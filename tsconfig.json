@@ -16,9 +16,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "swr": ["./src/lib/swr"],
-      "use-swr": ["./src/lib/swr"]
+      "@/*": ["./src/*"]
     },
     "plugins": [{ "name": "next" }]
   },

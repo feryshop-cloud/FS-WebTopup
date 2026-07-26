@@ -37,7 +37,7 @@ export function MarketplaceWhyUsSection() {
     {
       icon: <UserCheck className="h-6 w-6 text-primary" />,
       title: "Verified Sultan Seller",
-      desc: "Penjual di TopupSon wajib verifikasi KTP & identitas resmi. Reputasi toko transparan dengan ulasan asli pembeli.",
+      desc: "Penjual di Feryshop wajib verifikasi KTP & identitas resmi. Reputasi toko transparan dengan ulasan asli pembeli.",
     },
     {
       icon: <RefreshCw className="h-6 w-6 text-blue-500" />,
@@ -47,7 +47,7 @@ export function MarketplaceWhyUsSection() {
     {
       icon: <MessageSquare className="h-6 w-6 text-amber-500" />,
       title: "Kawalan Admin 24/7",
-      desc: "Tim Rekber TopupSon siap membimbing proses log-in dan pengamanan akun sampai tuntas tanpa ribet.",
+      desc: "Tim Rekber Feryshop siap membimbing proses log-in dan pengamanan akun sampai tuntas tanpa ribet.",
     },
   ];
 
@@ -57,10 +57,10 @@ export function MarketplaceWhyUsSection() {
       <div className="space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Mengapa Beli Akun di <span className="text-primary">TopupSon Marketplace?</span>
+            Mengapa Beli Akun di <span className="text-primary">Feryshop Marketplace?</span>
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Keamanan pembeli adalah prioritas mutlak kami dengan sistem Multi-SaaS Protection dan Rekening Bersama (Rekber) resmi.
+            Keamanan pembeli adalah prioritas mutlak kami dengan sistem pengamanan berlapis dan Rekening Bersama (Rekber) resmi.
           </p>
         </div>
 

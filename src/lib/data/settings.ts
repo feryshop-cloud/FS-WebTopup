@@ -23,6 +23,16 @@ export async function getSiteSettings(): Promise<SettingsPayload> {
       }
     }
 
+    // Enforce Feryshop branding and dark theme across all settings
+    siteSettings["general.title"] = "Feryshop";
+    siteSettings["site_name"] = "Feryshop";
+    siteSettings["seo.title"] = "Feryshop - Marketplace Akun Game Sultan & Top Up";
+    siteSettings["seo.description"] = "Platform Marketplace Akun Game Sultan & Layanan Top Up Game Resmi Termurah & Terpercaya 24 Jam.";
+    siteSettings["footer.credit_text"] = "Made in Feryshop";
+    siteSettings["general.logo"] = "/logo-2.png";
+    siteSettings["theme.default_mode"] = "dark";
+    siteSettings["theme.allow_toggle"] = false;
+
     return {
       success: true,
       data: siteSettings,

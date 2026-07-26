@@ -317,7 +317,7 @@ export default function AccountSettingsApiPage() {
               Login Sekarang
             </Button>
             <Button asChild variant="outline" className="rounded-full border-primary/10 px-6">
-              <Link href="/marketplace">Buka Marketplace Akun</Link>
+              <Link href="/marketplace">Buka Daftar Akun</Link>
             </Button>
           </div>
         </div>
@@ -352,7 +352,7 @@ export default function AccountSettingsApiPage() {
               <div className="flex flex-wrap gap-3">
                 <Button asChild className="rounded-full px-6">
                   <Link href="/marketplace">
-                    Buka Marketplace Akun
+                    Buka Daftar Akun
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>

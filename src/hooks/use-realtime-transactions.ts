@@ -22,6 +22,8 @@ const useRealtimeTransactions = () => {
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
+      revalidateIfStale: false,
+      keepPreviousData: true,
     }
   );
 

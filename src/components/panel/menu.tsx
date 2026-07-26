@@ -12,7 +12,6 @@ import {
   Percent,
   Sparkles,
   Star,
-  Store,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -101,12 +100,13 @@ export function Menu({ isOpen }: MenuProps) {
                         <Tooltip delayDuration={100}>
                           <TooltipTrigger asChild>
                             <Button
-                              variant={
-                                (active === undefined && (pathname === href || pathname.startsWith(`${href}/`))) || active
-                                  ? "secondary"
-                                  : "ghost"
-                              }
-                              className="w-full justify-start h-10 mb-1"
+                              variant="ghost"
+                              className={cn(
+                                "w-full justify-start h-10 mb-1 hover:bg-white/5 transition-colors",
+                                ((active === undefined && (pathname === href || pathname.startsWith(`${href}/`))) || active)
+                                  ? "text-primary font-bold bg-transparent hover:bg-transparent"
+                                  : "text-muted-foreground hover:text-primary"
+                              )}
                               asChild
                             >
                               <Link href={href}>
@@ -136,24 +136,29 @@ export function Menu({ isOpen }: MenuProps) {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
-                              variant={kalkulatorActive ? "secondary" : "ghost"}
-                              className="w-full justify-start h-10 mb-1 gap-2"
+                              variant="ghost"
+                              className={cn(
+                                "w-full justify-start h-10 mb-1 gap-2 hover:bg-white/5 transition-colors",
+                                kalkulatorActive ? "text-primary font-bold bg-transparent hover:bg-transparent" : "text-muted-foreground hover:text-primary"
+                              )}
                             >
                               <span className={cn(isOpen === false ? "" : "mr-2")}>
                                 <Calculator size={18} />
                               </span>
                               <p
                                 className={cn(
-                                  "max-w-[200px] truncate flex-1 text-left",
+                                  "max-w-[200px] truncate",
                                   isOpen === false ? "-translate-x-96 opacity-0" : "translate-x-0 opacity-100"
                                 )}
                               >
                                 Kalkulator
                               </p>
-                              <ChevronDown size={14} className={cn("opacity-70", isOpen === false ? "hidden" : "")} />
+                              <span className={cn("ml-auto", isOpen === false ? "hidden" : "block")}>
+                                <ChevronDown size={16} className="opacity-70" />
+                              </span>
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="min-w-[220px]">
+                          <DropdownMenuContent align="start" className="w-56">
                             {kalkulatorItems.map((item) => (
                               <DropdownMenuItem key={item.href} asChild>
                                 <Link href={item.href} className="w-full px-2 py-1.5 text-sm flex items-center gap-2">
@@ -169,11 +174,11 @@ export function Menu({ isOpen }: MenuProps) {
                   }
                 } else {
                   nodes.push(
-                    <div className="w-full" key={index}>
+                    <div className="w-full" key={href}>
                       <CollapseMenuButton
                         icon={Icon}
                         label={label}
-                        active={active === undefined ? pathname.startsWith(href) : active}
+                        active={active ?? false}
                         submenus={submenus}
                         isOpen={isOpen}
                       />
@@ -186,50 +191,17 @@ export function Menu({ isOpen }: MenuProps) {
             </li>
           ))}
 
-          <li className="w-full pt-2">
-            <div className="w-full">
-              <TooltipProvider disableHoverableContent>
-                <Tooltip delayDuration={100}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant={pathname.startsWith("/marketplace") ? "secondary" : "ghost"}
-                      className="w-full justify-start h-10 mb-1"
-                      asChild
-                    >
-                      <Link href="/marketplace">
-                        <span className={cn(isOpen === false ? "" : "mr-4")}>
-                          <Store size={18} />
-                        </span>
-                        <p
-                          className={cn(
-                            "max-w-[200px] truncate",
-                            isOpen === false ? "-translate-x-96 opacity-0" : "translate-x-0 opacity-100"
-                          )}
-                        >
-                          Marketplace Akun
-                        </p>
-                      </Link>
-                    </Button>
-                  </TooltipTrigger>
-                  {isOpen === false && <TooltipContent side="right">Marketplace Akun</TooltipContent>}
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </li>
-
           {!isLoggedIn && (
-            <li className="w-full pt-3 space-y-2">
+            <li className={cn("w-full pt-4", isOpen === false ? "flex flex-col gap-2" : "grid grid-cols-2 gap-2.5")}>
               <TooltipProvider disableHoverableContent>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" className="w-full justify-center h-10" asChild>
-                      <Link href="/signin">
-                        <span className={cn(isOpen === false ? "" : "mr-4")}>
-                          <LogIn size={18} />
-                        </span>
-                        <p className={cn("whitespace-nowrap", isOpen === false ? "opacity-0 hidden" : "opacity-100")}>
+                    <Button variant="outline" className="w-full justify-center h-10 px-2" asChild>
+                      <Link href="/signin" className="flex items-center justify-center gap-1.5 w-full">
+                        <LogIn size={18} className="shrink-0" />
+                        <span className={cn("font-medium text-sm truncate", isOpen === false ? "hidden" : "inline")}>
                           Masuk
-                        </p>
+                        </span>
                       </Link>
                     </Button>
                   </TooltipTrigger>
@@ -240,14 +212,12 @@ export function Menu({ isOpen }: MenuProps) {
               <TooltipProvider disableHoverableContent>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
-                    <Button className="w-full justify-center h-10" asChild>
-                      <Link href="/signup">
-                        <span className={cn(isOpen === false ? "" : "mr-4")}>
-                          <UserPlus size={18} />
-                        </span>
-                        <p className={cn("whitespace-nowrap", isOpen === false ? "opacity-0 hidden" : "opacity-100")}>
+                    <Button className="w-full justify-center h-10 px-2" asChild>
+                      <Link href="/signup" className="flex items-center justify-center gap-1.5 w-full">
+                        <UserPlus size={18} className="shrink-0" />
+                        <span className={cn("font-medium text-sm truncate", isOpen === false ? "hidden" : "inline")}>
                           Daftar
-                        </p>
+                        </span>
                       </Link>
                     </Button>
                   </TooltipTrigger>

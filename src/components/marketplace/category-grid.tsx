@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Gamepad2, Flame, Crosshair, Trophy, Shield, ChevronRight, Sparkles } from "lucide-react";
+import { Gamepad2, Flame, Crosshair, Trophy, Shield, ChevronRight } from "lucide-react";
 import { MARKETPLACE_CATEGORIES, type GameCategory } from "@/lib/data/mock-marketplace";
 import { cn } from "@/lib/utils";
 
@@ -27,11 +27,7 @@ export function MarketplaceCategoryGrid() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-primary">Pilih Kategori Game</span>
-          </div>
+        <div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Katalog Akun Game Populer
           </h2>
@@ -42,12 +38,12 @@ export function MarketplaceCategoryGrid() {
       </div>
 
       {/* Grid Kategori (Mobile 2 kolom, Tablet 3 kolom, Desktop 5 kolom) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-x-6 sm:gap-y-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-x-6 sm:gap-y-6">
         {MARKETPLACE_CATEGORIES.map((category) => (
           <Link
             key={category.id}
             href={`/marketplace/${category.slug}`}
-            className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary flex flex-col justify-between"
+            className="group relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-card p-3 sm:p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary flex flex-col justify-between"
           >
             {/* Background Glow on Hover */}
             <div
@@ -59,9 +55,9 @@ export function MarketplaceCategoryGrid() {
 
             <div>
               {/* Top Bar with Icon & Badge */}
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-muted/60 border border-border/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                  <GameCategoryIcon iconName={category.iconName} className="h-5 w-5 sm:h-6 sm:w-6" />
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-muted/60 border border-border/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                  <GameCategoryIcon iconName={category.iconName} className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
                   {category.totalAccounts} Akun

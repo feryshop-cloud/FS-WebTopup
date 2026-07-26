@@ -6,6 +6,7 @@ import { SettingsProvider, type SettingsPayload } from "@/context/settings-conte
 import { getSiteSettings } from "@/lib/data/settings";
 import PanelLayout from "@/components/panel/panel-layout";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { SWRProvider } from "@/components/providers/swr-provider";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { Toaster } from "sonner";
 import type { Metadata } from "next";
@@ -45,16 +46,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const data = settings?.data ?? {};
 
   // SEO Basics
-  const metaTitle = safeString(data["seo.title"] || data["general.title"] || "Top Up Game");
-  const metaDescription = safeString(data["seo.description"] || "Top Up Game Murah & Terpercaya");
-  const metaKeywords = safeString(data["seo.keywords"] || "topup game, beli diamond, game online");
+  const metaTitle = safeString(data["seo.title"] || data["general.title"] || "Feryshop | Pusat Jual Beli & Top Up Akun Game Sultan #1 Terpercaya");
+  const metaDescription = safeString(data["seo.description"] || "Feryshop | Marketplace jual beli akun game Sultan (MLBB, Free Fire, Valorant, eFootball, PUBG Mobile) & layanan top up game murah, cepat, teraman dengan Rekber resmi 24/7 dan garansi anti-hack 100%.");
+  const metaKeywords = safeString(data["seo.keywords"] || "feryshop, jual beli akun game, marketplace akun game sultan, top up game murah, rekber akun game terpercaya, akun mlbb sultan, beli akun free fire, top up mobile legends murah, feryshop rekber");
 
   // OG & Twitter
   const ogTitle = safeString(data["seo.og_title"] || metaTitle);
   const ogDescription = safeString(data["seo.og_description"] || metaDescription);
   
   const favicon = resolveSingle(data["general.favicon"]);
-  const ogImage = resolveSingle(data["seo.og_image"]) || resolveSingle(data["general.logo"]);
+  const ogImage = resolveSingle(data["seo.og_image"]) || resolveSingle(data["general.logo"]) || "/logo-2.png";
 
   return {
     metadataBase,
@@ -68,14 +69,14 @@ export async function generateMetadata(): Promise<Metadata> {
       url: metadataBase.origin,
       images: ogImage
         ? [{ url: ogImage, width: 1200, height: 630, alt: ogTitle }]
-        : [{ url: "/default-og-image.jpg", width: 1200, height: 630, alt: ogTitle }],
+        : [{ url: "/logo-1.png", width: 1200, height: 630, alt: ogTitle }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images: ogImage ? [ogImage] : ["/default-og-image.jpg"],
+      images: ogImage ? [ogImage] : ["/logo-1.png"],
     },
   };
 }
@@ -85,20 +86,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const settingsPayload = await fetchSettings();
   const data = settingsPayload?.data ?? {};
 
-  // --- Logic Theme (Dari File Kedua) ---
-  const rawDefault = typeof data["theme.default_mode"] === "string" ? data["theme.default_mode"] : "light";
-  const defaultMode = ["light", "dark", "system"].includes(rawDefault) ? rawDefault : "light";
-  const allowToggle = data["theme.allow_toggle"] !== false;
-  
-  // Jika toggle dimatikan, paksa tema sesuai default (kecuali system dipaksa ke light)
-  const forcedTheme = allowToggle ? undefined : (defaultMode === "system" ? "light" : defaultMode);
-
-  // --- Logic Schema.org (Dari File Pertama) ---
+  // --- Logic Schema.org ---
   const schemas: any[] = [];
   const enableOrg = data["seo.schema.organization"] === true;
   const enableWebsite = data["seo.schema.website"] === true;
-  const brandName = safeString(data["general.title"]);
-  const logo = resolveSingle(data["general.logo"]);
+  const brandName = safeString(data["general.title"]) || "Feryshop";
+  const logo = resolveSingle(data["general.logo"]) || "/logo-1.png";
 
   if (enableOrg && brandName) {
     schemas.push({
@@ -120,7 +113,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" className="dark" suppressHydrationWarning>
       <head>
         {schemas.map((schema, index) => (
           <script
@@ -131,17 +124,19 @@ export default async function Layout({ children }: { children: React.ReactNode }
         ))}
       </head>
       <body className={GeistSans.className}>
-        <ProgressBar className="fixed top-0 h-0.5 bg-indigo-600 z-30">
-          <Toaster position="top-center" />
+        <ProgressBar className="fixed top-0 h-0.5 bg-orange-500 z-30">
+          <Toaster position="top-center" theme="dark" />
           <ThemeProvider
             attribute="class"
-            defaultTheme={defaultMode}
-            enableSystem={defaultMode === "system"}
-            forcedTheme={forcedTheme}
+            defaultTheme="dark"
+            forcedTheme="dark"
+            enableSystem={false}
           >
-            <SettingsProvider initialData={settingsPayload}>
-              <PanelLayout>{children}</PanelLayout>
-            </SettingsProvider>
+            <SWRProvider>
+              <SettingsProvider initialData={settingsPayload}>
+                <PanelLayout>{children}</PanelLayout>
+              </SettingsProvider>
+            </SWRProvider>
           </ThemeProvider>
         </ProgressBar>
       </body>

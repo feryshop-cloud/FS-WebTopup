@@ -69,8 +69,8 @@ export function AccountCard({ account }: { account: GameAccount }) {
 
         {/* Bottom Image Overlay: Rank & Login Via */}
         <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-semibold text-white/90">
-          <span className="truncate bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10">
-            🛡️ {account.specs.rank}
+          <span className="truncate bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1">
+            <ShieldCheck className="h-3 w-3 text-emerald-400 inline" /> {account.specs.rank}
           </span>
           <span className="text-[10px] bg-primary/80 text-primary-foreground px-2 py-0.5 rounded-md font-bold">
             {account.specs.loginVia}
@@ -88,16 +88,16 @@ export function AccountCard({ account }: { account: GameAccount }) {
 
           {/* Quick Specs Tags */}
           <div className="flex flex-wrap gap-1.5 pt-1">
-            <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-              💎 {account.specs.skinsCount} Skin
+            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
+              <Award className="h-3 w-3 text-amber-400" /> {account.specs.skinsCount} Skin
             </span>
             {account.specs.winrate && (
-              <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-                🔥 WR {account.specs.winrate}
+              <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
+                <Flame className="h-3 w-3 text-orange-400" /> WR {account.specs.winrate}
               </span>
             )}
-            <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-              ⚡ {account.specs.deliveryType.split(" ")[0]}
+            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
+              <Zap className="h-3 w-3 text-blue-400" /> {account.specs.deliveryType.split(" ")[0]}
             </span>
           </div>
         </div>

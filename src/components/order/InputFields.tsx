@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { getCountryDisplay } from '@/lib/get-country-display'
+import { CheckCircle2, XCircle } from 'lucide-react'
 
 interface InputFieldsProps {
   gameConfig: {
@@ -162,7 +163,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
           <div className="w-full rounded-lg border border-green-600/70 bg-green-900/20 px-3 py-2 text-xs">
             <span className="inline-flex w-full items-center justify-center gap-2">
               <strong className="text-green-400">{nickname}</strong>
-              <span>✅</span>
+              <CheckCircle2 className="h-4 w-4 text-green-400" />
               <span className="text-muted-foreground">•</span>
               <strong className="text-foreground">
                 {country ? getCountryDisplay(country) : '-'}
@@ -174,7 +175,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
         {!loading && error && (
           <div className="w-full rounded-lg border border-red-600/70 bg-red-900/20 px-3 py-2 text-xs text-red-400">
             <div className="flex items-center justify-between gap-2">
-              <span>ID tidak valid ❌</span>
+              <span className="flex items-center gap-1"><XCircle className="h-4 w-4 text-red-400" /> ID tidak valid</span>
               <span className="text-red-300/80">Cek lagi ID & Server</span>
             </div>
           </div>

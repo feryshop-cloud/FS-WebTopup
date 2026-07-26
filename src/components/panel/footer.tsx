@@ -23,8 +23,6 @@ export function Footer() {
   const logoUrl = settings?.data?.["general.logo"];
   const logoTitle = settings?.data?.["general.title"];
 
-  const creditText = settings?.data?.["footer.credit_text"] || "Made With ❤️ by PT. Ferdi Ananda Store";
-
   const extraTitle = settings?.data?.["footer.extra_section.title"] || "";
   const rawLinks = settings?.data?.["footer.extra_section.links"];
   const extraLinks = Array.isArray(rawLinks)
@@ -39,55 +37,52 @@ export function Footer() {
   const isExternal = (url: string) => /^https?:\/\//i.test(url);
 
   return (
-    <footer className="bg-secondary print:hidden text-secondary-foreground mt-16">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-6">
-          <div className="space-y-4">
+    <footer className="bg-card border-t border-border print:hidden text-foreground mt-8 sm:mt-16">
+      <div className="container mx-auto px-4 sm:px-8 py-6 sm:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 pb-3 sm:pb-6">
+          <div className="space-y-2 sm:space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              {logoUrl ? (
-                <Image src={logoUrl} alt={logoTitle || "logo"} width={120} height={40} priority className="h-10 w-32" />
-              ) : (
-                <Skeleton className="h-8 w-32" />
-              )}
+              <Image src="/logo-2.png" alt="Feryshop Logo" width={40} height={40} priority className="h-7 sm:h-10 w-auto object-contain shrink-0" />
+              <span className="font-extrabold text-lg sm:text-2xl tracking-tight text-foreground">Feryshop</span>
             </Link>
-            <p className="text-sm leading-relaxed opacity-80">
-              {settings?.data?.["seo.description"] || "Penyedia layanan top up game & voucher terbaik."}
+            <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
+              {settings?.data?.["seo.description"] || "Marketplace Akun Game Sultan & Layanan Top Up Game Terpercaya."}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <h3 className="font-semibold">Menu</h3>
-              <ul className="mt-3 space-y-2 text-sm opacity-80">
+              <h3 className="font-semibold text-foreground text-xs sm:text-base">Menu</h3>
+              <ul className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
                 <li>
-                  <Link href="/">Beranda</Link>
+                  <Link href="/" className="hover:text-primary transition-colors">Beranda</Link>
                 </li>
                 <li>
-                  <Link href="/invoices">Cek Transaksi</Link>
+                  <Link href="/marketplace" className="hover:text-primary transition-colors">Daftar Akun</Link>
                 </li>
                 <li>
-                  <Link href="/price-list">Daftar Harga</Link>
+                  <Link href="/price-list" className="hover:text-primary transition-colors">Daftar Harga</Link>
                 </li>
                 <li>
-                  <Link href="/artikel">Artikel</Link>
+                  <Link href="/invoices" className="hover:text-primary transition-colors">Cek Invoice</Link>
                 </li>
                 <li>
-                  <Link href="/ulasan-produk">Ulasan Produk</Link>
+                  <Link href="/ulasan-produk" className="hover:text-primary transition-colors">Ulasan Produk</Link>
                 </li>
                 <li>
-                  <Link href="/contact">Hubungi Kami</Link>
+                  <Link href="/contact" className="hover:text-primary transition-colors">Hubungi Kami</Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold">Ikuti Kami</h3>
-              <div className="mt-3 flex space-x-4">
-                <Link href={settings?.data?.["sosmed.fb"] || "https://m.facebook.com/"} target="_blank" rel="noreferrer">
-                  <Facebook />
+              <h3 className="font-semibold text-foreground text-xs sm:text-base">Ikuti Kami</h3>
+              <div className="mt-2 sm:mt-3 flex space-x-3 sm:space-x-4">
+                <Link href={settings?.data?.["sosmed.fb"] || "https://m.facebook.com/"} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Link>
-                <Link href={settings?.data?.["sosmed.ig"] || "https://instagram.com/"} target="_blank" rel="noreferrer">
-                  <Instagram />
+                <Link href={settings?.data?.["sosmed.ig"] || "https://instagram.com/"} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Link>
               </div>
             </div>
@@ -95,14 +90,15 @@ export function Footer() {
 
           {extraLinks.length > 0 && (
             <div>
-              <h3 className="font-semibold">{extraTitle || "Lainnya"}</h3>
-              <ul className="mt-3 space-y-2 text-sm opacity-80">
+              <h3 className="font-semibold text-foreground text-xs sm:text-base">{extraTitle || "Lainnya"}</h3>
+              <ul className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
                 {extraLinks.map((item, idx) => (
                   <li key={`${item.url}-${idx}`}>
                     <Link
                       href={item.url}
                       target={isExternal(item.url) ? "_blank" : undefined}
                       rel={isExternal(item.url) ? "noreferrer" : undefined}
+                      className="hover:text-primary transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -113,13 +109,12 @@ export function Footer() {
           )}
         </div>
 
-        <div className="border-t border-white/20 my-6" />
+        <div className="border-t border-border my-3 sm:my-6" />
 
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs opacity-70">
+        <div className="flex justify-center sm:justify-start items-center text-[11px] sm:text-xs text-muted-foreground py-1 sm:py-2">
           <p>
-            © {new Date().getFullYear()} {settings?.data?.["general.title"] || "Penyedia layanan top up game & voucher terbaik."}. All rights reserved.
+            © {new Date().getFullYear()} Feryshop. All rights reserved.
           </p>
-          <p>{creditText}.</p>
         </div>
       </div>
     </footer>

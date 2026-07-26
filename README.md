@@ -1,105 +1,88 @@
-# UltraTopUp-NextJS
+# Feryshop - Platform Top-Up & Marketplace Akun
 
-**UltraTopUp-NextJS** adalah frontend modern berbasis Next.js (TypeScript/JavaScript) untuk platform UltraTopUp yang siap pakai di desktop & mobile. Frontend ini menjadi antarmuka utama pelanggan untuk eksplorasi produk digital top-up, transaksi, riwayat, dan dashboard pengguna.
+**Feryshop** adalah frontend modern berbasis Next.js (TypeScript/JavaScript) untuk platform Feryshop yang siap pakai di desktop & mobile. Frontend ini menjadi antarmuka utama pelanggan untuk eksplorasi produk digital top-up, transaksi, riwayat, marketplace akun, dan dashboard pengguna.
 
 ---
 
 ## Deskripsi
 
-UltraTopUp-NextJS terhubung langsung ke backend UltraTopUp-Laravel via API untuk menyajikan layanan transaksi pulsa, paket data, dan produk digital lainnya secara real time dengan UI/UX modern.
+Feryshop terhubung langsung ke backend via API untuk menyajikan layanan transaksi pulsa, paket data, voucher game, dan marketplace akun digital secara real time dengan UI/UX modern bertema Dark Mode eksklusif.
 
 ---
 
 ## Fitur-Fitur
 
-- Registrasi & Login User
-- Dashboard Pengguna
-- Browse dan Pesan Produk Digital
-- Riwayat & Status Transaksi
-- Info Saldo & TopUp
-- Notifikasi Real Time
-- Admin Panel (opsional)
-- Responsive (mobile & desktop)
+- Registrasi & Login User (OAuth Google & OTP)
+- Dashboard Pengguna & Pengaturan Akun
+- Browse dan Pesan Produk Digital & Marketplace Akun
+- Riwayat & Status Transaksi Real Time
+- Info Saldo, TopUp & Kode Promo
+- Notifikasi & WhatsApp Bubble Integration
+- Admin Panel / Seller Management
+- Responsive Design (Mobile & Desktop)
+- Dark Theme Only dengan Estetika Premium
 - Integrasi ke Payment Gateway
 
 ---
 
-## Struktur Direktori (Umum NextJS)
+## Struktur Direktori
 
 ```
-├── components/
-├── pages/
-│   ├── index.tsx
-│   ├── login.tsx
-│   ├── dashboard.tsx
-│   └── api/
-├── public/
-│   └── assets/
-├── styles/
-├── services/
-│   └── api.ts
-├── utils/
+├── src/
+│   ├── app/           # Next.js App Router (Pages & API Routes)
+│   ├── components/    # Reusable UI Components (Lucide Icons, Tailwind)
+│   ├── context/       # React Context Providers (Settings, Theme)
+│   ├── lib/           # Database (Drizzle ORM), Auth, Utilities, & Seed Data
+│   └── types/         # TypeScript Definitions
+├── public/            # Static Assets & Logos
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## Instalasi & Deploy ke VPS aaPanel
+## Instalasi & Menjalankan secara Lokal
 
 ### Prasyarat
 
 - Node.js (disarankan v18+)
-- aaPanel (web server management)
-- PM2 (process manager nodejs, install: `npm install -g pm2`)
-- Git (untuk clone repo)
-- Backend UltraTopUp-Laravel telah jalan
+- Package manager (npm / pnpm / yarn)
 
-### Langkah Instalasi & Deploy
+### Langkah Instalasi
 
-1. **Clone Project**
-    ```bash
-    git clone https://github.com/ferdianandaid/UltraTopUp-NextJS.git
-    cd UltraTopUp-NextJS
-    ```
+1. **Clone Project / Masuk ke Direktori**
+   ```bash
+   cd TopupSon
+   ```
 
 2. **Install Dependency**
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 3. **Siapkan Konfigurasi Environment**
-    - Edit file `.env.local`, contoh:
-      ```
-      NEXT_PUBLIC_API_BASE_URL=http://domain-backend-laravelmu/api
-      ```
+   - Salin dan edit file `.env`, contoh:
+     ```env
+     NEXT_PUBLIC_APP_NAME="Feryshop"
+     NEXT_PUBLIC_API_URL=http://localhost:8000
+     ```
 
-4. **Build dan Jalankan Production**
-    ```bash
-    npm run build
-    PORT=3100 pm2 start npm --name "topup" -- start
-    pm2 startup
-    pm2 save
-    ```
+4. **Jalankan Development Server**
+   ```bash
+   npm run dev
+   ```
+   Akses aplikasi melalui `http://localhost:3000`.
 
-    - `PORT=3100` adalah port custom, bisa diganti sesuai kebutuhan.
-    - Gunakan PM2 agar proses Next.js selalu running di background.
-
-5. **Konfigurasi Domain/Subdomain di aaPanel**
-    - Point domain ke folder project ini (bisa gunakan reverse proxy ke `localhost:3100`)
-
-6. **(Opsional) Setting SSL Let's Encrypt di aaPanel**
+5. **Build untuk Production**
+   ```bash
+   npm run build
+   npm start
+   ```
 
 ---
 
-## Panduan Akses
+## Branding & Kredit
 
-- Akses frontend via domain/subdomain yang sudah dipointing.
-
----
-
-<<<<<<< HEAD
-UltraTopUp — Solusi TopUp Otomatis Pulsa & Layanan Digital
-=======
-UltraTopUp — Solusi TopUp Otomatis Pulsa & Layanan Digital
->>>>>>> 37ec7a7 (feat: add and fix some feature)
+- **Brand**: Feryshop
+- **Credit**: Made in Feryshop
+- All rights reserved.

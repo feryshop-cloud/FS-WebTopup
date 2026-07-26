@@ -36,7 +36,8 @@ export default function Promo() {
 
   const { data, error, isLoading, mutate } = useSWR<{ success: boolean; products: PromoProduct[] }>(
     "/api/promo",
-    fetcher
+    fetcher,
+    { keepPreviousData: true, revalidateIfStale: false, dedupingInterval: 300_000 }
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);

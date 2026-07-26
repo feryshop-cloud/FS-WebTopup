@@ -1,17 +1,32 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
+import { usePathname } from "next/navigation"
+import { Toaster as Sonner, toast } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
+  const pathname = usePathname()
+  const prevPathRef = useRef(pathname)
+
+  useEffect(() => {
+    if (prevPathRef.current !== pathname) {
+      if (pathname === "/" || (!pathname.startsWith("/invoices/") && !pathname.startsWith("/order/"))) {
+        toast.dismiss()
+      }
+      prevPathRef.current = pathname
+    }
+  }, [pathname])
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      closeButton
+      duration={4000}
       toastOptions={{
         classNames: {
           toast:

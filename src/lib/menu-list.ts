@@ -7,6 +7,7 @@ import {
   LucideIcon,
   BadgeDollarSign,
   Star,
+  Store,
 } from "lucide-react";
 
 type Submenu = {
@@ -39,14 +40,19 @@ export function getMenuList(pathname: string, isLoggedIn: boolean): Group[] {
           icon: Home,
         },
         {
-          href: "/invoices",
-          label: "Cek Invoice",
-          icon: ReceiptText,
+          href: "/marketplace",
+          label: "Daftar Akun",
+          icon: Store,
         },
         {
           href: "/price-list",
           label: "Daftar Harga",
           icon: BadgeDollarSign,
+        },
+        {
+          href: "/invoices",
+          label: "Cek Invoice",
+          icon: ReceiptText,
         },
         {
           href: "/ulasan-produk",

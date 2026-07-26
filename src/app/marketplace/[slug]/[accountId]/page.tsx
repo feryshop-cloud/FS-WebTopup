@@ -15,11 +15,11 @@ export async function generateMetadata({ params }: AccountDetailPageProps): Prom
   const { accountId } = await params;
   const account = MOCK_ACCOUNTS.find((a) => a.id === accountId || a.slug === accountId);
   if (!account) {
-    return { title: "Detail Akun - TopupSon Marketplace" };
+    return { title: "Feryshop | Detail Akun Marketplace" };
   }
   return {
-    title: `${account.title} | Beli Akun ${account.gameName} - TopupSon`,
-    description: `Beli ${account.title} seharga Rp ${account.price.toLocaleString("id-ID")}. Garansi 100% Anti-Hack via Rekber resmi TopupSon.`,
+    title: `Feryshop | ${account.title} - Akun ${account.gameName} Sultan`,
+    description: `Feryshop | Beli akun ${account.title} (${account.gameName}) murah seharga Rp ${account.price.toLocaleString("id-ID")}. Garansi 100% anti-hack via Rekber resmi 24/7.`,
   };
 }
 

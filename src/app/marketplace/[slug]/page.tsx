@@ -14,11 +14,11 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const { slug } = await params;
   const category = MARKETPLACE_CATEGORIES.find((c) => c.slug === slug);
   if (!category) {
-    return { title: "Kategori Tidak Ditemukan - TopupSon" };
+    return { title: "Feryshop | Kategori Tidak Ditemukan" };
   }
   return {
-    title: `Jual Beli Akun ${category.name} Sultan & Aman - TopupSon`,
-    description: `Katalog akun ${category.name} terverifikasi dengan garansi anti-hack 100% via Rekber TopupSon. ${category.subtitle}`,
+    title: `Feryshop | Jual Beli Akun ${category.name} Sultan & Terverifikasi`,
+    description: `Feryshop | Katalog akun ${category.name} sultan terverifikasi dengan garansi anti-hack 100% via Rekber resmi Feryshop. ${category.subtitle}`,
   };
 }
 

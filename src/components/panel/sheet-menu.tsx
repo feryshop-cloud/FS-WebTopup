@@ -36,14 +36,16 @@ export function SheetMenu() {
             variant="link"
             asChild
           >
-            <Link href="/" className="flex items-center">
-              <SheetTitle>
+            <Link href="/" className="flex items-center gap-2">
+              <SheetTitle className="flex items-center gap-2">
                 <Image 
-                src={logoUrl}
-                alt="Logo"
-                width={120}
-                height={40}
-                className="w-32 h-auto sm:hidden" />
+                  src={logoUrl || "/logo-2.png"}
+                  alt="Feryshop Logo"
+                  width={40}
+                  height={40}
+                  className="h-8 w-auto object-contain shrink-0 sm:hidden"
+                />
+                <span className="font-extrabold text-lg tracking-tight text-foreground sm:hidden">Feryshop</span>
               </SheetTitle>
             </Link>
           </Button>

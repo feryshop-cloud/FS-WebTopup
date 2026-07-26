@@ -28,7 +28,7 @@ export async function POST(req: Request) {
           foundUser = {
             id: u.id,
             name: u.name,
-            email: u.email || `${whatsapp}@topupson.id`,
+            email: u.email || `${whatsapp}@feryshop.id`,
             role: u.role || "member",
             saldo: Number(u.balance || 0),
             whatsapp: u.whatsapp || whatsapp,
@@ -42,8 +42,8 @@ export async function POST(req: Request) {
     if (!foundUser) {
       foundUser = {
         id: `USR-${whatsapp.slice(-4)}`,
-        name: body.name || "Member TopupSon",
-        email: `${whatsapp}@topupson.id`,
+        name: body.name || "Member Feryshop",
+        email: `${whatsapp}@feryshop.id`,
         role: "member",
         saldo: 50000,
         whatsapp: whatsapp,

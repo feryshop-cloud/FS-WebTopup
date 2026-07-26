@@ -16,7 +16,9 @@ import { fetcher } from "@/lib/fetcher";
 
 const swrOptions = {
   revalidateOnFocus: false,
-  dedupingInterval: 60_000,
+  revalidateIfStale: false,
+  dedupingInterval: 300_000,
+  keepPreviousData: true,
 };
 
 export default function HomePage() {

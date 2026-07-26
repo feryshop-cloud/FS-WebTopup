@@ -65,7 +65,7 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
         product_title: "86 Diamonds (78 + 8 Bonus)",
         id_games: "12345678",
         server_games: "1234",
-        nickname: "TopupSon Player",
+        nickname: "Feryshop Player",
         quantity: 1,
         price: 23500,
         total_price: 23500,

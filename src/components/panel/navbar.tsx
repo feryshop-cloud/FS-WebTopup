@@ -4,10 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Calculator, ChevronDown, Percent, Sparkles, Star, Store } from "lucide-react";
+import { Calculator, ChevronDown, Percent, Sparkles, Star } from "lucide-react";
 
 import { useSettings } from "@/context/settings-context";
-import { ModeToggle } from "@/components/mode-toggle";
 import { UserNav } from "@/components/panel/user-nav";
 import { SheetMenu } from "@/components/panel/sheet-menu";
 import { Search } from "@/components/panel/search";
@@ -34,8 +33,6 @@ export function Navbar() {
   const logoUrl = settings?.data?.["general.logo"] as string | undefined;
   const logoTitle = settings?.data?.["general.title"] as string | undefined;
 
-  const allowThemeToggle = settings?.data?.["theme.allow_toggle"] !== false;
-
   const enableWinrate = Boolean(settings?.data?.["enable_kalkulator_winrate"]);
   const enableMagicWheel = Boolean(settings?.data?.["enable_kalkulator_magic_wheel"]);
   const enableZodiac = Boolean(settings?.data?.["enable_kalkulator_zodiac"]);
@@ -51,23 +48,20 @@ export function Navbar() {
   const menuList = getMenuList(pathname, isLoggedIn);
 
   return (
-    <header className="sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
-      <div className="mx-4 sm:mx-8 flex h-16 items-center">
+    <header className="sticky top-0 z-40 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-4 sm:mx-8 flex h-12 sm:h-16 items-center">
         <div className="flex items-center space-x-4 lg:space-x-0">
           <SheetMenu />
-          <Link href="/">
-            {logoUrl ? (
-              <Image
-                src={logoUrl}
-                alt={logoTitle || "logo"}
-                width={120}
-                height={40}
-                priority
-                className="w-32 h-auto"
-              />
-            ) : (
-              <Skeleton className="w-32 h-10 sm:hidden" />
-            )}
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src={logoUrl || "/logo-2.png"}
+              alt="Feryshop Logo"
+              width={40}
+              height={40}
+              priority
+              className="h-7 sm:h-10 w-auto object-contain shrink-0"
+            />
+            <span className="font-extrabold text-base sm:text-xl tracking-tight text-foreground">Feryshop</span>
           </Link>
         </div>
 
@@ -79,13 +73,12 @@ export function Navbar() {
                 <Button asChild variant="outline" size="sm" className="shadow-none">
                   <Link href="/signin">Masuk</Link>
                 </Button>
-                <Button asChild size="sm" className="shadow-none">
+                <Button asChild size="sm" className="shadow-none bg-primary text-primary-foreground hover:bg-primary/90">
                   <Link href="/signup">Daftar</Link>
                 </Button>
               </div>
             )}
           </div>
-          {allowThemeToggle && <ModeToggle />}
           {session && <UserNav />}
         </div>
       </div>
@@ -100,10 +93,10 @@ export function Navbar() {
                 <li key={href}>
                   <Link href={href}>
                     <Button
-                      variant={active ? "secondary" : "ghost"}
+                      variant="ghost"
                       className={cn(
-                        "gap-2",
-                        pathname === href || pathname.startsWith(`${href}/`) ? "text-primary" : ""
+                        "gap-2 hover:bg-white/5 transition-colors",
+                        pathname === href || pathname.startsWith(`${href}/`) ? "text-primary font-bold bg-transparent hover:bg-transparent" : "text-muted-foreground hover:text-primary"
                       )}
                     >
                       <Icon size={16} />
@@ -119,8 +112,11 @@ export function Navbar() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          variant={kalkulatorActive ? "secondary" : "ghost"}
-                          className={cn("gap-2", kalkulatorActive ? "text-primary" : "")}
+                          variant="ghost"
+                          className={cn(
+                            "gap-2 hover:bg-white/5 transition-colors",
+                            kalkulatorActive ? "text-primary font-bold bg-transparent hover:bg-transparent" : "text-muted-foreground hover:text-primary"
+                          )}
                         >
                           <Calculator size={16} />
                           <span className="text-sm">Kalkulator</span>
@@ -145,20 +141,13 @@ export function Navbar() {
               return nodes;
             })
           )}
-
-          <li>
-            <Link href="/marketplace">
-              <Button
-                variant={pathname.startsWith("/marketplace") ? "secondary" : "ghost"}
-                className={cn("gap-2", pathname.startsWith("/marketplace") ? "text-primary" : "")}
-              >
-                <Store size={16} />
-                <span className="text-sm font-semibold">Marketplace Akun</span>
-              </Button>
-            </Link>
-          </li>
         </ul>
       </nav>
+
+      {/* Animated Blue Bottom Bar with Running White Shimmer Effect */}
+      <div className="relative h-[2.5px] w-full overflow-hidden bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400 bg-[length:200%_100%] animate-gradient-x shadow-[0_0_8px_rgba(59,130,246,0.5)]">
+        <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white to-transparent opacity-90 animate-shimmer-slide" />
+      </div>
     </header>
   );
 }

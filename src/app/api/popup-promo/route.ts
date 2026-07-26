@@ -7,7 +7,7 @@ export async function GET() {
     success: true,
     data: {
       id: 1,
-      title: "Selamat Datang di TopupSon!",
+      title: "Selamat Datang di Feryshop!",
       image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
       description: "Nikmati kemudahan top up game 24 jam dengan harga termurah & proses instan.",
       url: "/order/mobile-legends",

@@ -35,8 +35,8 @@ export async function POST(req: Request) {
     }
 
     if (!promo) {
-      if (codeInput === "TOPUPSON10") {
-        promo = { code: "TOPUPSON10", discount_type: "percent", discount_value: 10, min_order: 20000, max_discount: 15000 };
+      if (codeInput === "FERYSHOP10") {
+        promo = { code: "FERYSHOP10", discount_type: "percent", discount_value: 10, min_order: 20000, max_discount: 15000 };
       } else if (codeInput === "HEMAT5RB") {
         promo = { code: "HEMAT5RB", discount_type: "fixed", discount_value: 5000, min_order: 30000, max_discount: 5000 };
       } else if (codeInput === "NEWUSER") {

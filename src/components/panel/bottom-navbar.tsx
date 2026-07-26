@@ -15,15 +15,14 @@ export default function BottomNavbar() {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 bg-background border-t border-muted shadow-md">
-      <div className="flex justify-around items-center h-16">
+      <div className="flex justify-around items-center h-13 sm:h-16">
         {menuList
           .flatMap(group => group.menus)
-          .slice(0, 5)
           .map(({ href, icon: Icon, label }) => {
-          const isActive =
-            href === '/'
-              ? pathname === '/'
-              : pathname === href || pathname.startsWith(`${href}/`)
+            const isActive =
+              href === '/'
+                ? pathname === '/'
+                : pathname === href || pathname.startsWith(`${href}/`)
 
             return (
               <motion.div
@@ -34,14 +33,14 @@ export default function BottomNavbar() {
                 <Link href={href} className="flex flex-col items-center text-xs">
                   <Icon
                     className={cn(
-                      'w-6 h-6 transition-colors',
-                      isActive ? 'text-indigo-600' : 'text-muted-foreground'
+                      'w-4 h-4 sm:w-5 sm:h-5 transition-colors',
+                      isActive ? 'text-primary' : 'text-muted-foreground'
                     )}
                   />
                   <span
                     className={cn(
-                      'text-[11px] mt-1 transition-colors',
-                      isActive ? 'text-indigo-600 font-medium' : 'text-muted-foreground'
+                      'text-[9px] sm:text-[10px] mt-0.5 sm:mt-1 transition-colors text-center truncate max-w-[60px]',
+                      isActive ? 'text-primary font-bold' : 'text-muted-foreground'
                     )}
                   >
                     {label}

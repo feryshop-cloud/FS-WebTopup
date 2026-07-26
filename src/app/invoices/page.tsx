@@ -252,78 +252,111 @@ export default function InvoiceSearchPage() {
           <div className="-mx-4 overflow-x-auto lg:mx-0">
             <table className="min-w-full text-sm whitespace-nowrap">
               <thead>
-                <tr className="border-t border-b text-xs text-left">
-                  <th className="p-3 text-left">Tanggal</th>
-                  <th className="p-3 text-left">Nomor Invoice</th>
-                  <th className="p-3 text-left">Produk</th>
-                  <th className="p-3 text-left">No. WhatsApp</th>
-                  <th className="p-3 text-left">Harga</th>
-                  <th className="p-3 text-left">Status</th>
+                <tr className="border-t border-b border-border text-xs text-muted-foreground font-semibold uppercase tracking-wider text-left bg-muted/20">
+                  <th className="p-3.5 text-left">Waktu</th>
+                  <th className="p-3.5 text-left">Pelanggan / Invoice</th>
+                  <th className="p-3.5 text-left">Game</th>
+                  <th className="p-3.5 text-left">Produk</th>
+                  <th className="p-3.5 text-left">Info / Harga</th>
+                  <th className="p-3.5 text-left">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {orders?.data && orders.data.length > 0 ? (
-                  orders.data.map((order: any, index: number) => (
-                    <motion.tr
-                      key={order.order_id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`text-xs transition-colors ${
-                        index % 2 === 0 ? "bg-white dark:bg-background" : "bg-gray-50 dark:bg-muted/50"
-                      }`}
-                    >
-                      <td className="p-3">
-                        {new Date(order.updated_at).toLocaleString("id-ID", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                        })}
-                      </td>
-                      <td className="p-3">
-                        {order.order_id.slice(0, 3) + "x".repeat(order.order_id.length - 5) + order.order_id.slice(-3)}
-                      </td>
-                      <td className="p-3">{String(order.product || "-")}</td>
-                      <td className="p-3">{order.whatsapp.replace(/.(?=.{3})/g, "*")}</td>
-                      <td className="p-3">
-                        {(() => {
-                          const price = order.price.toString();
-                          const formatted = order.price.toLocaleString("id-ID");
-                          const firstDotIndex = formatted.indexOf(".");
-                          const prefix = formatted.slice(0, firstDotIndex);
-                          const digitsBefore = prefix.replace(/\D/g, "").length;
-                          const maskedLength = price.length - digitsBefore;
-                          const masked = "x".repeat(maskedLength);
-                          return `Rp. ${prefix}.${masked}`;
-                        })()}
-                      </td>
-                      <td className="p-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold
-                            ${
-                              order.buy_status === "Pending"
-                                ? "bg-yellow-500 text-black"
-                                : order.buy_status === "Proses"
-                                ? "bg-blue-500 text-white"
-                                : order.buy_status === "Batal" || order.buy_status === "Gagal"
-                                ? "bg-red-500 text-white"
-                                : order.buy_status === "Sukses"
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-500 text-white"
+                  orders.data.map((order: any, index: number) => {
+                    const timeVal = order.updated_at || order.created_at || order.createdAt;
+                    const displayTime = (() => {
+                      if (!timeVal) return "Baru saja";
+                      if (typeof timeVal === "string" && (timeVal.includes("lalu") || timeVal.includes("Baru") || timeVal.includes("menit") || timeVal.includes("detik") || timeVal.includes("jam"))) return timeVal;
+                      try {
+                        const d = new Date(timeVal);
+                        if (!isNaN(d.getTime())) {
+                          return d.toLocaleString("id-ID", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                        }
+                      } catch {}
+                      return String(timeVal);
+                    })();
+
+                    const rawId = order.order_id || order.orderId || "";
+                    const displayId = (() => {
+                      if (rawId && typeof rawId === "string") {
+                        if (rawId.length >= 6) {
+                          return `${rawId.slice(0, 3)}***${rawId.slice(-3)}`;
+                        }
+                        return rawId;
+                      }
+                      if (order.nickname) return `Player (${order.nickname})`;
+                      return `TRX-${order.id || index + 1001}`;
+                    })();
+
+                    const displayGame = String(order.game || order.gameSlug || order.games || "Game Top Up");
+                    const displayProduct = String(order.product || order.product_title || order.productTitle || "-");
+
+                    const displayExtra = (() => {
+                      if (order.whatsapp) {
+                        const wa = String(order.whatsapp);
+                        return wa.length > 5 ? wa.replace(/.(?=.{3})/g, "*") : "628********";
+                      }
+                      const rawPrice = order.price ?? order.total_price ?? order.totalPrice;
+                      if (rawPrice !== undefined && rawPrice !== null && rawPrice !== "") {
+                        try {
+                          const num = Number(rawPrice);
+                          if (!isNaN(num)) {
+                            const formatted = num.toLocaleString("id-ID");
+                            const firstDot = formatted.indexOf(".");
+                            if (firstDot !== -1) {
+                              const prefix = formatted.slice(0, firstDot);
+                              const digitsBefore = prefix.replace(/\D/g, "").length;
+                              const maskedLen = Math.max(2, String(rawPrice).length - digitsBefore);
+                              return `Rp. ${prefix}.${"x".repeat(maskedLen)}`;
                             }
-                          `}
-                        >
-                          {order.buy_status}
-                        </span>
-                      </td>
-                    </motion.tr>
-                  ))
+                            return `Rp. ${formatted}`;
+                          }
+                        } catch {}
+                      }
+                      return "Terverifikasi";
+                    })();
+
+                    const status = String(order.buy_status || order.buyStatus || order.payment_status || "Sukses");
+                    const badgeClass =
+                      status === "Pending" || status === "pending"
+                        ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
+                        : status === "Proses" || status === "Processing" || status === "processing"
+                        ? "bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                        : status === "Batal" || status === "Gagal" || status === "failed" || status === "canceled"
+                        ? "bg-red-500/10 text-red-500 border border-red-500/20"
+                        : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
+
+                    return (
+                      <motion.tr
+                        key={rawId || order.id || index}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="text-xs border-b border-border/40 hover:bg-muted/40 transition-colors"
+                      >
+                        <td className="p-3.5 text-muted-foreground font-medium">{displayTime}</td>
+                        <td className="p-3.5 font-mono font-semibold text-foreground">{displayId}</td>
+                        <td className="p-3.5 text-foreground font-medium">{displayGame}</td>
+                        <td className="p-3.5 text-muted-foreground">{displayProduct}</td>
+                        <td className="p-3.5 font-mono text-muted-foreground">{displayExtra}</td>
+                        <td className="p-3.5">
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide ${badgeClass}`}>
+                            {status}
+                          </span>
+                        </td>
+                      </motion.tr>
+                    );
+                  })
                 ) : (
                   <tr key="empty">
-                    <td colSpan={6} className="p-6 text-center text-gray-400">
+                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
                       Belum ada transaksi masuk.
                     </td>
                   </tr>

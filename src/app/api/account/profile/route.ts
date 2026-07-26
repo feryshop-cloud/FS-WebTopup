@@ -10,9 +10,9 @@ export async function PUT(req: Request) {
       success: true,
       message: "Profil berhasil diperbarui",
       data: {
-        name: body.name || "Member TopupSon",
+        name: body.name || "Member Feryshop",
         phone: body.phone || "081234567890",
-        email: body.email || "user@topupson.id",
+        email: body.email || "user@feryshop.id",
       },
     }, { status: 200 });
   } catch (err: any) {

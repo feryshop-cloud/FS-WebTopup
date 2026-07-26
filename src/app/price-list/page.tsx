@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import { ExternalLink, CheckCircle2, XCircle } from "lucide-react";
 
 import { ContentLayout } from "@/components/panel/content-layout";
@@ -36,55 +38,17 @@ const fmtRupiah = (v: any) => {
 };
 
 export default function PriceListPage() {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+  const { data, error, isLoading } = useSWR<any>("/api/price-list", fetcher, {
+    keepPreviousData: true,
+    revalidateIfStale: false,
+    dedupingInterval: 300_000,
+  });
+  const loading = isLoading && !data;
+  const err = error ? String(error?.message || error) : null;
 
   const [selectedGameId, setSelectedGameId] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
-
-  useEffect(() => {
-    let alive = true;
-
-    setLoading(true);
-    setErr(null);
-
-    fetch("/api/price-list", {
-      method: "GET",
-      headers: { Accept: "application/json" },
-    })
-      .then(async (res) => {
-        const ct = (res.headers.get("content-type") || "").toLowerCase();
-        const isJson = ct.includes("application/json");
-        const json = isJson ? await res.json().catch(() => ({})) : null;
-
-        if (!res.ok) {
-          const msg = json?.message || `Gagal mengambil data. Status: ${res.status}`;
-          throw new Error(msg);
-        }
-        if (!isJson) throw new Error("Response tidak valid (bukan JSON).");
-
-        return json;
-      })
-      .then((json) => {
-        if (!alive) return;
-        setData(json);
-      })
-      .catch((e: any) => {
-        if (!alive) return;
-        setErr(String(e?.message || e));
-        setData(null);
-      })
-      .finally(() => {
-        if (!alive) return;
-        setLoading(false);
-      });
-
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   const gameList = useMemo(() => {
     if (!data?.success) return [];

@@ -32,8 +32,8 @@ export async function GET(req: Request) {
     if (!userData) {
       userData = {
         id: "USR-001",
-        name: "Member TopupSon",
-        email: "user@topupson.id",
+        name: "Member Feryshop",
+        email: "user@feryshop.id",
         phone: "081234567890",
         whatsapp: "081234567890",
         role: "member",

@@ -76,7 +76,7 @@ export function MarketplaceCategoryView({ categorySlug }: { categorySlug: string
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link href="/marketplace" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors font-medium">
           <ArrowLeft className="h-4 w-4" />
-          <span>Kembali ke Katalog</span>
+          <span>Kembali ke Daftar Akun</span>
         </Link>
         <span>/</span>
         <span className="text-foreground font-semibold">{category.name}</span>
@@ -157,10 +157,10 @@ export function MarketplaceCategoryView({ categorySlug }: { categorySlug: string
             onChange={(e) => setSelectedSort(e.target.value)}
             className="h-11 sm:h-12 rounded-xl border border-border bg-card px-4 text-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:w-56"
           >
-            <option value="DEFAULT">🔥 Rekomendasi (Sultan)</option>
-            <option value="PRICE_ASC">💰 Harga Termurah</option>
-            <option value="PRICE_DESC">💎 Harga Termahal</option>
-            <option value="DISCOUNT">🏷️ Diskon Terbesar</option>
+            <option value="DEFAULT">Rekomendasi (Sultan)</option>
+            <option value="PRICE_ASC">Harga Termurah</option>
+            <option value="PRICE_DESC">Harga Termahal</option>
+            <option value="DISCOUNT">Diskon Terbesar</option>
           </select>
         </div>
 

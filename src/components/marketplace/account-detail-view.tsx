@@ -32,12 +32,12 @@ export function MarketplaceAccountDetailView({ accountId }: { accountId: string 
     : 0;
 
   // WhatsApp pre-filled messages
-  const adminPhone = "6281234567890"; // Admin TopupSon Rekber WhatsApp
+  const adminPhone = "6281234567890"; // Admin Feryshop Rekber WhatsApp
   const tanyaMessage = encodeURIComponent(
-    `Halo Admin TopupSon, saya ingin bertanya tentang akun game berikut:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\n\nApakah akun ini masih tersedia dan ready Rekber?`
+    `Halo Admin Feryshop, saya ingin bertanya tentang akun game berikut:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\n\nApakah akun ini masih tersedia dan ready Rekber?`
   );
   const beliMessage = encodeURIComponent(
-    `Halo Admin TopupSon, saya ingin MEMBELI akun game melalui Rekber resmi TopupSon:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\nPenjual: ${account.seller.name}\n\nMohon instruksi pembayaran dan proses serah terima datanya Admin.`
+    `Halo Admin Feryshop, saya ingin MEMBELI akun game melalui Rekber resmi Feryshop:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\nPenjual: ${account.seller.name}\n\nMohon instruksi pembayaran dan proses serah terima datanya Admin.`
   );
 
   const whatsappTanyaUrl = `https://wa.me/${adminPhone}?text=${tanyaMessage}`;
@@ -48,7 +48,7 @@ export function MarketplaceAccountDetailView({ accountId }: { accountId: string 
       {/* Breadcrumb Navigation */}
       <div className="flex items-center flex-wrap gap-1.5 text-xs sm:text-sm text-muted-foreground">
         <Link href="/marketplace" className="hover:text-primary transition-colors font-medium">
-          Katalog Akun
+          Daftar Akun
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <Link href={`/marketplace/${account.gameSlug}`} className="hover:text-primary transition-colors font-medium">
@@ -125,7 +125,7 @@ export function MarketplaceAccountDetailView({ accountId }: { accountId: string 
           <div className="space-y-4 rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary border border-primary/20">
-                ⚡ {account.specs.deliveryType}
+                <Zap className="h-3.5 w-3.5" /> {account.specs.deliveryType}
               </span>
               <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
@@ -230,7 +230,7 @@ export function MarketplaceAccountDetailView({ accountId }: { accountId: string 
             <div className="mt-4 rounded-2xl bg-primary/5 border border-primary/20 p-4 text-xs space-y-1.5 text-foreground">
               <div className="font-bold flex items-center gap-1.5 text-primary">
                 <ShieldCheck className="h-4 w-4" />
-                Garansi Resmi Rekber TopupSon
+                Garansi Resmi Rekber Feryshop
               </div>
               <p className="text-muted-foreground leading-normal">
                 Dana pembelian kamu tidak akan diserahkan kepada penjual sebelum kamu berhasil login dan memverifikasi seluruh item akun sesuai spesifikasi di atas. Jika terjadi kendala data atau hack-back, dana dikembalikan 100%.

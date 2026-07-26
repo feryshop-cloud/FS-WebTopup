@@ -2,13 +2,28 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL || '';
+const connectionString = process.env.DATABASE_URL || '';
 
-// Disable prefetch as it is not supported for "Transaction" pool mode in Supabase / PgBouncer
-// Use placeholder during static build evaluation if DATABASE_URL is not yet configured
-const client = connectionString
-  ? postgres(connectionString, { prepare: false })
-  : postgres('postgres://placeholder:placeholder@localhost:5432/placeholder', { prepare: false, max: 1 });
+// Singleton connection pool for Next.js dev server to prevent hot-reload memory leaks and slow rendering
+const globalForDb = globalThis as unknown as {
+  postgresClient: postgres.Sql | undefined;
+};
+
+const client = globalForDb.postgresClient ?? (
+  connectionString
+    ? postgres(connectionString, { prepare: false, max: 10 })
+    : postgres('postgres://placeholder:placeholder@localhost:5432/placeholder', {
+        prepare: false,
+        max: 1,
+        connect_timeout: 1,
+        idle_timeout: 1,
+        max_lifetime: 1,
+      })
+);
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForDb.postgresClient = client;
+}
 
 export const db = drizzle(client, { schema });
 export * from './schema';

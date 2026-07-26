@@ -27,7 +27,7 @@ export async function GET() {
 
     if (allPromos.length === 0) {
       allPromos = [
-        { id: 1, code: "TOPUPSON10", discount_type: "percent", discount_value: 10, min_order: 20000, max_discount: 15000 },
+        { id: 1, code: "FERYSHOP10", discount_type: "percent", discount_value: 10, min_order: 20000, max_discount: 15000 },
         { id: 2, code: "HEMAT5RB", discount_type: "fixed", discount_value: 5000, min_order: 30000, max_discount: 5000 },
       ];
     }

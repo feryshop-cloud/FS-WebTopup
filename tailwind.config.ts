@@ -19,6 +19,10 @@ const config = {
     },
     extend: {
       colors: {
+        my: {
+          color: "hsl(var(--my-color))",
+          hoverColor: "hsl(var(--my-hover-color))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,5 +1,5 @@
 // ============================================================================
-// DEFAULT SEED & FALLBACK DATA UNTUK TOPUPSON
+// DEFAULT SEED & FALLBACK DATA UNTUK FERYSHOP
 // Digunakan sebagai fallback jika Supabase belum dikonfigurasi atau tabel masih kosong
 // ====================================================================
 
@@ -221,7 +221,7 @@ export const seedPaymentMethods = [
     status: 'active',
     group: 'Convenience Store',
     instructions: [
-      { title: 'Pembayaran di Alfamart / Alfamidi', steps: ['Kunjungi kasir Alfamart atau Alfamidi terdekat', 'Beritahu kasir ingin membayar transaksi TopupSon / Merchant Kode Pembayaran', 'Tunjukkan Kode Pembayaran kepada kasir', 'Lakukan pembayaran dengan tunai atau non-tunai'] },
+      { title: 'Pembayaran di Alfamart / Alfamidi', steps: ['Kunjungi kasir Alfamart atau Alfamidi terdekat', 'Beritahu kasir ingin membayar transaksi Feryshop / Merchant Kode Pembayaran', 'Tunjukkan Kode Pembayaran kepada kasir', 'Lakukan pembayaran dengan tunai atau non-tunai'] },
     ],
   },
 ];
@@ -246,12 +246,12 @@ export const seedSliders = [
 export const seedArticles = [
   {
     id: 1,
-    title: 'Cara Top Up Mobile Legends Termurah 2026 di TopupSon',
+    title: 'Cara Top Up Mobile Legends Termurah 2026 di Feryshop',
     slug: 'cara-top-up-mlbb-termurah-2026',
     thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop',
     excerpt: 'Panduan lengkap cara beli diamond MLBB legal 100% instan tanpa ribet dan proses cepat 24 jam.',
-    content: '<p>Top up Mobile Legends sekarang semakin mudah dan cepat hanya di <strong>TopupSon</strong>. Cukup masukkan User ID dan Zone ID Anda, pilih nominal Diamond atau Weekly Diamond Pass, lalu pilih metode pembayaran seperti QRIS, E-Wallet (GoPay, DANA, OVO), atau Virtual Account Bank.</p><p>Setelah pembayaran dikonfirmasi, Diamond akan otomatis masuk ke akun game Anda dalam waktu kurang dari 5 detik! Nikmati juga berbagai promo diskon harian dan harga khusus untuk member Gold dan Platinum.</p>',
-    author: 'Admin TopupSon',
+    content: '<p>Top up Mobile Legends sekarang semakin mudah dan cepat hanya di <strong>Feryshop</strong>. Cukup masukkan User ID dan Zone ID Anda, pilih nominal Diamond atau Weekly Diamond Pass, lalu pilih metode pembayaran seperti QRIS, E-Wallet (GoPay, DANA, OVO), atau Virtual Account Bank.</p><p>Setelah pembayaran dikonfirmasi, Diamond akan otomatis masuk ke akun game Anda dalam waktu kurang dari 5 detik! Nikmati juga berbagai promo diskon harian dan harga khusus untuk member Gold dan Platinum.</p>',
+    author: 'Admin Feryshop',
     views: 1250,
     created_at: '2026-07-20T10:00:00Z',
   },
@@ -261,7 +261,7 @@ export const seedArticles = [
     slug: 'update-patch-valorant-terbaru',
     thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
     excerpt: 'Simak detail pembaruan agen baru dan bundle skin eksklusif yang wajib kamu miliki season ini.',
-    content: '<p>Riot Games kembali menghadirkan update patch terbaru untuk Valorant yang membawa penyesuaian keseimbangan (buff & nerf) pada beberapa agen initiator dan duelist. Selain itu, bundle skin terbaru dengan efek animasi finisher yang memukau juga telah resmi dirilis di store in-game.</p><p>Jangan sampai ketinggalan! Segera top up Valorant Points (VP) kamu di TopupSon untuk membeli night market ataupun bundle favoritmu dengan harga termurah.</p>',
+    content: '<p>Riot Games kembali menghadirkan update patch terbaru untuk Valorant yang membawa penyesuaian keseimbangan (buff & nerf) pada beberapa agen initiator dan duelist. Selain itu, bundle skin terbaru dengan efek animasi finisher yang memukau juga telah resmi dirilis di store in-game.</p><p>Jangan sampai ketinggalan! Segera top up Valorant Points (VP) kamu di Feryshop untuk membeli night market ataupun bundle favoritmu dengan harga termurah.</p>',
     author: 'Tim Redaksi',
     views: 840,
     created_at: '2026-07-22T14:30:00Z',
@@ -272,7 +272,7 @@ export const seedArticles = [
     slug: 'tips-booyah-ff-solo-ranked',
     thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop',
     excerpt: 'Strategi terbaik naik rank Heroic Free Fire dengan cepat menggunakan kombinasi karakter dan senjata terkuat.',
-    content: '<p>Bermain solo ranked di Free Fire membutuhkan ketahanan dan strategi penempatan posisi yang tepat. Gunakan kombinasi skill pasif dan aktif dari karakter seperti Alok, Chrono, atau K untuk bertahan hidup di zona akhir.</p><p>Pastikan juga kamu memiliki persediaan Gloo Wall yang cukup dan jangan lupa top up diamond Free Fire di TopupSon untuk membeli Elite Pass terbaru!</p>',
+    content: '<p>Bermain solo ranked di Free Fire membutuhkan ketahanan dan strategi penempatan posisi yang tepat. Gunakan kombinasi skill pasif dan aktif dari karakter seperti Alok, Chrono, atau K untuk bertahan hidup di zona akhir.</p><p>Pastikan juga kamu memiliki persediaan Gloo Wall yang cukup dan jangan lupa top up diamond Free Fire di Feryshop untuk membeli Elite Pass terbaru!</p>',
     author: 'Gamer Pro',
     views: 2100,
     created_at: '2026-07-25T09:15:00Z',
@@ -280,12 +280,12 @@ export const seedArticles = [
 ];
 
 export const seedSettings = {
-  site_name: 'TopupSon',
-  site_title: 'TopupSon - Top Up Game Murah, Cepat, dan Terpercaya',
-  site_description: 'Platform top up game online, voucher, dan pulsa termurah dan otomatis 24 jam di Indonesia.',
-  logo: '/logo.png',
+  site_name: 'Feryshop',
+  site_title: 'Feryshop - Marketplace Akun Game Sultan & Top Up',
+  site_description: 'Platform marketplace akun game Sultan dan layanan top up game resmi termurah dan otomatis 24 jam di Indonesia.',
+  logo: '/logo-2.png',
   favicon: '/favicon.ico',
-  footer_text: '© 2026 TopupSon. All rights reserved. Platform Layanan Top Up Game Resmi & Terpercaya.',
+  footer_text: 'Made in Feryshop',
   social_facebook: 'https://facebook.com',
   social_instagram: 'https://instagram.com',
   social_whatsapp: 'https://wa.me/628123456789',

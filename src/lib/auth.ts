@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const whatsapp = typeof credentials?.whatsapp === "string" ? credentials.whatsapp.trim() : "";
-        const name = typeof credentials?.name === "string" ? credentials.name : "Member TopupSon";
+        const name = typeof credentials?.name === "string" ? credentials.name : "Member Feryshop";
 
         if (!whatsapp) return null;
 
@@ -97,7 +97,7 @@ export const authOptions: NextAuthOptions = {
               foundUser = {
                 id: u.id,
                 name: u.name,
-                email: u.email || `${whatsapp}@topupson.id`,
+                email: u.email || `${whatsapp}@feryshop.id`,
                 role: u.role || "member",
                 saldo: Number(u.balance || 0),
                 whatsapp: u.whatsapp || whatsapp,
@@ -112,7 +112,7 @@ export const authOptions: NextAuthOptions = {
           foundUser = {
             id: `USR-${whatsapp.slice(-4)}`,
             name: name,
-            email: `${whatsapp}@topupson.id`,
+            email: `${whatsapp}@feryshop.id`,
             role: "member",
             saldo: 50000,
             whatsapp: whatsapp,
@@ -123,7 +123,7 @@ export const authOptions: NextAuthOptions = {
           id: String(foundUser.id),
           name: foundUser.name,
           email: foundUser.email,
-          token: `TSON-JWT-${Date.now()}`,
+          token: `FERY-JWT-${Date.now()}`,
           role: foundUser.role,
           saldo: foundUser.saldo,
           whatsapp: foundUser.whatsapp,
@@ -135,7 +135,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        (user as any).token = `TSON-GOOGLE-${Date.now()}`;
+        (user as any).token = `FERY-GOOGLE-${Date.now()}`;
         (user as any).role = "member";
         (user as any).saldo = 50000;
         (user as any).whatsapp = "081234567890";
@@ -163,7 +163,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET || "topupson-super-secret-key-2026",
+  secret: process.env.NEXTAUTH_SECRET || "feryshop-super-secret-key-2026",
 };
 
 const handler = NextAuth(authOptions);

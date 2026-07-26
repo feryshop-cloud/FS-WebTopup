@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp } from "lucide-react";
 
 interface Game {
   id: string;
@@ -29,7 +30,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                 alt="Promo"
                 width={28} 
                 height={28} 
-                className="w-7 h-7" />
+                className="w-7 h-7 filter sepia-[0.3] saturate-[250%] hue-rotate-[-10deg] brightness-110 drop-shadow-[0_0_10px_rgba(249,115,22,0.9)] transition-all duration-300" />
               <h3 className="text-lg font-semibold uppercase leading-relaxed tracking-wider">
                 TRENDING
               </h3>
@@ -44,24 +45,14 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
               ?
                 Array.from({ length: 6 }).map((_, index) => (
                   <li key={index} className="relative rounded-2xl">
-                    <div
-                      className="w-full h-20 rounded-2xl animate-pulse bg-gray-700/50 dark:bg-gray-600/50"
-                      style={{
-                        backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.1) 10%, transparent 20%)`,
-                        backgroundSize: "5px 5px",
-                      }}
-                    />
+                    <div className="w-full h-20 rounded-2xl animate-pulse bg-zinc-800/80 border border-white/5" />
                   </li>
                 ))
               :
                 popularGames?.map((gamePopuler: Game, index: number) => (
                   <motion.li
                     key={gamePopuler.id}
-                    className="group relative rounded-2xl bg-muted transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                    style={{
-                      backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.1) 10%, transparent 20%)`,
-                      backgroundSize: "5px 5px",
-                    }}
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900/90 via-zinc-900/60 to-zinc-950/90 transition-all duration-500 hover:-translate-y-1.5 hover:border-my-color/60 hover:bg-gradient-to-br hover:from-zinc-800/90 hover:to-zinc-900/90 hover:shadow-[0_8px_25px_rgba(249,115,22,0.25)]"
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{
@@ -70,29 +61,38 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                       ease: [0.4, 0.0, 0.2, 1],
                     }}
                   >
+                    {/* Ambient Neon Glow Spot on Hover */}
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-my-color/15 blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:bg-my-color/30" />
+
                     <Link prefetch={true}
                       href={`/order/${gamePopuler.slug}`}
-                      className="flex items-center gap-2 p-2 rounded-2xl bg-opacity-80 hover:bg-opacity-100 transition-all duration-300 ease-in-out hover:shadow-2xl hover:ring-my-color hover:ring-offset-2 hover:ring-offset-background hover:ring-[3px]"
+                      className="relative z-10 flex items-center gap-3 p-3 transition-all duration-300"
                     >
-                      {/* Gambar Game */}
-                      <Image
-                        alt={gamePopuler.title || "Game"}
-                        priority={index < 4}
-                        width={56}
-                        height={56}
-                        className="aspect-square h-14 w-14 rounded-xl object-cover shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg md:h-20 md:w-20"
-                        src={typeof gamePopuler.image === "string" && gamePopuler.image.trim() ? gamePopuler.image.trim() : "/default-og-image.jpg"}
-                        crossOrigin="anonymous"
-                      />
+                      {/* Gambar Game dengan Zoom & Shine Effect */}
+                      <div className="relative overflow-hidden rounded-xl shrink-0">
+                        <Image
+                          alt={gamePopuler.title || "Game"}
+                          priority={index < 4}
+                          width={64}
+                          height={64}
+                          className="aspect-square h-14 w-14 object-cover shadow-md transition-transform duration-500 ease-out group-hover:scale-110 md:h-16 md:w-16"
+                          src={typeof gamePopuler.image === "string" && gamePopuler.image.trim() ? gamePopuler.image.trim() : "/default-og-image.jpg"}
+                          crossOrigin="anonymous"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      </div>
     
-                      {/* Informasi Game */}
+                      {/* Informasi Game dengan Hover Badge/Arrow */}
                       <div className="flex-1 overflow-hidden">
-                        <h2 className="truncate text-xs font-semibold sm:max-w-[125px] md:max-w-[150px] md:text-base lg:max-w-[175px]">
+                        <h2 className="truncate text-xs font-bold transition-colors duration-300 group-hover:text-my-color sm:max-w-[125px] md:max-w-[150px] md:text-base lg:max-w-[175px]">
                           {gamePopuler.title}
                         </h2>
-                        <p className="truncate text-xs opacity-80 md:text-sm">
-                          {gamePopuler.developers}
-                        </p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <p className="truncate text-xs text-muted-foreground md:text-sm">
+                            {gamePopuler.developers || "Game Sultan"}
+                          </p>
+                          <TrendingUp size={13} className="text-my-color opacity-0 transition-all duration-300 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 shrink-0" />
+                        </div>
                       </div>
                     </Link>
                   </motion.li>

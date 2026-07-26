@@ -13,13 +13,7 @@ export async function GET(req: Request) {
   // Jika imagePath sudah merupakan URL lengkap, fetch langsung
   let targetUrl = imagePath;
   if (!imagePath.startsWith("http://") && !imagePath.startsWith("https://")) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (supabaseUrl) {
-      targetUrl = `${supabaseUrl}/storage/v1/object/public/images/${imagePath.replace(/^\//, '')}`;
-    } else {
-      // Fallback lokal jika tidak memakai Supabase storage
-      return NextResponse.redirect(new URL(`/images/${imagePath.replace(/^\//, '')}`, req.url));
-    }
+    return NextResponse.redirect(new URL(`/images/${imagePath.replace(/^\//, '')}`, req.url));
   }
 
   try {

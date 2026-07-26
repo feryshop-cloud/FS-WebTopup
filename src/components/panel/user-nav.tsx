@@ -90,7 +90,7 @@ export function UserNav() {
           <DropdownMenuItem asChild>
             <Link href="/marketplace" className="flex items-center">
               <Store className="w-4 h-4 mr-3 text-muted-foreground" />
-              Marketplace Akun
+              Daftar Akun
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

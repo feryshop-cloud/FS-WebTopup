@@ -138,7 +138,7 @@ export const MOCK_ACCOUNTS: GameAccount[] = [
       "Skin Legend: Miya, Granger, Gusion.",
       "Skin Collector: Gusion K, Ling Serene Plume, Benedetta.",
       "Winrate rank tinggi 68.4%, Emblem MAX semua.",
-      "Garansi anti-hack back 100% selamanya via Rekber TopupSon.",
+      "Garansi anti-hack back 100% selamanya via Rekber Feryshop.",
     ],
     images: [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",

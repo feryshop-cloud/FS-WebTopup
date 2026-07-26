@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       user: {
         id: "USR-GOOGLE-001",
         name: body.name || "Google User",
-        email: body.email || "google@topupson.id",
+        email: body.email || "google@feryshop.id",
         role: "member",
         saldo: 50000,
         whatsapp: "081234567890",

@@ -46,11 +46,8 @@ export function Sidebar() {
           asChild
         >
           <Link href="/" className="flex items-center gap-2">
-            {logoUrl ? (
-              <Image src={logoUrl} alt="Logo" width={120} height={40} className="w-32 h-auto" />
-            ) : (
-              <Skeleton className="w-32 h-10" />
-            )}
+            <Image src={logoUrl || "/logo-2.png"} alt="Feryshop Logo" width={40} height={40} className="h-8 sm:h-9 w-auto object-contain shrink-0" />
+            <span className={cn("font-extrabold text-lg tracking-tight text-foreground transition-opacity duration-300", !getOpenState() ? "opacity-0 hidden" : "opacity-100")}>Feryshop</span>
           </Link>
         </Button>
         <Menu isOpen={getOpenState()} />

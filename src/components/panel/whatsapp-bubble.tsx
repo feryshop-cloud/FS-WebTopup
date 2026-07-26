@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const CLOSED_KEY = "ultratopup:wa_bubble_closed_v2";
+const CLOSED_KEY = "feryshop:wa_bubble_closed_v2";
 
 const toString = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : String(v));
 const toBool = (v: unknown) => v === true || v === "true" || v === 1 || v === "1";
