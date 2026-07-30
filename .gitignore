@@ -1,5 +1,8 @@
+/.agents
 /.codex
 /.impeccable
+/.kiro
+/.opencode
 node_modules
 .next
 out
