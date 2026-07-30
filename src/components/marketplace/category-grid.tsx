@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils";
 export function GameCategoryIcon({ iconName, className }: { iconName: GameCategory["iconName"]; className?: string }) {
   switch (iconName) {
     case "mlbb":
-      return <Gamepad2 className={cn("text-indigo-500", className)} />;
+      return <Gamepad2 className={cn("text-tertiary", className)} />;
     case "ff":
-      return <Flame className={cn("text-orange-500", className)} />;
+      return <Flame className={cn("text-primary", className)} />;
     case "valorant":
       return <Crosshair className={cn("text-rose-500", className)} />;
     case "efootball":
-      return <Trophy className={cn("text-blue-500", className)} />;
+      return <Trophy className={cn("text-info", className)} />;
     case "pubgm":
       return <Shield className={cn("text-amber-500", className)} />;
     default:
@@ -59,7 +59,7 @@ export function MarketplaceCategoryGrid() {
                 <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-muted/60 border border-border/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                   <GameCategoryIcon iconName={category.iconName} className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary border border-primary/20">
                   {category.totalAccounts} Akun
                 </span>
               </div>
@@ -69,14 +69,14 @@ export function MarketplaceCategoryGrid() {
                 <h3 className="text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
                   {category.name}
                 </h3>
-                <p className="text-[11px] sm:text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                   {category.subtitle}
                 </p>
               </div>
             </div>
 
             {/* Bottom Action Hint */}
-            <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] font-semibold text-muted-foreground group-hover:text-primary transition-colors">
+            <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors">
               <span>Lihat Katalog</span>
               <ChevronRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
             </div>

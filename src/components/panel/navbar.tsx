@@ -10,6 +10,7 @@ import { useSettings } from "@/context/settings-context";
 import { UserNav } from "@/components/panel/user-nav";
 import { SheetMenu } from "@/components/panel/sheet-menu";
 import { Search } from "@/components/panel/search";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -76,10 +77,16 @@ export function Navbar() {
                 <Button asChild size="sm" className="shadow-none bg-primary text-primary-foreground hover:bg-primary/90">
                   <Link href="/signup">Daftar</Link>
                 </Button>
+                <ModeToggle />
               </div>
             )}
           </div>
           {session && <UserNav />}
+          {isLoggedIn && (
+            <div className="hidden lg:block">
+              <ModeToggle />
+            </div>
+          )}
         </div>
       </div>
 
@@ -144,8 +151,7 @@ export function Navbar() {
         </ul>
       </nav>
 
-      {/* Animated Blue Bottom Bar with Running White Shimmer Effect */}
-      <div className="relative h-[2.5px] w-full overflow-hidden bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400 bg-[length:200%_100%] animate-gradient-x shadow-[0_0_8px_rgba(59,130,246,0.5)]">
+      <div className="relative h-[2.5px] w-full overflow-hidden bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-[length:200%_100%] animate-gradient-x shadow-[0_0_8px_hsl(var(--primary)/0.35)]">
         <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white to-transparent opacity-90 animate-shimmer-slide" />
       </div>
     </header>

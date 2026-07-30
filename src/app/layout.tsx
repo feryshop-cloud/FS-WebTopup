@@ -7,7 +7,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import PanelLayout from "@/components/panel/panel-layout";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SWRProvider } from "@/components/providers/swr-provider";
-import { ProgressBar } from "@/components/progress-bar/progress-bar";
+import { ProgressBarWrapper } from "@/components/progress-bar/progress-bar-wrapper";
 import { Toaster } from "sonner";
 import type { Metadata } from "next";
 
@@ -124,13 +124,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
         ))}
       </head>
       <body className={GeistSans.className}>
-        <ProgressBar className="fixed top-0 h-0.5 bg-orange-500 z-30">
+        <ProgressBarWrapper className="fixed top-0 h-0.5 bg-orange-500 z-30">
           <Toaster position="top-center" theme="dark" />
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
-            forcedTheme="dark"
-            enableSystem={false}
+            enableSystem
           >
             <SWRProvider>
               <SettingsProvider initialData={settingsPayload}>
@@ -138,7 +137,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
               </SettingsProvider>
             </SWRProvider>
           </ThemeProvider>
-        </ProgressBar>
+        </ProgressBarWrapper>
       </body>
     </html>
   );

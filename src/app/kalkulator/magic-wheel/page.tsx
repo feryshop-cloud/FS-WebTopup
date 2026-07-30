@@ -64,7 +64,7 @@ export default function MagicWheelCalculatorPage() {
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="mx-auto max-w-2xl text-center">
           <Badge
-            className="mb-3 border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:text-purple-200"
+            className="mb-3 border border-tertiary/30 bg-tertiary/10 text-tertiary dark:text-tertiary"
             variant="secondary"
           >
             Magic Wheel
@@ -79,7 +79,7 @@ export default function MagicWheelCalculatorPage() {
           <Card className="mx-auto max-w-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-500" />
+                <Sparkles className="h-5 w-5 text-tertiary" />
                 Kalkulator Magic Wheel
                 <Badge variant="secondary" className="ml-auto">
                   Nonaktif
@@ -94,13 +94,13 @@ export default function MagicWheelCalculatorPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-purple-500/20">
+          <Card className="border-tertiary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-500" />
+                <Sparkles className="h-5 w-5 text-tertiary" />
                 Kalkulator Magic Wheel
                 <Badge
-                  className="ml-auto border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:text-purple-200"
+                  className="ml-auto border border-tertiary/30 bg-tertiary/10 text-tertiary dark:text-tertiary"
                   variant="secondary"
                 >
                   Max {formatNumber(target)} Point
@@ -124,7 +124,7 @@ export default function MagicWheelCalculatorPage() {
 
               <Separator />
 
-              <div className="rounded-lg border border-purple-500/20 p-4 space-y-3">
+              <div className="rounded-lg border border-tertiary/20 p-4 space-y-3">
                 <div className="text-sm font-medium">Hasil</div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -136,9 +136,9 @@ export default function MagicWheelCalculatorPage() {
                     <div className="text-xs opacity-70">Sisa Point</div>
                     <div className="text-2xl font-semibold">{formatNumber(calc.remaining)}</div>
                   </div>
-                  <div className="rounded-md bg-purple-500/10 p-3 border border-purple-500/20">
-                    <div className="text-xs text-purple-700 dark:text-purple-200">Membutuhkan Maksimal</div>
-                    <div className="text-2xl font-semibold text-purple-700 dark:text-purple-200">
+                  <div className="rounded-md bg-tertiary/10 p-3 border border-tertiary/20">
+                    <div className="text-xs text-tertiary">Membutuhkan Maksimal</div>
+                    <div className="text-2xl font-semibold text-tertiary">
                       {formatNumber(calc.totalDiamonds)} Diamonds
                     </div>
                   </div>
