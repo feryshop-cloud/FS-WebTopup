@@ -54,14 +54,16 @@ export function Navbar() {
         <div className="flex items-center space-x-4 lg:space-x-0">
           <SheetMenu />
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src={logoUrl || "/logo-2.png"}
-              alt="Feryshop Logo"
-              width={40}
-              height={40}
-              priority
-              className="h-7 sm:h-10 w-auto object-contain shrink-0"
-            />
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0F0F0F] p-1 shadow-sm ring-1 ring-border/70 sm:h-11 sm:w-11 sm:p-1.5">
+              <Image
+                src={logoUrl || "/logo-2.png"}
+                alt="Feryshop Logo"
+                width={40}
+                height={40}
+                priority
+                className="h-full w-full object-contain"
+              />
+            </span>
             <span className="font-extrabold text-base sm:text-xl tracking-tight text-foreground">Feryshop</span>
           </Link>
         </div>

@@ -148,6 +148,12 @@ The palette uses semantic roles so that components remain consistent across ligh
 - **Neutral — Warm Zinc:** Surface tokens progress from white to warm gray. They define page backgrounds, cards, form fields, borders, muted text, and section separation.
 - **Status Colors:** Red is reserved for errors, failed transactions, destructive actions, and genuinely urgent states. Blue is used only for informational messages, while green is reserved for successful transactions and completed actions.
 
+### Brand Mark Contrast
+
+The Feryshop logo asset uses transparent pixels plus blue, orange, and a white ribbon. The white ribbon must never sit directly on `background`, `card`, `surface-bright`, or any other white/light surface. Use `inverse-surface` (`#0F0F0F`) as the preferred brand-mark background, or place the logo inside a compact near-black/graphite badge when the surrounding header, sidebar, or footer remains light.
+
+**The White Ribbon Rule.** Wherever the raw transparent logo appears, the immediate background behind the mark must provide at least `3:1` non-text contrast against white. `#0F0F0F` is the default safe background; `#3F3F46` is acceptable for compact logo badges. Do not use orange, violet, white, `#FAFAFA`, or translucent light surfaces behind the raw logo unless the white ribbon is outlined or replaced with a light-mode logo asset.
+
 Do not use orange for every interface element. Reserve it for actions, selection, focus, important prices, and meaningful brand emphasis.
 
 Do not use violet for ordinary navigation or red for decorative promotions. Urgency and status must never depend on color alone; pair them with text, icons, labels, or patterns.
@@ -331,6 +337,8 @@ The application-download notification bar appears directly below the header with
 
 On mobile, retain the logo, search access, and menu trigger. Move account actions and secondary destinations—Home, Price List, Track Transaction, Contact Us, and Calculator—into an off-canvas panel. Icon-only controls require accessible labels and visible focus states.
 
+In light mode, the transparent Feryshop logo must not be placed directly on the header canvas. Either give the logo its own compact `inverse-surface`/graphite badge with enough internal padding, or use a light-mode-specific logo asset whose white ribbon has a dark outline or replacement fill. The wordmark can remain `text-foreground`; only the mark needs the protected background.
+
 Use orange only for active navigation, focus indication, and primary actions. Normal navigation should remain neutral.
 
 ### Hero Carousel
@@ -379,6 +387,8 @@ Recommended footer colors:
 - Links and small accents: `#F97A14`
 - Borders: `#242428`
 
+The footer is the safest natural home for the raw logo because `inverse-surface` preserves the white ribbon. If a light footer is used for a campaign or embedded layout, the logo must move into the same protected near-black badge used in the header.
+
 Social icons must include accessible names. Footer links need visible hover and keyboard-focus states.
 
 ### Floating Customer Support
@@ -418,6 +428,7 @@ The theme toggle must expose its state programmatically, for example through `ar
 - Normal text should meet a minimum contrast ratio of `4.5:1`.
 - Large text should meet a minimum contrast ratio of `3:1`.
 - Interactive controls and meaningful graphical elements should meet a minimum contrast ratio of `3:1` against adjacent colors.
+- The white segment of the transparent Feryshop logo is a meaningful graphical element; test it against its immediate rendered background, not the page-level theme token.
 - Never communicate status, urgency, discounts, or selection through color alone.
 - Use visible `focus-visible` styles for all interactive elements.
 - Respect `prefers-reduced-motion`.

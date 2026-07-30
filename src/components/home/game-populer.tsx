@@ -52,7 +52,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                 popularGames?.map((gamePopuler: Game, index: number) => (
                   <motion.li
                     key={gamePopuler.id}
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900/90 via-zinc-900/60 to-zinc-950/90 transition-all duration-500 hover:-translate-y-1.5 hover:border-my-color/60 hover:bg-gradient-to-br hover:from-zinc-800/90 hover:to-zinc-900/90 hover:shadow-[0_8px_25px_rgba(249,115,22,0.25)]"
+                    className="group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-my-color/60 hover:bg-accent hover:shadow-md dark:border-white/10 dark:bg-gradient-to-br dark:from-zinc-900/90 dark:via-zinc-900/60 dark:to-zinc-950/90 dark:hover:from-zinc-800/90 dark:hover:to-zinc-900/90 dark:hover:shadow-[0_8px_25px_rgba(249,115,22,0.25)]"
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{
@@ -62,11 +62,11 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                     }}
                   >
                     {/* Ambient Neon Glow Spot on Hover */}
-                    <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-my-color/15 blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:bg-my-color/30" />
+                    <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-my-color/10 blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:bg-my-color/20 dark:bg-my-color/15 dark:group-hover:bg-my-color/30" />
 
                     <Link prefetch={true}
                       href={`/order/${gamePopuler.slug}`}
-                      className="relative z-10 flex items-center gap-3 p-3 transition-all duration-300"
+                      className="relative z-10 flex items-center gap-3 p-3 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-my-color focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       {/* Gambar Game dengan Zoom & Shine Effect */}
                       <div className="relative overflow-hidden rounded-xl shrink-0">
@@ -81,7 +81,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                         />
                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                       </div>
-    
+
                       {/* Informasi Game dengan Hover Badge/Arrow */}
                       <div className="flex-1 overflow-hidden">
                         <h2 className="truncate text-xs font-bold transition-colors duration-300 group-hover:text-my-color sm:max-w-[125px] md:max-w-[150px] md:text-base lg:max-w-[175px]">
