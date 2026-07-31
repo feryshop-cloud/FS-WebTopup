@@ -19,6 +19,10 @@
     --outline: 240 4% 46%;
     --outline-variant: 240 7% 88%;
     --surface-tint: 27 95% 53%;
+    --brand-blue: 198 100% 46%;
+    --brand-blue-foreground: 0 0% 100%;
+    --brand-blue-container: 198 100% 94%;
+    --brand-blue-container-foreground: 202 100% 20%;
 
     --background: 0 0% 98%;
     --foreground: 240 6% 10%;
@@ -63,10 +67,10 @@
     --success-container: 141 84% 93%;
     --success-container-foreground: 144 61% 20%;
 
-    --info: 221 83% 53%;
+    --info: var(--brand-blue);
     --info-foreground: 0 0% 100%;
-    --info-container: 214 95% 93%;
-    --info-container-foreground: 226 57% 21%;
+    --info-container: var(--brand-blue-container);
+    --info-container-foreground: var(--brand-blue-container-foreground);
 
     --border: 240 6% 88%;
     --input: 240 6% 88%;
@@ -94,6 +98,10 @@
     --outline: 240 5% 65%;
     --outline-variant: 240 5% 15%;
     --surface-tint: 27 95% 53%;
+    --brand-blue: 198 100% 46%;
+    --brand-blue-foreground: 0 0% 100%;
+    --brand-blue-container: 198 100% 14%;
+    --brand-blue-container-foreground: 198 100% 88%;
 
     --background: 0 0% 2%;
     --foreground: 0 0% 98%;
@@ -138,10 +146,10 @@
     --success-container: 141 84% 93%;
     --success-container-foreground: 144 61% 20%;
 
-    --info: 221 83% 53%;
+    --info: var(--brand-blue);
     --info-foreground: 0 0% 100%;
-    --info-container: 214 95% 93%;
-    --info-container-foreground: 226 57% 21%;
+    --info-container: var(--brand-blue-container);
+    --info-container-foreground: var(--brand-blue-container-foreground);
 
     --border: 240 5% 15%;
     --input: 240 5% 15%;

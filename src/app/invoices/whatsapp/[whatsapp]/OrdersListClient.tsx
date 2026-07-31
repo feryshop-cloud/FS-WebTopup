@@ -129,7 +129,7 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
                             order.buy_status === "Pending"
                               ? "bg-yellow-500 text-black"
                               : order.buy_status === "Proses"
-                              ? "bg-blue-500 text-white"
+                              ? "bg-info text-info-foreground"
                               : order.buy_status === "Batal" || order.buy_status === "Gagal"
                               ? "bg-red-500 text-white"
                               : order.buy_status === "Sukses"

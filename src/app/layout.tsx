@@ -124,7 +124,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         ))}
       </head>
       <body className={GeistSans.className}>
-        <ProgressBarWrapper className="fixed top-0 h-0.5 bg-orange-500 z-30">
+        <ProgressBarWrapper className="fixed top-0 h-0.5 bg-brand-blue z-30">
           <Toaster position="top-center" theme="dark" />
           <ThemeProvider
             attribute="class"

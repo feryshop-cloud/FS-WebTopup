@@ -30,6 +30,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                 alt="Promo"
                 width={28} 
                 height={28} 
+                unoptimized
                 className="w-7 h-7 filter sepia-[0.3] saturate-[250%] hue-rotate-[-10deg] brightness-110 drop-shadow-[0_0_10px_rgba(249,115,22,0.9)] transition-all duration-300" />
               <h3 className="text-lg font-semibold uppercase leading-relaxed tracking-wider">
                 TRENDING

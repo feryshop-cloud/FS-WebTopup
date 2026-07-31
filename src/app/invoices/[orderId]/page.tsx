@@ -286,7 +286,7 @@ export default function InvoicePage() {
       case "Pending":
         return "bg-yellow-500";
       case "Proses":
-        return "bg-blue-500";
+        return "bg-info";
       case "Sukses":
         return "bg-green-500";
       case "Gagal":
@@ -303,7 +303,7 @@ export default function InvoicePage() {
       case "Pending":
         return "bg-yellow-100 text-yellow-800";
       case "Proses":
-        return "bg-blue-100 text-blue-800";
+        return "bg-info-container text-info-container-foreground";
       case "Sukses":
         return "bg-green-100 text-green-800";
       case "Gagal":

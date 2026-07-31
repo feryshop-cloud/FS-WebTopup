@@ -43,6 +43,12 @@ var config = {
                     inverse: "hsl(var(--inverse-surface))",
                     "inverse-foreground": "hsl(var(--inverse-on-surface))",
                 },
+                brand: {
+                    blue: "hsl(var(--brand-blue))",
+                    "blue-foreground": "hsl(var(--brand-blue-foreground))",
+                    "blue-container": "hsl(var(--brand-blue-container))",
+                    "blue-container-foreground": "hsl(var(--brand-blue-container-foreground))",
+                },
                 outline: {
                     DEFAULT: "hsl(var(--outline))",
                     variant: "hsl(var(--outline-variant))",

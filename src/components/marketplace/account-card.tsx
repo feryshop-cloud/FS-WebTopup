@@ -18,7 +18,7 @@ export function AccountCard({ account }: { account: GameAccount }) {
       case "Hot Deal":
         return "bg-rose-500/90 text-white font-bold border-rose-300 shadow-rose-500/20";
       case "Fast Delivery":
-        return "bg-emerald-500/90 text-white font-bold border-emerald-300 shadow-emerald-500/20";
+        return "bg-brand-blue text-brand-blue-foreground font-bold border-cyan-200 shadow-brand-blue/20";
       case "Rare Item":
         return "bg-purple-500/90 text-white font-bold border-purple-300 shadow-purple-500/20";
       default:
@@ -97,7 +97,7 @@ export function AccountCard({ account }: { account: GameAccount }) {
               </span>
             )}
             <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-              <Zap className="h-3 w-3 text-blue-400" /> {account.specs.deliveryType.split(" ")[0]}
+              <Zap className="h-3 w-3 text-brand-blue" /> {account.specs.deliveryType.split(" ")[0]}
             </span>
           </div>
         </div>
@@ -128,7 +128,7 @@ export function AccountCard({ account }: { account: GameAccount }) {
                 {account.seller.name.charAt(0)}
               </div>
               <span className="font-semibold text-foreground truncate text-[11px]">{account.seller.name}</span>
-              {account.seller.isVerified && <CheckCircle2 className="h-3 w-3 text-primary shrink-0" />}
+              {account.seller.isVerified && <CheckCircle2 className="h-3 w-3 text-brand-blue shrink-0" />}
             </div>
             <div className="flex items-center gap-1 shrink-0 text-[11px] font-bold text-amber-500">
               <Star className="h-3 w-3 fill-amber-500 text-amber-500" />

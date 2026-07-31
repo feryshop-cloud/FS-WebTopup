@@ -40,7 +40,7 @@ export function MarketplaceWhyUsSection() {
       desc: "Penjual di Feryshop wajib verifikasi KTP & identitas resmi. Reputasi toko transparan dengan ulasan asli pembeli.",
     },
     {
-      icon: <RefreshCw className="h-6 w-6 text-blue-500" />,
+      icon: <RefreshCw className="h-6 w-6 text-brand-blue" />,
       title: "Sistem Rekaman & Resi",
       desc: "Seluruh serah terima data direkam dan dilengkapi bukti top-up pertama untuk klaim garansi pemulihan jika diperlukan.",
     },

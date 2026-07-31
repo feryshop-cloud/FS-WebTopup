@@ -60,8 +60,8 @@ export function Search() {
     <>
       <div className="hidden sm:flex flex-col space-y-2 relative w-full px-16">
         <div className="relative w-full">
-          <div className="relative w-full rounded-xl border bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
-            <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-muted-foreground" />
+          <div className="group relative w-full rounded-xl border border-input bg-background/90 backdrop-blur transition-[border-color,box-shadow] focus-within:border-brand-blue focus-within:shadow-[0_0_0_3px_hsl(var(--brand-blue)/0.16)] supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
+            <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-muted-foreground transition-colors group-focus-within:text-brand-blue" />
 
             <Input
               type="text"
@@ -79,13 +79,13 @@ export function Search() {
           </div>
 
           {games.length > 0 && (
-            <div className="absolute top-full left-0 w-full mt-2 bg-background border border-input rounded-xl shadow-sm z-10 overflow-hidden">
+            <div className="absolute top-full left-0 w-full mt-2 bg-background border border-brand-blue/25 rounded-xl shadow-sm z-10 overflow-hidden">
               <div className="max-h-[60vh] overflow-y-auto">
                 {games.map((game) => (
                   <Link
                     key={game.id}
                     href={`/order/${game.slug}`}
-                    className="flex items-center gap-4 px-4 py-3 hover:bg-accent transition-all duration-200"
+                    className="flex items-center gap-4 px-4 py-3 hover:bg-brand-blue/10 focus-visible:bg-brand-blue/10 focus-visible:outline-none transition-all duration-200"
                     onClick={() => {
                       setQuery("");
                       setGames([]);
@@ -112,7 +112,7 @@ export function Search() {
 
       <button
         onClick={() => setShowSearch(!showSearch)}
-        className="sm:hidden flex items-center justify-center w-9 h-9 rounded-xl border border-input bg-background hover:bg-accent hover:text-foreground transition-colors duration-200"
+        className="sm:hidden flex items-center justify-center w-9 h-9 rounded-xl border border-input bg-background hover:border-brand-blue/50 hover:bg-brand-blue/10 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-colors duration-200"
       >
         {showSearch ? <X className="w-5 h-5" /> : <SearchIcon className="w-5 h-5" />}
       </button>
@@ -125,8 +125,8 @@ export function Search() {
           transition={{ duration: 0.2 }}
           className="absolute top-full left-0 w-full p-3 bg-background border-b shadow-sm z-20"
         >
-          <div className="relative w-full rounded-xl border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-muted-foreground" />
+          <div className="group relative w-full rounded-xl border border-input bg-background/95 backdrop-blur transition-[border-color,box-shadow] focus-within:border-brand-blue focus-within:shadow-[0_0_0_3px_hsl(var(--brand-blue)/0.16)] supports-[backdrop-filter]:bg-background/60">
+            <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-muted-foreground transition-colors group-focus-within:text-brand-blue" />
             <Input
               ref={inputRef}
               type="text"
@@ -144,12 +144,12 @@ export function Search() {
           </div>
 
           {games.length > 0 && (
-            <div className="mt-4 max-h-[60vh] overflow-y-auto rounded-xl border border-input bg-background shadow-sm">
+            <div className="mt-4 max-h-[60vh] overflow-y-auto rounded-xl border border-brand-blue/25 bg-background shadow-sm">
               {games.map((game) => (
                 <Link
                   key={game.id}
                   href={`/order/${game.slug}`}
-                  className="flex items-center gap-4 px-4 py-3 hover:bg-accent transition"
+                  className="flex items-center gap-4 px-4 py-3 hover:bg-brand-blue/10 focus-visible:bg-brand-blue/10 focus-visible:outline-none transition"
                   onClick={() => {
                     setShowSearch(false);
                     setQuery("");
