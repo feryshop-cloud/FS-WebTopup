@@ -153,9 +153,9 @@ export function Navbar() {
         </ul>
       </nav>
 
-      <div className="relative h-[2.5px] w-full overflow-hidden bg-gradient-to-r from-brand-blue via-info to-cyan-400 bg-[length:200%_100%] animate-gradient-x shadow-[0_2px_10px_hsl(var(--brand-blue)/0.45)]">
+      {/* <div className="relative h-[2.5px] w-full overflow-hidden bg-gradient-to-r from-brand-blue via-info to-cyan-400 bg-[length:200%_100%] animate-gradient-x shadow-[0_2px_10px_hsl(var(--brand-blue)/0.45)]">
         <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white to-transparent opacity-90 animate-shimmer-slide" />
-      </div>
+      </div> */}
     </header>
   );
 }
