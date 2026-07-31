@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db, games, products, paymentMethods } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { seedGames, seedProducts, seedPaymentMethods } from "@/lib/db/seed-data";
-import { getLivePublicGames } from "@/lib/db/live-adapter";
+import { getLivePublicGames, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export async function GET(_req: Request, context: any) {
     }
 
     // 1. Coba ambil dari Supabase / Drizzle
-    if (!gameData && (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL)) {
+    if (!gameData && shouldQueryLegacyStorefrontSchema()) {
       try {
         const dbGame = await db.select().from(games).where(eq(games.slug, slug)).limit(1);
         if (dbGame && dbGame[0]) {

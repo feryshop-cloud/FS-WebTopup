@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db, categories } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { seedCategories } from "@/lib/db/seed-data";
-import { getLivePublicGames } from "@/lib/db/live-adapter";
+import { getLivePublicGames, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,7 @@ export async function GET() {
       }));
     }
 
-    if (allCategories.length === 0 && (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL)) {
+    if (allCategories.length === 0 && shouldQueryLegacyStorefrontSchema()) {
       try {
         const dbCategories = await db.select().from(categories).where(eq(categories.isActive, true)).orderBy(asc(categories.sortOrder));
         if (dbCategories && dbCategories.length > 0) {

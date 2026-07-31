@@ -17,6 +17,10 @@ export interface PublicGame {
 let liveGamesPromise: Promise<PublicGame[]> | undefined;
 let settingsTablePromise: Promise<boolean> | undefined;
 
+export function shouldQueryLegacyStorefrontSchema() {
+  return process.env.FS_PUBLIC_LEGACY_SCHEMA_SOURCE === "db";
+}
+
 function getSupabaseRestUrl() {
   const configuredUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (configuredUrl) return configuredUrl.replace(/\/+$/, "");
@@ -86,7 +90,9 @@ function mapLiveGames(rows: { id: string; title: string; slug: string; image: st
 
 export async function getLivePublicGames(): Promise<PublicGame[]> {
   liveGamesPromise ??= getLivePublicGamesFromRest().then(async (restGames) => {
-    if (restGames.length > 0 || !hasDatabaseConnection) return restGames;
+    if (restGames.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
+      return restGames;
+    }
 
     return sqlClient<{
     id: string;
