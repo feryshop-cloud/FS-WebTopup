@@ -14,6 +14,11 @@ export interface PublicGame {
   is_popular: boolean;
 }
 
+export interface RemoteSetting {
+  key: string;
+  value: unknown;
+}
+
 let liveGamesPromise: Promise<PublicGame[]> | undefined;
 let settingsTablePromise: Promise<boolean> | undefined;
 
@@ -69,6 +74,36 @@ async function getLivePublicGamesFromRest(): Promise<PublicGame[]> {
   } catch (error) {
     console.warn("Live Supabase REST games query unavailable:", error);
     return [];
+  }
+}
+
+export async function getRemoteSettingsFromRest(): Promise<Record<string, unknown>> {
+  const restUrl = getSupabaseRestUrl();
+  const publishableKey = getSupabasePublishableKey();
+  if (!restUrl || !publishableKey) return {};
+
+  try {
+    const response = await fetch(
+      `${restUrl}/rest/v1/settings?select=key,value&order=key.asc`,
+      {
+        headers: {
+          apikey: publishableKey,
+          Authorization: `Bearer ${publishableKey}`,
+        },
+        next: { revalidate: 30 },
+      },
+    );
+
+    if (!response.ok) return {};
+
+    const rows = await response.json() as RemoteSetting[];
+    return rows.reduce<Record<string, unknown>>((settings, row) => {
+      settings[row.key] = row.value;
+      return settings;
+    }, {});
+  } catch (error) {
+    console.warn("Remote settings query unavailable:", error);
+    return {};
   }
 }
 
