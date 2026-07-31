@@ -37,23 +37,25 @@ export function Footer() {
   const isExternal = (url: string) => /^https?:\/\//i.test(url);
 
   return (
-    <footer className="bg-card border-t border-border print:hidden text-foreground mt-8 sm:mt-16">
+    <footer className="bg-[#0F0F0F] border-t border-[#242428] print:hidden text-[#FAFAFA] mt-8 sm:mt-16">
       <div className="container mx-auto px-4 sm:px-8 py-6 sm:py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 pb-3 sm:pb-6">
           <div className="space-y-2 sm:space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo-2.png" alt="Feryshop Logo" width={40} height={40} priority className="h-7 sm:h-10 w-auto object-contain shrink-0" />
-              <span className="font-extrabold text-lg sm:text-2xl tracking-tight text-foreground">Feryshop</span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0F0F0F] p-1 ring-1 ring-[#242428] sm:h-11 sm:w-11 sm:p-1.5">
+                <Image src="/logo-2.png" alt="Feryshop Logo" width={40} height={40} priority className="h-full w-full object-contain" />
+              </span>
+              <span className="font-extrabold text-lg sm:text-2xl tracking-tight text-[#FAFAFA]">Feryshop</span>
             </Link>
-            <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
+            <p className="text-xs sm:text-sm leading-relaxed text-[#A2A2AB]">
               {settings?.data?.["seo.description"] || "Marketplace Akun Game Sultan & Layanan Top Up Game Terpercaya."}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <h3 className="font-semibold text-foreground text-xs sm:text-base">Menu</h3>
-              <ul className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
+              <h3 className="font-semibold text-[#FAFAFA] text-xs sm:text-base">Menu</h3>
+              <ul className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm text-[#A2A2AB]">
                 <li>
                   <Link href="/" className="hover:text-primary transition-colors">Beranda</Link>
                 </li>
@@ -76,12 +78,12 @@ export function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-foreground text-xs sm:text-base">Ikuti Kami</h3>
+              <h3 className="font-semibold text-[#FAFAFA] text-xs sm:text-base">Ikuti Kami</h3>
               <div className="mt-2 sm:mt-3 flex space-x-3 sm:space-x-4">
-                <Link href={settings?.data?.["sosmed.fb"] || "https://m.facebook.com/"} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href={settings?.data?.["sosmed.fb"] || "https://m.facebook.com/"} target="_blank" rel="noreferrer" className="text-[#A2A2AB] hover:text-primary transition-colors">
                   <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Link>
-                <Link href={settings?.data?.["sosmed.ig"] || "https://instagram.com/"} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href={settings?.data?.["sosmed.ig"] || "https://instagram.com/"} target="_blank" rel="noreferrer" className="text-[#A2A2AB] hover:text-primary transition-colors">
                   <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Link>
               </div>
@@ -90,8 +92,8 @@ export function Footer() {
 
           {extraLinks.length > 0 && (
             <div>
-              <h3 className="font-semibold text-foreground text-xs sm:text-base">{extraTitle || "Lainnya"}</h3>
-              <ul className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
+              <h3 className="font-semibold text-[#FAFAFA] text-xs sm:text-base">{extraTitle || "Lainnya"}</h3>
+              <ul className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm text-[#A2A2AB]">
                 {extraLinks.map((item, idx) => (
                   <li key={`${item.url}-${idx}`}>
                     <Link
@@ -109,9 +111,9 @@ export function Footer() {
           )}
         </div>
 
-        <div className="border-t border-border my-3 sm:my-6" />
+        <div className="border-t border-[#242428] my-3 sm:my-6" />
 
-        <div className="flex justify-center sm:justify-start items-center text-[11px] sm:text-xs text-muted-foreground py-1 sm:py-2">
+        <div className="flex justify-center sm:justify-start items-center text-xs text-[#A2A2AB] py-1 sm:py-2">
           <p>
             © {new Date().getFullYear()} Feryshop. All rights reserved.
           </p>

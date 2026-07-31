@@ -327,11 +327,11 @@ export default function InvoiceSearchPage() {
                     const badgeClass =
                       status === "Pending" || status === "pending"
                         ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
-                        : status === "Proses" || status === "Processing" || status === "processing"
-                        ? "bg-blue-500/10 text-blue-500 border border-blue-500/20"
-                        : status === "Batal" || status === "Gagal" || status === "failed" || status === "canceled"
-                        ? "bg-red-500/10 text-red-500 border border-red-500/20"
-                        : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
+                      : status === "Proses" || status === "Processing" || status === "processing"
+                        ? "bg-info/10 text-info border border-info/20"
+                      : status === "Batal" || status === "Gagal" || status === "failed" || status === "canceled"
+                        ? "bg-destructive/10 text-destructive border border-destructive/20"
+                        : "bg-success/10 text-success border border-success/20";
 
                     return (
                       <motion.tr
@@ -347,7 +347,7 @@ export default function InvoiceSearchPage() {
                         <td className="p-3.5 text-muted-foreground">{displayProduct}</td>
                         <td className="p-3.5 font-mono text-muted-foreground">{displayExtra}</td>
                         <td className="p-3.5">
-                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide ${badgeClass}`}>
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide ${badgeClass}`}>
                             {status}
                           </span>
                         </td>

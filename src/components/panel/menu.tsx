@@ -19,6 +19,7 @@ import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { getMenuList } from "@/lib/menu-list";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CollapseMenuButton } from "@/components/panel/collapse-menu-button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
@@ -192,7 +193,7 @@ export function Menu({ isOpen }: MenuProps) {
           ))}
 
           {!isLoggedIn && (
-            <li className={cn("w-full pt-4", isOpen === false ? "flex flex-col gap-2" : "grid grid-cols-2 gap-2.5")}>
+            <li className={cn("w-full pt-4", isOpen === false ? "flex flex-col gap-2" : "grid grid-cols-[1fr_1fr_44px] gap-2.5")}>
               <TooltipProvider disableHoverableContent>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
@@ -224,11 +225,18 @@ export function Menu({ isOpen }: MenuProps) {
                   {isOpen === false && <TooltipContent side="right">Daftar</TooltipContent>}
                 </Tooltip>
               </TooltipProvider>
+
+              <div className={cn("flex justify-center", isOpen === false ? "w-full" : "w-11")}>
+                <ModeToggle />
+              </div>
             </li>
           )}
 
           {isLoggedIn && (
             <li className="w-full grow flex flex-col justify-end">
+              <div className="mb-2 flex justify-center">
+                <ModeToggle />
+              </div>
               <TooltipProvider disableHoverableContent>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>

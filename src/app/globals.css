@@ -1,52 +1,170 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root, .dark {
-      --background: 0 0% 2%;
-      --foreground: 0 0% 98%;
+@layer base {
+  :root {
+    --surface: 0 0% 98%;
+    --surface-dim: 240 6% 90%;
+    --surface-bright: 0 0% 100%;
+    --surface-container-lowest: 0 0% 100%;
+    --surface-container-low: 240 7% 97%;
+    --surface-container: 240 4% 95%;
+    --surface-container-high: 240 5% 92%;
+    --surface-container-highest: 240 5% 84%;
+    --on-surface: 240 6% 10%;
+    --on-surface-variant: 240 3% 45%;
+    --inverse-surface: 0 0% 6%;
+    --inverse-on-surface: 0 0% 98%;
+    --outline: 240 4% 46%;
+    --outline-variant: 240 7% 88%;
+    --surface-tint: 27 95% 53%;
 
-      --card: 0 0% 6%;
-      --card-foreground: 0 0% 98%;
+    --background: 0 0% 98%;
+    --foreground: 240 6% 10%;
 
-      --popover: 0 0% 6%;
-      --popover-foreground: 0 0% 98%;
+    --card: var(--surface-container-lowest);
+    --card-foreground: var(--on-surface);
 
-      --primary: 24 95% 53%;
-      --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--on-surface);
 
-      --secondary: 240 5% 15%;
-      --secondary-foreground: 0 0% 98%;
+    --primary: 27 95% 53%;
+    --primary-foreground: 240 6% 10%;
+    --primary-container: 25 100% 95%;
+    --primary-container-foreground: 24 100% 24%;
+    --inverse-primary: 26 100% 73%;
 
-      --muted: 240 5% 12%;
-      --muted-foreground: 240 5% 65%;
+    --secondary: 240 7% 94%;
+    --secondary-foreground: 240 6% 15%;
+    --secondary-solid: 240 5% 26%;
+    --secondary-solid-foreground: 0 0% 100%;
+    --secondary-container: 240 7% 94%;
+    --secondary-container-foreground: 240 4% 16%;
 
-      --accent: 240 5% 15%;
-      --accent-foreground: 0 0% 98%;
+    --muted: 240 5% 95%;
+    --muted-foreground: 240 4% 45%;
 
-      --destructive: 0 62.8% 40%;
-      --destructive-foreground: 0 0% 98%;
+    --accent: 24 95% 95%;
+    --accent-foreground: 24 90% 35%;
 
-      --border: 240 5% 15%;
-      --input: 240 5% 15%;
-      --ring: 24 95% 53%;
+    --tertiary: 271 91% 65%;
+    --tertiary-foreground: 0 0% 100%;
+    --tertiary-container: 269 100% 95%;
+    --tertiary-container-foreground: 274 66% 32%;
 
-      --radius: 0.5rem;
-      
-      --my-color: 24 95% 53%;
-      --my-hover-color: 24 95% 45%;
-    }
+    --destructive: 0 74% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --error-container: 0 93% 94%;
+    --error-container-foreground: 0 75% 15%;
+
+    --success: 142 72% 29%;
+    --success-foreground: 0 0% 100%;
+    --success-container: 141 84% 93%;
+    --success-container-foreground: 144 61% 20%;
+
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 100%;
+    --info-container: 214 95% 93%;
+    --info-container-foreground: 226 57% 21%;
+
+    --border: 240 6% 88%;
+    --input: 240 6% 88%;
+    --ring: 27 95% 53%;
+
+    --radius: 0.5rem;
+
+    --my-color: 27 95% 53%;
+    --my-hover-color: 24 100% 43%;
   }
 
-  @layer base {
-    * {
-      @apply border-border outline-ring/50;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+  .dark {
+    --surface: 0 0% 2%;
+    --surface-dim: 0 0% 0%;
+    --surface-bright: 0 0% 10%;
+    --surface-container-lowest: 0 0% 0%;
+    --surface-container-low: 0 0% 4%;
+    --surface-container: 0 0% 6%;
+    --surface-container-high: 240 5% 12%;
+    --surface-container-highest: 240 5% 15%;
+    --on-surface: 0 0% 98%;
+    --on-surface-variant: 240 5% 65%;
+    --inverse-surface: 0 0% 98%;
+    --inverse-on-surface: 240 6% 10%;
+    --outline: 240 5% 65%;
+    --outline-variant: 240 5% 15%;
+    --surface-tint: 27 95% 53%;
+
+    --background: 0 0% 2%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 27 95% 53%;
+    --primary-foreground: 240 6% 10%;
+    --primary-container: 25 100% 95%;
+    --primary-container-foreground: 24 100% 24%;
+    --inverse-primary: 26 100% 73%;
+
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-solid: 240 5% 26%;
+    --secondary-solid-foreground: 0 0% 100%;
+    --secondary-container: 240 5% 15%;
+    --secondary-container-foreground: 0 0% 98%;
+
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 240 5% 15%;
+    --accent-foreground: 0 0% 98%;
+
+    --tertiary: 271 91% 65%;
+    --tertiary-foreground: 0 0% 100%;
+    --tertiary-container: 269 100% 95%;
+    --tertiary-container-foreground: 274 66% 32%;
+
+    --destructive: 0 63% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --error-container: 0 93% 94%;
+    --error-container-foreground: 0 75% 15%;
+
+    --success: 142 72% 29%;
+    --success-foreground: 0 0% 100%;
+    --success-container: 141 84% 93%;
+    --success-container-foreground: 144 61% 20%;
+
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 100%;
+    --info-container: 214 95% 93%;
+    --info-container-foreground: 226 57% 21%;
+
+    --border: 240 5% 15%;
+    --input: 240 5% 15%;
+    --ring: 27 95% 53%;
+
+    --my-color: 27 95% 53%;
+    --my-hover-color: 26 100% 73%;
   }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply bg-background;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+}
 
 @keyframes scrollX {
   0% {

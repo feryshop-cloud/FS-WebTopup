@@ -56,7 +56,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     iconName: "mlbb",
     bannerUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop",
     totalAccounts: 24,
-    colorTheme: "from-indigo-600/20 via-purple-600/10 to-transparent border-indigo-500/30",
+    colorTheme: "from-tertiary/20 via-tertiary/10 to-transparent border-tertiary/30",
     popularRanks: ["Mythic Glory", "Mythic Immortal", "Legend", "Epic", "Sultan Collector"],
   },
   {
@@ -67,7 +67,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     iconName: "ff",
     bannerUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop",
     totalAccounts: 18,
-    colorTheme: "from-orange-600/20 via-red-600/10 to-transparent border-orange-500/30",
+    colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
     popularRanks: ["Heroic / Master", "Grandmaster", "Akun Vault Penuh", "SG 2 Ungu", "Evo Gun Max"],
   },
   {
@@ -89,7 +89,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     iconName: "efootball",
     bannerUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop",
     totalAccounts: 12,
-    colorTheme: "from-blue-600/20 via-cyan-600/10 to-transparent border-blue-500/30",
+    colorTheme: "from-info/20 via-info/10 to-transparent border-info/30",
     popularRanks: ["Divisi 1", "Tim 104+ OVR", "Epic Big Time", "Showtime Full", "Legendary Squad"],
   },
   {

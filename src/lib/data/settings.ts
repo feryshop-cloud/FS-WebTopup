@@ -31,7 +31,7 @@ export async function getSiteSettings(): Promise<SettingsPayload> {
     siteSettings["footer.credit_text"] = "Made in Feryshop";
     siteSettings["general.logo"] = "/logo-2.png";
     siteSettings["theme.default_mode"] = "dark";
-    siteSettings["theme.allow_toggle"] = false;
+    siteSettings["theme.allow_toggle"] = true;
 
     return {
       success: true,

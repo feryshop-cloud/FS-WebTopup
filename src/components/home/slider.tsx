@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
@@ -9,6 +10,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+
+type SliderAutoplayConfig = {
+  enabled?: boolean;
+  delay?: number;
+  stopOnInteraction?: boolean;
+  stopOnMouseEnter?: boolean;
+  stopOnFocusIn?: boolean;
+};
 
 interface SliderProps {
   slides: {
@@ -18,10 +27,26 @@ interface SliderProps {
     title?: string;
     url?: string;
   }[];
+  autoplay?: boolean | SliderAutoplayConfig;
 }
 
-export function Slider({ slides }: SliderProps) {
+export function Slider({ slides, autoplay = true }: SliderProps) {
   if (!slides || !Array.isArray(slides) || slides.length === 0) return null;
+
+  const autoplayConfig: SliderAutoplayConfig =
+    typeof autoplay === "boolean" ? { enabled: autoplay } : autoplay;
+  const autoplayEnabled = autoplayConfig.enabled !== false && slides.length > 1;
+  const autoplayDelay = Math.max(2000, autoplayConfig.delay ?? 3000);
+  const autoplayPlugin = autoplayEnabled
+    ? [
+        Autoplay({
+          delay: autoplayDelay,
+          stopOnInteraction: autoplayConfig.stopOnInteraction ?? true,
+          stopOnMouseEnter: autoplayConfig.stopOnMouseEnter ?? true,
+          stopOnFocusIn: autoplayConfig.stopOnFocusIn ?? true,
+        }),
+      ]
+    : undefined;
 
   return (
     <div className="mx-auto w-full">
@@ -29,8 +54,16 @@ export function Slider({ slides }: SliderProps) {
         opts={{
           loop: true,
         }}
+        plugins={autoplayPlugin}
         className="relative group"
+        aria-label="Promo berjalan"
       >
+        {autoplayEnabled && (
+          <p className="sr-only">
+            Slider promo bergulir otomatis setiap {Math.round(autoplayDelay / 1000)} detik dan berhenti sementara saat diarahkan, difokuskan, atau dikontrol manual.
+          </p>
+        )}
+
         <CarouselContent>
           {slides.map((slide, index) => {
             const rawImg = slide.image || slide.images || "/default-og-image.jpg";
