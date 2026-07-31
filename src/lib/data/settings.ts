@@ -1,4 +1,5 @@
 import { db, settings } from "@/lib/db";
+import { hasCompatibleSettingsTable } from "@/lib/db/live-adapter";
 import { seedSettings } from "@/lib/db/seed-data";
 
 export interface SettingsPayload {
@@ -10,7 +11,7 @@ export async function getSiteSettings(): Promise<SettingsPayload> {
   try {
     const siteSettings: Record<string, any> = { ...seedSettings };
 
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (process.env.FS_PUBLIC_SETTINGS_SOURCE === "db" && await hasCompatibleSettingsTable()) {
       try {
         const dbSettings = await db.select().from(settings);
         if (dbSettings && dbSettings.length > 0) {

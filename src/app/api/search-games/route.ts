@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db, games } from "@/lib/db";
 import { ilike, eq, and } from "drizzle-orm";
 import { seedGames } from "@/lib/db/seed-data";
+import { getLivePublicGames } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,11 @@ export async function GET(req: Request) {
 
     let results: any[] = [];
 
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    results = (await getLivePublicGames()).filter(
+      (game) => game.title.toLowerCase().includes(search) || game.slug.toLowerCase().includes(search),
+    );
+
+    if (results.length === 0 && (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL)) {
       try {
         const dbGames = await db.select().from(games).where(
           and(eq(games.isActive, true), ilike(games.title, `%${search}%`))

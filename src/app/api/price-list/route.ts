@@ -2,14 +2,30 @@ import { NextResponse } from "next/server";
 import { db, games, products } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
+import { getLivePublicGames } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     let resultGames: any[] = [];
+    const liveGames = await getLivePublicGames();
 
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (liveGames.length > 0) {
+      resultGames = liveGames.map((game) => ({
+        id: game.id,
+        title: game.title,
+        slug: game.slug,
+        logo: game.logo || game.image,
+        products: (seedProducts[game.slug] || []).map((product) => ({
+          ...product,
+          brand: game.title,
+          status: product.is_active ? 1 : 0,
+        })),
+      }));
+    }
+
+    if (resultGames.length === 0 && (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL)) {
       try {
         const dbGames = await db.select().from(games).where(eq(games.isActive, true)).orderBy(asc(games.sortOrder));
         if (dbGames && dbGames.length > 0) {

@@ -2,15 +2,18 @@ import { NextResponse } from "next/server";
 import { db, games } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { seedGames } from "@/lib/db/seed-data";
+import { getLivePublicGames } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     let allGames: any[] = [];
-    
+
+    allGames = await getLivePublicGames();
+
     // Coba ambil dari database Supabase / Drizzle
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (allGames.length === 0 && (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL)) {
       try {
         const dbGames = await db.select().from(games).where(eq(games.isActive, true)).orderBy(asc(games.sortOrder));
         if (dbGames && dbGames.length > 0) {

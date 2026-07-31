@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db, games, products, paymentMethods } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { seedGames, seedProducts, seedPaymentMethods } from "@/lib/db/seed-data";
+import { getLivePublicGames } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +17,13 @@ export async function GET(_req: Request, context: any) {
     let productsData: any[] = [];
     let paymentMethodsData: any[] = [];
 
+    const liveGame = (await getLivePublicGames()).find((game) => game.slug === slug);
+    if (liveGame) {
+      gameData = liveGame;
+    }
+
     // 1. Coba ambil dari Supabase / Drizzle
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (!gameData && (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL)) {
       try {
         const dbGame = await db.select().from(games).where(eq(games.slug, slug)).limit(1);
         if (dbGame && dbGame[0]) {

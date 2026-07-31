@@ -1,0 +1,87 @@
+import { hasDatabaseConnection, sqlClient } from "@/lib/db";
+
+export interface PublicGame {
+  id: string;
+  title: string;
+  slug: string;
+  image: string;
+  banner: string | null;
+  logo: string | null;
+  developers: string;
+  category_id: number;
+  description: string | null;
+  instructions: unknown;
+  is_popular: boolean;
+}
+
+let liveGamesPromise: Promise<PublicGame[]> | undefined;
+let settingsTablePromise: Promise<boolean> | undefined;
+
+export async function getLivePublicGames(): Promise<PublicGame[]> {
+  if (!hasDatabaseConnection) return [];
+
+  liveGamesPromise ??= sqlClient<{
+    id: string;
+    title: string;
+    slug: string;
+    image: string | null;
+  }[]>`
+    select
+      id::text as id,
+      name as title,
+      slug,
+      image_url as image
+    from public.games
+    order by name asc
+  `
+    .then((rows) =>
+      rows.map((game, index) => ({
+        id: game.id,
+        title: game.title,
+        slug: game.slug,
+        image: game.image || "/banner-mobile-legend.png",
+        banner: game.image || "/banner-mobile-legend.png",
+        logo: game.image || null,
+        developers: "Game Developer",
+        category_id: index + 1,
+        description: null,
+        instructions: null,
+        is_popular: index < 4,
+      })),
+    )
+    .catch((error) => {
+      console.warn("Live Supabase games query unavailable:", error);
+      return [];
+    });
+
+  return liveGamesPromise;
+}
+
+export async function hasCompatibleSettingsTable(): Promise<boolean> {
+  if (!hasDatabaseConnection) return false;
+
+  settingsTablePromise ??= sqlClient<{ has_table: boolean }[]>`
+    select (
+      exists (
+        select 1
+        from information_schema.tables
+        where table_schema = 'public'
+          and table_name = 'settings'
+      )
+      and (
+        select count(*)
+        from information_schema.columns
+        where table_schema = 'public'
+          and table_name = 'settings'
+          and column_name in ('key', 'value')
+      ) = 2
+    ) as has_table
+  `
+    .then((rows) => Boolean(rows[0]?.has_table))
+    .catch((error) => {
+      console.warn("Settings table metadata check unavailable:", error);
+      return false;
+    });
+
+  return settingsTablePromise;
+}
