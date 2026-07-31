@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { apiPath, withBasePath } from "@/lib/routes";
 
 type AccountMe = {
   success?: boolean;
@@ -31,7 +32,7 @@ type AccountMe = {
 };
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(withBasePath(url), { cache: "no-store" });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
     const err: any = new Error(json?.message || "Request gagal");
@@ -87,7 +88,7 @@ export default function AccountSettingsPage() {
     if (next.length < 2) return toast.error("Nama minimal 2 karakter.");
     setSavingName(true);
     try {
-      const res = await fetch("/api/account/profile", {
+      const res = await fetch(apiPath("/api/account/profile"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: next }),
@@ -104,7 +105,7 @@ export default function AccountSettingsPage() {
     if (password !== passwordConfirmation) return toast.error("Konfirmasi password tidak sama.");
     setSavingPassword(true);
     try {
-      const res = await fetch("/api/account/password", {
+      const res = await fetch(apiPath("/api/account/password"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ old_password: oldPassword, password, password_confirmation: passwordConfirmation }),

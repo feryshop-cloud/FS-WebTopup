@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { apiPath } from "@/lib/routes";
 
 type PageMeta = {
   current_page: number;
@@ -104,7 +105,7 @@ export default function DashboardPage() {
     setErrorSummary(null);
 
     try {
-      const res = await fetch("/api/transactions/transaction-summary", { cache: "no-store" });
+      const res = await fetch(apiPath("/api/transactions/transaction-summary"), { cache: "no-store" });
 
       if (res.status === 401) {
         setErrorSummary("Sesi kamu sudah habis. Silakan login ulang.");
@@ -131,7 +132,7 @@ export default function DashboardPage() {
     setErrorTx(null);
 
     try {
-      const url = new URL("/api/transactions", window.location.origin);
+      const url = new URL(apiPath("/api/transactions"), window.location.origin);
       if (q.trim()) url.searchParams.set("q", q.trim());
 
       const res = await fetch(url.toString(), { cache: "no-store" });

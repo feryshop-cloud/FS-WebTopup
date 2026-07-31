@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { apiPath } from "@/lib/routes";
 
 const DUPLICATE_MESSAGE =
   "Akun Dengan Email/WhatsApp Tersebut Sudah Terdaftar, Silahkan Masuk Dengan Email Tersebut.";
@@ -59,7 +60,7 @@ function SignupForm() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch("/api/settings", { cache: "no-store" });
+        const res = await fetch(apiPath("/api/settings"), { cache: "no-store" });
         const json = await res.json().catch(() => ({}));
         if (!mounted) return;
         setSettings(json?.data || {});
@@ -127,7 +128,7 @@ function SignupForm() {
     setSignupError(null);
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch(apiPath("/api/auth/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

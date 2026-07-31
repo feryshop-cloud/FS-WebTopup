@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { apiPath } from "@/lib/routes";
 
 interface Game {
   id: number;
@@ -36,7 +37,7 @@ export function Search() {
       }
 
       try {
-        const res = await fetch(`/api/search-games?search=${encodeURIComponent(q)}`, {
+        const res = await fetch(apiPath(`/api/search-games?search=${encodeURIComponent(q)}`), {
           cache: "no-store",
         });
 

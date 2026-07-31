@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { apiPath } from "@/lib/routes";
 
 type SitemapUrl = {
   loc: string;
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || origin).replace(/\/+$/, "");
 
   try {
-    const res = await fetch(`${siteUrl}/api/sitemap`, { cache: "no-store" });
+    const res = await fetch(`${siteUrl}${apiPath("/api/sitemap")}`, { cache: "no-store" });
 
     if (!res.ok) {
       return NextResponse.json({ error: "Failed to fetch sitemap data" }, { status: 500 });

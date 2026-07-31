@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useOrders } from "@/hooks/use-orders";
 import useRealtimeTransactions from "@/hooks/use-realtime-transactions";
+import { apiPath } from "@/lib/routes";
 
 export default function InvoiceSearchPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function InvoiceSearchPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/invoices/search?order_id=${encodeURIComponent(orderId)}`);
+      const response = await fetch(apiPath(`/api/invoices/search?order_id=${encodeURIComponent(orderId)}`));
       const data = await response.json();
 
       if (!response.ok) {
@@ -61,7 +62,7 @@ export default function InvoiceSearchPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(trimmed)}`);
+      const response = await fetch(apiPath(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(trimmed)}`));
       const data = await response.json();
 
       if (!response.ok) {

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { apiPath } from "@/lib/routes";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -52,7 +53,7 @@ function ForgotPasswordForm() {
     if (!canSendEmail) return;
     setLoadingEmail(true);
     try {
-      const res = await fetch("/api/auth/password/forgot", {
+      const res = await fetch(apiPath("/api/auth/password/forgot"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ method: "email", email: email.trim() }),

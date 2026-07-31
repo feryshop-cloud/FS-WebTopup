@@ -27,9 +27,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { apiPath, withBasePath } from "@/lib/routes";
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(withBasePath(url), { cache: "no-store" });
   const json = await res.json().catch(() => ({}));
 
   if (!res.ok) {
@@ -181,7 +182,7 @@ export default function AccountSettingsApiPage() {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const res = await fetch("/api/account/api-credential", {
+      const res = await fetch(apiPath("/api/account/api-credential"), {
         method: "POST",
       });
       const json = await res.json().catch(() => ({}));
@@ -206,7 +207,7 @@ export default function AccountSettingsApiPage() {
   const handleRegenerateKey = async () => {
     setRegenerating(true);
     try {
-      const res = await fetch("/api/account/api-credential/regenerate-key", {
+      const res = await fetch(apiPath("/api/account/api-credential/regenerate-key"), {
         method: "POST",
       });
       const json = await res.json().catch(() => ({}));
@@ -235,7 +236,7 @@ export default function AccountSettingsApiPage() {
     setSavingSecret(true);
 
     try {
-      const res = await fetch("/api/account/api-credential/secret", {
+      const res = await fetch(apiPath("/api/account/api-credential/secret"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -268,7 +269,7 @@ export default function AccountSettingsApiPage() {
     setTogglingStatus(true);
 
     try {
-      const res = await fetch("/api/account/api-credential/status", {
+      const res = await fetch(apiPath("/api/account/api-credential/status"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

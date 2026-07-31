@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { apiPath } from "@/lib/routes";
 
 type Purpose = "login" | "register" | "reset_password";
 
@@ -193,7 +194,7 @@ export default function OtpForm({
     setLoadingRequest(true);
 
     try {
-      const res = await fetch("/api/auth/otp/request", {
+      const res = await fetch(apiPath("/api/auth/otp/request"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -238,7 +239,7 @@ export default function OtpForm({
       const cleanWhatsapp = normalizeWhatsapp(whatsapp);
 
       if (purpose === "reset_password") {
-        const res = await fetch("/api/auth/otp/verify", {
+        const res = await fetch(apiPath("/api/auth/otp/verify"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { apiPath } from "@/lib/routes";
 
 export type SettingsPayload = {
   success: boolean;
@@ -144,7 +145,7 @@ export const SettingsProvider = ({
 
     async function fetchSettings() {
       try {
-        const res = await fetch("/api/settings");
+        const res = await fetch(apiPath("/api/settings"));
         if (!res.ok) throw new Error("Gagal memuat settings");
 
         const json = await res.json();

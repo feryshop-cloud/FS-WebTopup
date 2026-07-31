@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { apiPath } from "@/lib/routes";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -47,7 +48,7 @@ function ForgotPasswordForm() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch("/api/settings", { cache: "no-store" });
+        const res = await fetch(apiPath("/api/settings"), { cache: "no-store" });
         const json = await res.json().catch(() => ({}));
         if (!mounted) return;
         setSettings(json?.data || {});
@@ -103,7 +104,7 @@ function ForgotPasswordForm() {
     setLoadingEmail(true);
 
     try {
-      const res = await fetch("/api/auth/password/forgot", {
+      const res = await fetch(apiPath("/api/auth/password/forgot"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -11,6 +11,7 @@ import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
 import MethodToggle from "@/components/auth/method-toggle";
 import OtpForm from "@/components/auth/otp-form";
+import { apiPath } from "@/lib/routes";
 import TurnstileWidget from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,7 +52,7 @@ function SignInForm() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch("/api/settings", { cache: "no-store" });
+        const res = await fetch(apiPath("/api/settings"), { cache: "no-store" });
         const json = await res.json().catch(() => ({}));
         if (!mounted) return;
         setSettings(json?.data || {});

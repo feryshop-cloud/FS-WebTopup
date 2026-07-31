@@ -19,6 +19,7 @@ import GuideDrawer from "@/components/order/GuideDrawer";
 import ConfirmDrawer from "@/components/order/ConfirmDrawer";
 import OrderSummaryDekstop from "@/components/order/OrderSummaryDekstop";
 import OrderSummaryMobile from "@/components/order/OrderSummaryMobile";
+import { apiPath } from "@/lib/routes";
 
 const num = (v: any) => {
   const n = Number(v ?? 0);
@@ -94,7 +95,7 @@ export default function OrderPage() {
     setCfgLoading(true);
     setCfgError(null);
 
-    fetch(`/api/order-config/${encodeURIComponent(slug)}`, {
+    fetch(apiPath(`/api/order-config/${encodeURIComponent(slug)}`), {
       method: "GET",
       headers: { Accept: "application/json" },
       cache: "no-store",
@@ -288,7 +289,7 @@ export default function OrderPage() {
       const server = inputs.server || "";
 
       const res = await fetch(
-        `/api/check-nickname?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&game=${encodeURIComponent(game || "")}`
+        apiPath(`/api/check-nickname?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&game=${encodeURIComponent(game || "")}`)
       );
       const data = await res.json().catch(() => ({}));
 
@@ -400,7 +401,7 @@ export default function OrderPage() {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers.Authorization = `Bearer ${token}`;
 
-      const response = await fetch("/api/order", {
+      const response = await fetch(apiPath("/api/order"), {
         method: "POST",
         headers,
         body: JSON.stringify(jsonData),
@@ -535,7 +536,7 @@ export default function OrderPage() {
       <GuideDrawer
         open={isGuideOpen}
         onOpenChange={setIsGuideOpen}
-        guideImage={guideImagePath ? `/api/proxy-image?path=${encodeURIComponent(guideImagePath)}` : undefined}
+        guideImage={guideImagePath ? apiPath(`/api/proxy-image?path=${encodeURIComponent(guideImagePath)}`) : undefined}
         guideText={gameConfig?.guide_text}
       />
 

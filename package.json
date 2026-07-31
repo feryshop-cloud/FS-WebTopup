@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:railway": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "lint": "eslint .",
     "registry:build": "tsx ./scripts/build-registry.ts",
     "cb": "rm -rf .next node_modules/.cache && npm run build && pm2 restart all && pm2 save"

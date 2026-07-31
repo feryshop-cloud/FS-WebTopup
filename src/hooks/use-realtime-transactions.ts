@@ -2,9 +2,10 @@ import { useEffect, useRef } from "react";
 import Pusher from "pusher-js";
 import useSWR from "swr";
 import { Transaction } from "@/types";
+import { withBasePath } from "@/lib/routes";
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(withBasePath(url), { cache: "no-store" });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = typeof json?.message === "string" ? json.message : "Request failed";

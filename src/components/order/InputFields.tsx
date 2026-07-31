@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { getCountryDisplay } from '@/lib/get-country-display'
 import { CheckCircle2, XCircle } from 'lucide-react'
+import { apiPath } from '@/lib/routes'
 
 interface InputFieldsProps {
   gameConfig: {
@@ -65,7 +66,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
     setCountry(null)
 
     try {
-      const res = await fetch('/api/validate-mlbb', {
+      const res = await fetch(apiPath('/api/validate-mlbb'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, server }),

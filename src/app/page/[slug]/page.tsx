@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ContentLayout } from "@/components/panel/content-layout";
+import { apiPath } from "@/lib/routes";
 
 type CustomPagePayload = {
   success?: boolean;
@@ -28,14 +29,14 @@ const getSiteUrl = () => process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3
 
 async function fetchCustomPage(slug: string): Promise<CustomPagePayload | null> {
   const siteUrl = getSiteUrl();
-  const res = await fetch(`${siteUrl}/api/page/${encodeURIComponent(slug)}`, { cache: "no-store" });
+  const res = await fetch(`${siteUrl}${apiPath(`/api/page/${encodeURIComponent(slug)}`)}`, { cache: "no-store" });
   if (!res.ok) return null;
   return (await res.json().catch(() => null)) as CustomPagePayload | null;
 }
 
 async function fetchSettings(): Promise<SettingsPayload | null> {
   const siteUrl = getSiteUrl();
-  const res = await fetch(`${siteUrl}/api/settings`, { next: { revalidate: 3600 } });
+  const res = await fetch(`${siteUrl}${apiPath("/api/settings")}`, { next: { revalidate: 3600 } });
   if (!res.ok) return null;
   return (await res.json().catch(() => null)) as SettingsPayload | null;
 }

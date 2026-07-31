@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { apiPath } from "@/lib/routes";
 
 export type InvoiceReviewPayload = {
   rating: number;
@@ -52,7 +53,7 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
     setSubmitting(true);
 
     try {
-      const res = await fetch(`/api/order/${orderId}/review`, {
+      const res = await fetch(apiPath(`/api/order/${orderId}/review`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

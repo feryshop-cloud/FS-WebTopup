@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSettings } from "./settings-context";
+import { apiPath } from "@/lib/routes";
 
 const LogoContext = createContext<string | null>(null);
 
@@ -13,7 +14,7 @@ export function LogoProvider({ children }: { children: React.ReactNode }) {
     let logo = settings?.data?.general?.logo || "/logo.png";
     
     if (!logo.startsWith("http") && !logo.startsWith("/")) {
-      logo = `/api/proxy-image?path=${encodeURIComponent(logo)}`;
+      logo = apiPath(`/api/proxy-image?path=${encodeURIComponent(logo)}`);
     }
     
     setLogoUrl(logo);

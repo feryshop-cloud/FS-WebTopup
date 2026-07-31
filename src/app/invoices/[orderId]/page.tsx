@@ -16,6 +16,7 @@ import { InvoicePaymentMethod } from "@/components/invoice/PaymentMethod";
 import { InvoiceCountdown } from "@/components/invoice/Countdown";
 import { InvoicePaymentInstructions } from "@/components/invoice/PaymentInstructions";
 import { InvoiceReviewPayload, ReviewSection } from "@/components/invoice/ReviewSection";
+import { apiPath } from "@/lib/routes";
 
 import animationWaitingPayment from "@/data/lottie/payment-waiting.json";
 import animationBuyProcess from "@/data/lottie/buy-process.json";
@@ -54,7 +55,7 @@ export default function InvoicePage() {
       }
 
       try {
-        const res = await fetch(`/api/order/${encodeURIComponent(safeOrderId)}`, { cache: "no-store" });
+        const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}`), { cache: "no-store" });
         const data = await res.json().catch(() => ({} as any));
 
         if (!res.ok || !data?.success) {
@@ -87,7 +88,7 @@ export default function InvoicePage() {
     if (!safeOrderId) return;
 
     try {
-      const res = await fetch(`/api/order/${encodeURIComponent(safeOrderId)}/review`, { cache: "no-store" });
+      const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}/review`), { cache: "no-store" });
       const json = await res.json().catch(() => ({} as any));
 
       if (!res.ok || !json?.success) {
@@ -180,7 +181,7 @@ export default function InvoicePage() {
       if (cancelled) return;
 
       try {
-        const res = await fetch(`/api/order/${encodeURIComponent(safeOrderId)}/payment-status`, { cache: "no-store" });
+        const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}/payment-status`), { cache: "no-store" });
         const json = await res.json().catch(() => null);
 
         if (!res.ok || !json?.success) {

@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { apiPath } from "@/lib/routes";
 
 type ApplyResult = {
   code: string;
@@ -103,7 +104,7 @@ export default function PromoCodeSection({
       q.set("product_id", String(productId));
       q.set("payment_method_id", String(paymentMethodId));
 
-      const res = await fetch(`/api/promo-codes?${q.toString()}`, { cache: "no-store" });
+      const res = await fetch(apiPath(`/api/promo-codes?${q.toString()}`), { cache: "no-store" });
       const json = await res.json().catch(() => ({} as any));
 
       if (!res.ok || !json?.success) {
@@ -127,7 +128,7 @@ export default function PromoCodeSection({
 
     setLoading(true);
     try {
-      const res = await fetch("/api/promo-codes/validate", {
+      const res = await fetch(apiPath("/api/promo-codes/validate"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

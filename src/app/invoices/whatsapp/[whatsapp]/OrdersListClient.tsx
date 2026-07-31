@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { apiPath } from "@/lib/routes";
 
 export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
   const [orders, setOrders] = useState<any[]>([]);
@@ -16,7 +17,7 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
   useEffect(() => {
     async function fetchOrders() {
       const res = await fetch(
-        `/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(whatsapp)}`
+        apiPath(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(whatsapp)}`)
       );
       if (res.ok) {
         const data = await res.json();
