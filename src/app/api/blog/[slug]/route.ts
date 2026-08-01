@@ -37,6 +37,7 @@ export async function GET(_request: Request, context: any) {
     return NextResponse.json({
       success: true,
       data: foundArticle,
+      blog: foundArticle,
     }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({

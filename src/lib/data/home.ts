@@ -171,10 +171,11 @@ export async function getBlogLitePayload(page = 1, perPage = 6) {
 
   return {
     success: true,
-    data: {
-      data: paginated,
-      total: allArticles.length,
+    data: paginated,
+    meta: {
       current_page: page,
+      per_page: perPage,
+      total: allArticles.length,
       last_page: Math.max(1, Math.ceil(allArticles.length / perPage)),
     },
   };
