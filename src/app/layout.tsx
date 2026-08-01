@@ -64,7 +64,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title: metaTitle,
     description: metaDescription,
     keywords: metaKeywords,
-    icons: { icon: favicon || "/favicon.ico" },
+    icons: {
+      icon: [
+        { url: favicon || "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+        { url: "/icon.png", sizes: "32x32", type: "image/png" },
+      ],
+      shortcut: [favicon || "/favicon.ico"],
+      apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
