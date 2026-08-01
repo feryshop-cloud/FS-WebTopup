@@ -1,8 +1,9 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db, users } from "@/lib/db";
+import { db, hasDatabaseConnection, sqlClient, users } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -23,51 +24,32 @@ export const authOptions: NextAuthOptions = {
         const email = typeof credentials?.email === "string" ? credentials.email.trim() : "";
         const password = typeof credentials?.password === "string" ? credentials.password : "";
 
-        if (!email) return null;
+        if (!email || !password || !hasDatabaseConnection) return null;
 
-        let foundUser: any = null;
+        try {
+          const authUser = await signInSupabaseWithPassword(email, password);
+          const profiles = await sqlClient<{ id: string; full_name: string; email: string; status: string }[]>`
+            select id, full_name, email, status
+            from public.users
+            where id = ${authUser.id}
+            limit 1
+          `;
+          const profile = profiles[0];
+          if (!profile) return null;
 
-        // 1. Coba cari di Supabase / Drizzle DB
-        if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
-          try {
-            const dbUsers = await db.select().from(users).where(eq(users.email, email)).limit(1);
-            if (dbUsers && dbUsers[0]) {
-              const u = dbUsers[0];
-              foundUser = {
-                id: u.id,
-                name: u.name,
-                email: u.email,
-                role: u.role || "member",
-                saldo: Number(u.balance || 0),
-                whatsapp: u.whatsapp || "081234567890",
-              };
-            }
-          } catch (e) {
-            console.warn("Fallback auth DB lookup:", e);
-          }
-        }
-
-        // 2. Fallback demo login jika DB tidak terkoneksi atau user baru saat dev
-        if (!foundUser) {
-          foundUser = {
-            id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
-            name: email.split("@")[0].replace(/\b\w/g, (l) => l.toUpperCase()),
-            email: email,
+          return {
+            id: String(profile.id),
+            name: profile.full_name,
+            email: profile.email,
+            token: `TSON-JWT-${Date.now()}`,
             role: "member",
-            saldo: 50000,
-            whatsapp: "081234567890",
-          };
+            saldo: 0,
+            whatsapp: null,
+          } as any;
+        } catch (e) {
+          console.warn("Credentials auth failed:", e);
+          return null;
         }
-
-        return {
-          id: String(foundUser.id),
-          name: foundUser.name,
-          email: foundUser.email,
-          token: `TSON-JWT-${Date.now()}`,
-          role: foundUser.role,
-          saldo: foundUser.saldo,
-          whatsapp: foundUser.whatsapp,
-        } as any;
       },
     }),
 
