@@ -1,5 +1,8 @@
 import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 
+const FALLBACK_GAME_IMAGE = "/placeholder.png";
+const FALLBACK_GAME_LOGO = "/logo-topup.webp";
+
 export interface PublicGame {
   id: string;
   title: string;
@@ -46,7 +49,7 @@ async function getLivePublicGamesFromRest(): Promise<PublicGame[]> {
 
   try {
     const response = await fetch(
-      `${restUrl}/rest/v1/games?select=id,name,slug,image_url&order=name.asc`,
+      `${restUrl}/rest/v1/games?select=id,name,title,slug,image_url,banner,logo,developers,category_id,description,instructions,is_popular,is_active,sort_order&is_active=eq.true&order=sort_order.asc&order=name.asc`,
       {
         headers: {
           apikey: publishableKey,
@@ -61,16 +64,19 @@ async function getLivePublicGamesFromRest(): Promise<PublicGame[]> {
     const rows = await response.json() as {
       id: string;
       name: string;
+      title: string | null;
       slug: string;
       image_url: string | null;
+      banner: string | null;
+      logo: string | null;
+      developers: string | null;
+      category_id: number | null;
+      description: string | null;
+      instructions: unknown;
+      is_popular: boolean | null;
     }[];
 
-    return mapLiveGames(rows.map((row) => ({
-      id: row.id,
-      title: row.name,
-      slug: row.slug,
-      image: row.image_url,
-    })));
+    return mapLiveGames(rows);
   } catch (error) {
     console.warn("Live Supabase REST games query unavailable:", error);
     return [];
@@ -107,19 +113,32 @@ export async function getRemoteSettingsFromRest(): Promise<Record<string, unknow
   }
 }
 
-function mapLiveGames(rows: { id: string; title: string; slug: string; image: string | null }[]): PublicGame[] {
+function mapLiveGames(rows: {
+  id: string;
+  name?: string | null;
+  title?: string | null;
+  slug: string;
+  image_url?: string | null;
+  banner?: string | null;
+  logo?: string | null;
+  developers?: string | null;
+  category_id?: number | null;
+  description?: string | null;
+  instructions?: unknown;
+  is_popular?: boolean | null;
+}[]): PublicGame[] {
   return rows.map((game, index) => ({
     id: game.id,
-    title: game.title,
+    title: game.title || game.name || game.slug,
     slug: game.slug,
-    image: game.image || "/banner-mobile-legend.png",
-    banner: game.image || "/banner-mobile-legend.png",
-    logo: game.image || null,
-    developers: "Game Developer",
-    category_id: index + 1,
-    description: null,
-    instructions: null,
-    is_popular: index < 4,
+    image: game.image_url || FALLBACK_GAME_IMAGE,
+    banner: game.banner || game.image_url || FALLBACK_GAME_IMAGE,
+    logo: game.logo || FALLBACK_GAME_LOGO,
+    developers: game.developers || "Game Developer",
+    category_id: game.category_id ?? index + 1,
+    description: game.description ?? null,
+    instructions: game.instructions ?? null,
+    is_popular: Boolean(game.is_popular),
   }));
 }
 
@@ -133,15 +152,30 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
     id: string;
     title: string;
     slug: string;
-    image: string | null;
+    image_url: string | null;
+    banner: string | null;
+    logo: string | null;
+    developers: string | null;
+    category_id: number | null;
+    description: string | null;
+    instructions: unknown;
+    is_popular: boolean | null;
   }[]>`
     select
       id::text as id,
-      name as title,
+      coalesce(title, name) as title,
       slug,
-      image_url as image
+      image_url,
+      banner,
+      logo,
+      developers,
+      category_id,
+      description,
+      instructions,
+      is_popular
     from public.games
-    order by name asc
+    where is_active = true
+    order by sort_order asc, name asc
   `
     .then(mapLiveGames)
     .catch((error) => {
