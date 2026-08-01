@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Gamepad2, Flame, Crosshair, Trophy, Shield, ChevronRight } from "lucide-react";
+import { Gamepad2, Flame, Crosshair, Trophy, Shield, Sparkles, ChevronRight } from "lucide-react";
 import { MARKETPLACE_CATEGORIES, type GameCategory } from "@/lib/data/mock-marketplace";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +18,8 @@ export function GameCategoryIcon({ iconName, className }: { iconName: GameCatego
       return <Trophy className={cn("text-info", className)} />;
     case "pubgm":
       return <Shield className={cn("text-amber-500", className)} />;
+    case "genshin":
+      return <Sparkles className={cn("text-sky-400", className)} />;
     default:
       return <Gamepad2 className={className} />;
   }
@@ -56,8 +58,14 @@ export function MarketplaceCategoryGrid({ categories = MARKETPLACE_CATEGORIES }:
             <div>
               {/* Top Bar with Icon & Badge */}
               <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl bg-muted/60 border border-border/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                  <GameCategoryIcon iconName={category.iconName} className="h-4 w-4 sm:h-6 sm:w-6" />
+                <div className="relative flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl bg-muted/60 border border-border/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                  <Image
+                    src={category.bannerUrl}
+                    alt={`${category.name} icon`}
+                    width={48}
+                    height={48}
+                    className="h-full w-full object-contain p-1"
+                  />
                 </div>
                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary border border-primary/20">
                   {category.totalAccounts} Akun

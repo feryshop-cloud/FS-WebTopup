@@ -26,12 +26,13 @@ const FALLBACK_IMAGE =
 
 const CATEGORY_META: Record<
   string,
-  Pick<GameCategory, "slug" | "subtitle" | "iconName" | "colorTheme" | "popularRanks">
+  Pick<GameCategory, "slug" | "subtitle" | "iconName" | "bannerUrl" | "colorTheme" | "popularRanks">
 > = {
   "Mobile Legends": {
     slug: "mlbb",
     subtitle: "Bang Bang Akun Sultan & Mythic",
     iconName: "mlbb",
+    bannerUrl: "/mlbb-icon.webp",
     colorTheme: "from-tertiary/20 via-tertiary/10 to-transparent border-tertiary/30",
     popularRanks: ["Mythic Glory", "Mythic Immortal", "Legend", "Epic", "Sultan Collector"],
   },
@@ -39,6 +40,7 @@ const CATEGORY_META: Record<
     slug: "ff",
     subtitle: "Akun SG 2 Ungu & Evo Gun Max",
     iconName: "ff",
+    bannerUrl: "/ff-icon.webp",
     colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
     popularRanks: ["Heroic / Master", "Grandmaster", "Akun Vault Penuh", "SG 2 Ungu", "Evo Gun Max"],
   },
@@ -46,6 +48,7 @@ const CATEGORY_META: Record<
     slug: "valorant",
     subtitle: "Skin Kuronami, Reaver & Radiant Peak",
     iconName: "valorant",
+    bannerUrl: "/valorant-icon.webp",
     colorTheme: "from-rose-600/20 via-red-600/10 to-transparent border-rose-500/30",
     popularRanks: ["Radiant", "Immortal 3", "Ascendant", "Diamond", "Full Skin Bundle"],
   },
@@ -53,6 +56,7 @@ const CATEGORY_META: Record<
     slug: "efootball",
     subtitle: "Tim Impian Epic Big Time 104+ OVR",
     iconName: "efootball",
+    bannerUrl: "/logo-topup.webp",
     colorTheme: "from-info/20 via-info/10 to-transparent border-info/30",
     popularRanks: ["Divisi 1", "Tim 104+ OVR", "Epic Big Time", "Showtime Full", "Legendary Squad"],
   },
@@ -60,8 +64,17 @@ const CATEGORY_META: Record<
     slug: "pubgm",
     subtitle: "M416 Glacier Max Lv 7 & Conqueror",
     iconName: "pubgm",
+    bannerUrl: "/pubg-icon.webp",
     colorTheme: "from-amber-600/20 via-yellow-600/10 to-transparent border-amber-500/30",
     popularRanks: ["Conqueror", "Ace Dominator", "Crown", "M416 Glacier Lv 7", "Set Firaun Max"],
+  },
+  "Genshin Impact": {
+    slug: "genshin-impact",
+    subtitle: "Akun Adventure Rank tinggi & karakter bintang 5",
+    iconName: "genshin",
+    bannerUrl: "/genshin-icon.webp",
+    colorTheme: "from-sky-500/20 via-cyan-500/10 to-transparent border-sky-400/30",
+    popularRanks: ["AR 55+", "Archon Ready", "Limited 5-Star", "Signature Weapon", "Spiral Abyss Ready"],
   },
 };
 
@@ -104,6 +117,7 @@ function categoryMeta(categoryName: string) {
     slug: slugify(categoryName),
     subtitle: "Akun game terverifikasi siap Rekber",
     iconName: "mlbb" as const,
+    bannerUrl: "/placeholder.png",
     colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
     popularRanks: ["Sultan", "Ready", "Verified", "Hot Deal"],
   };
@@ -244,7 +258,7 @@ export async function getMarketplaceCategories() {
       name: item.name,
       subtitle: meta.subtitle,
       iconName: meta.iconName,
-      bannerUrl: item.firstImage,
+      bannerUrl: meta.bannerUrl,
       totalAccounts: item.count,
       colorTheme: meta.colorTheme,
       popularRanks: meta.popularRanks,

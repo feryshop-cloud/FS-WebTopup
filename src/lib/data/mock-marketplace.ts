@@ -40,7 +40,7 @@ export interface GameCategory {
   slug: string;
   name: string;
   subtitle: string;
-  iconName: "mlbb" | "ff" | "valorant" | "efootball" | "pubgm";
+  iconName: "mlbb" | "ff" | "valorant" | "efootball" | "pubgm" | "genshin";
   bannerUrl: string;
   totalAccounts: number;
   colorTheme: string;
@@ -54,7 +54,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     name: "Mobile Legends",
     subtitle: "Bang Bang Akun Sultan & Mythic",
     iconName: "mlbb",
-    bannerUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop",
+    bannerUrl: "/mlbb-icon.webp",
     totalAccounts: 24,
     colorTheme: "from-tertiary/20 via-tertiary/10 to-transparent border-tertiary/30",
     popularRanks: ["Mythic Glory", "Mythic Immortal", "Legend", "Epic", "Sultan Collector"],
@@ -65,7 +65,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     name: "Free Fire",
     subtitle: "Akun SG 2 Ungu & Evo Gun Max",
     iconName: "ff",
-    bannerUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop",
+    bannerUrl: "/ff-icon.webp",
     totalAccounts: 18,
     colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
     popularRanks: ["Heroic / Master", "Grandmaster", "Akun Vault Penuh", "SG 2 Ungu", "Evo Gun Max"],
@@ -76,7 +76,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     name: "Valorant",
     subtitle: "Skin Kuronami, Reaver & Radiant Peak",
     iconName: "valorant",
-    bannerUrl: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=1200&auto=format&fit=crop",
+    bannerUrl: "/valorant-icon.webp",
     totalAccounts: 15,
     colorTheme: "from-rose-600/20 via-red-600/10 to-transparent border-rose-500/30",
     popularRanks: ["Radiant", "Immortal 3", "Ascendant", "Diamond", "Full Skin Bundle"],
@@ -87,7 +87,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     name: "eFootball",
     subtitle: "Tim Impian Epic Big Time 104+ OVR",
     iconName: "efootball",
-    bannerUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop",
+    bannerUrl: "/logo-topup.webp",
     totalAccounts: 12,
     colorTheme: "from-info/20 via-info/10 to-transparent border-info/30",
     popularRanks: ["Divisi 1", "Tim 104+ OVR", "Epic Big Time", "Showtime Full", "Legendary Squad"],
@@ -98,7 +98,7 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     name: "PUBG Mobile",
     subtitle: "M416 Glacier Max Lv 7 & Conqueror",
     iconName: "pubgm",
-    bannerUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1200&auto=format&fit=crop",
+    bannerUrl: "/pubg-icon.webp",
     totalAccounts: 16,
     colorTheme: "from-amber-600/20 via-yellow-600/10 to-transparent border-amber-500/30",
     popularRanks: ["Conqueror", "Ace Dominator", "Crown", "M416 Glacier Lv 7", "Set Firaun Max"],
