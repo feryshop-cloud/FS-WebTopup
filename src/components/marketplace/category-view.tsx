@@ -7,14 +7,27 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AccountCard } from "./account-card";
 import { GameCategoryIcon } from "./category-grid";
-import { MARKETPLACE_CATEGORIES, MOCK_ACCOUNTS, type GameCategory } from "@/lib/data/mock-marketplace";
+import {
+  MARKETPLACE_CATEGORIES,
+  MOCK_ACCOUNTS,
+  type GameAccount,
+  type GameCategory,
+} from "@/lib/data/mock-marketplace";
 import { cn } from "@/lib/utils";
 
-export function MarketplaceCategoryView({ categorySlug }: { categorySlug: string }) {
-  const category = MARKETPLACE_CATEGORIES.find((c) => c.slug === categorySlug) || MARKETPLACE_CATEGORIES[0];
+export function MarketplaceCategoryView({
+  categorySlug,
+  accounts = MOCK_ACCOUNTS,
+  categories = MARKETPLACE_CATEGORIES,
+}: {
+  categorySlug: string;
+  accounts?: GameAccount[];
+  categories?: GameCategory[];
+}) {
+  const category = categories.find((c) => c.slug === categorySlug) || categories[0] || MARKETPLACE_CATEGORIES[0];
   const allCategoryAccounts = useMemo(() => {
-    return MOCK_ACCOUNTS.filter((acc) => acc.gameSlug === category.slug);
-  }, [category.slug]);
+    return accounts.filter((acc) => acc.gameSlug === category.slug);
+  }, [accounts, category.slug]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRank, setSelectedRank] = useState<string>("ALL");

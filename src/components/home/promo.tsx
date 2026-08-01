@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import LogoInstan from "@/components/logo/instan";
+import type { HomeFallbackData } from "@/lib/data/home";
 
 interface PromoProduct {
   id: number;
@@ -30,14 +31,14 @@ function toTitleCaseFromSlug(slug: string) {
     .join(" ");
 }
 
-export default function Promo() {
+export default function Promo({ initialData }: { initialData?: HomeFallbackData["promo"] }) {
   const { data: session } = useSession();
   const role = session?.user?.role ?? "user";
 
   const { data, error, isLoading, mutate } = useSWR<{ success: boolean; products: PromoProduct[] }>(
     "/api/promo",
     fetcher,
-    { keepPreviousData: true, revalidateIfStale: false, dedupingInterval: 300_000 }
+    { keepPreviousData: true, revalidateIfStale: false, dedupingInterval: 300_000, fallbackData: initialData as any }
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);

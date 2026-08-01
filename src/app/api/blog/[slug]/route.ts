@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, articles } from "@/lib/db";
 import { eq } from "drizzle-orm";
-import { seedArticles } from "@/lib/db/seed-data";
+import { hasArticleDatabaseEnabled, getSeedArticles, normalizeArticle, type ArticleRecord } from "@/lib/data/articles";
 
 export const dynamic = "force-dynamic";
 
@@ -12,32 +12,22 @@ export async function GET(_request: Request, context: any) {
       return NextResponse.json({ success: false, message: "Slug tidak ditemukan" }, { status: 400 });
     }
 
-    let foundArticle: any = null;
+    const seed = getSeedArticles();
+    let foundArticle: ArticleRecord | null = null;
 
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (hasArticleDatabaseEnabled()) {
       try {
         const dbArticle = await db.select().from(articles).where(eq(articles.slug, slug)).limit(1);
         if (dbArticle && dbArticle[0]) {
-          const a = dbArticle[0];
-          foundArticle = {
-            id: a.id,
-            title: a.title,
-            slug: a.slug,
-            thumbnail: a.thumbnail,
-            excerpt: a.excerpt,
-            content: a.content,
-            author: a.author,
-            views: a.views,
-            created_at: a.createdAt,
-          };
+          foundArticle = normalizeArticle(dbArticle[0]);
         }
       } catch (e) {
-        console.warn(`Fallback blog [${slug}]:`, e);
+        console.warn(`Fallback blog [${slug}] ke dummy data:`, e);
       }
     }
 
     if (!foundArticle) {
-      foundArticle = seedArticles.find((a) => a.slug === slug);
+      foundArticle = seed.find((a) => a.slug === slug) ?? null;
     }
 
     if (!foundArticle) {

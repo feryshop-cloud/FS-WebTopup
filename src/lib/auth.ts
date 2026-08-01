@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db, users } from "@/lib/db";
@@ -166,5 +166,3 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || "feryshop-super-secret-key-2026",
 };
 
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };

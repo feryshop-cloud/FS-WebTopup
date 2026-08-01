@@ -1,37 +1,23 @@
 import { NextResponse } from "next/server";
 import { db, articles } from "@/lib/db";
 import { eq, desc } from "drizzle-orm";
-import { seedArticles } from "@/lib/db/seed-data";
+import { hasArticleDatabaseEnabled, getSeedArticles, normalizeArticle } from "@/lib/data/articles";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    let allArticles: any[] = [];
+    let allArticles = getSeedArticles();
 
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (hasArticleDatabaseEnabled()) {
       try {
         const dbArticles = await db.select().from(articles).where(eq(articles.isPublished, true)).orderBy(desc(articles.createdAt));
         if (dbArticles && dbArticles.length > 0) {
-          allArticles = dbArticles.map((a) => ({
-            id: a.id,
-            title: a.title,
-            slug: a.slug,
-            thumbnail: a.thumbnail,
-            excerpt: a.excerpt,
-            content: a.content,
-            author: a.author,
-            views: a.views,
-            created_at: a.createdAt,
-          }));
+          allArticles = dbArticles.map(normalizeArticle);
         }
       } catch (e) {
-        console.warn("Fallback blog ke seed data:", e);
+        console.warn("Fallback blog ke dummy data:", e);
       }
-    }
-
-    if (allArticles.length === 0) {
-      allArticles = seedArticles;
     }
 
     return NextResponse.json({

@@ -12,8 +12,7 @@ export function MarketplaceHero() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to MLBB category with search query by default or first category
-      router.push(`/marketplace/mlbb?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/marketplace/mobile-legends?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 

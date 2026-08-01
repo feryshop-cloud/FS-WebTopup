@@ -38,6 +38,8 @@ This repo runs on Windows with PowerShell 5.1. The `bash` tool here executes Pow
 | `2>/dev/null` | `2>&1 \| Out-Null` | No `/dev/null` in PowerShell |
 | `| head -N` | `\| Select-Object -First N` | Pipeline syntax differs |
 | `| tail -N` | `\| Select-Object -Last N` | Pipeline syntax differs |
+| `npm run lint 2>&1 \| tail -20` | `npm run lint 2>&1 \| Select-Object -Last 20` | Show the last 20 lint output lines in PowerShell |
+| `npm run lint 2>&1 \| grep -E "inventory/page\|settings/page\|GameCategoryManager\|actions/inventory\|actions/settings\|seed\.ts\|0009_games"` | `npm run lint 2>&1 \| Select-String -Pattern "inventory/page\|settings/page\|GameCategoryManager\|actions/inventory\|actions/settings\|seed\.ts\|0009_games"` | Filter lint output with a regex in PowerShell |
 
 **Key gotcha:** `&&` is not a valid statement separator in PowerShell 5.1. Use `;` to chain commands or `if ($?) { ... }` for conditional chaining. The `bash` tool wraps commands in PowerShell, so `cmd1 && cmd2` will fail — use `cmd1; if ($?) { cmd2 }` instead.
 

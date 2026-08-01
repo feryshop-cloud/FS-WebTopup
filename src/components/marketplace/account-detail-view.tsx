@@ -20,11 +20,10 @@ import {
   UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MOCK_ACCOUNTS, type GameAccount } from "@/lib/data/mock-marketplace";
+import type { GameAccount } from "@/lib/data/mock-marketplace";
 import { cn } from "@/lib/utils";
 
-export function MarketplaceAccountDetailView({ accountId }: { accountId: string }) {
-  const account = MOCK_ACCOUNTS.find((acc) => acc.id === accountId || acc.slug === accountId) || MOCK_ACCOUNTS[0];
+export function MarketplaceAccountDetailView({ account }: { account: GameAccount }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const discountPercentage = account.originalPrice

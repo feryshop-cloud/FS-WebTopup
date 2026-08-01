@@ -23,7 +23,7 @@ export function GameCategoryIcon({ iconName, className }: { iconName: GameCatego
   }
 }
 
-export function MarketplaceCategoryGrid() {
+export function MarketplaceCategoryGrid({ categories = MARKETPLACE_CATEGORIES }: { categories?: GameCategory[] }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
@@ -39,7 +39,7 @@ export function MarketplaceCategoryGrid() {
 
       {/* Grid Kategori (Mobile 2 kolom, Tablet 3 kolom, Desktop 5 kolom) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-x-6 sm:gap-y-6">
-        {MARKETPLACE_CATEGORIES.map((category) => (
+        {categories.map((category) => (
           <Link
             key={category.id}
             href={`/marketplace/${category.slug}`}

@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import type { HomeFallbackData } from "@/lib/data/home";
 
 type BlogCategoryLite = {
   id: number;
@@ -38,10 +39,11 @@ type BlogLiteResponse = {
   };
 };
 
-export default function Artikel() {
+export default function Artikel({ initialData }: { initialData?: HomeFallbackData["blogLite"] }) {
   const { data, error, isLoading, mutate } = useSWR<BlogLiteResponse>(
     "/api/blog-lite?page=1&per_page=6",
-    fetcher
+    fetcher,
+    { fallbackData: initialData as any }
   );
 
   const blogs: BlogLite[] = Array.isArray(data?.data) ? data!.data! : [];

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentLayout } from "@/components/panel/content-layout";
 import { MarketplaceCategoryView } from "@/components/marketplace/category-view";
-import { MARKETPLACE_CATEGORIES } from "@/lib/data/mock-marketplace";
+import { getMarketplaceAccounts, getMarketplaceCategories } from "@/lib/marketplace/live-marketplace";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -12,7 +12,8 @@ interface CategoryPageProps {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = MARKETPLACE_CATEGORIES.find((c) => c.slug === slug);
+  const categories = await getMarketplaceCategories();
+  const category = categories.find((c) => c.slug === slug);
   if (!category) {
     return { title: "Feryshop | Kategori Tidak Ditemukan" };
   }
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
-  const category = MARKETPLACE_CATEGORIES.find((c) => c.slug === slug);
+  const [accounts, categories] = await Promise.all([getMarketplaceAccounts(), getMarketplaceCategories()]);
+  const category = categories.find((c) => c.slug === slug);
 
   if (!category) {
     notFound();
@@ -33,7 +35,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <ContentLayout title={`Katalog ${category.name}`}>
       <div className="space-y-8">
-        <MarketplaceCategoryView categorySlug={slug} />
+        <MarketplaceCategoryView categorySlug={slug} accounts={accounts} categories={categories} />
       </div>
     </ContentLayout>
   );

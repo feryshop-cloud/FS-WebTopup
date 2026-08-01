@@ -9,6 +9,8 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SWRProvider } from "@/components/providers/swr-provider";
 import { ProgressBarWrapper } from "@/components/progress-bar/progress-bar-wrapper";
 import { Toaster } from "sonner";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import type { Metadata } from "next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3100";
@@ -83,7 +85,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // --- Main Layout Component ---
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const settingsPayload = await fetchSettings();
+  const [settingsPayload, session] = await Promise.all([
+    fetchSettings(),
+    getServerSession(authOptions),
+  ]);
   const data = settingsPayload?.data ?? {};
 
   // --- Logic Schema.org ---
@@ -133,7 +138,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           >
             <SWRProvider>
               <SettingsProvider initialData={settingsPayload}>
-                <PanelLayout>{children}</PanelLayout>
+                <PanelLayout session={session}>{children}</PanelLayout>
               </SettingsProvider>
             </SWRProvider>
           </ThemeProvider>

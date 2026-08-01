@@ -8,9 +8,10 @@ import { fetcher } from "@/lib/fetcher";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import type { HomeFallbackData } from "@/lib/data/home";
 
-export default function PromoPopup() {
-  const { data } = useSWR("/api/popup-promo", fetcher);
+export default function PromoPopup({ initialData }: { initialData?: HomeFallbackData["popupPromo"] }) {
+  const { data } = useSWR("/api/popup-promo", fetcher, { fallbackData: initialData });
   const [showPopup, setShowPopup] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);

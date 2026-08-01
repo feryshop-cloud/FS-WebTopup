@@ -1,7 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { apiPath } from "@/lib/routes";
+import { createContext, useContext, useEffect, useMemo } from "react";
 
 export type SettingsPayload = {
   success: boolean;
@@ -133,44 +132,10 @@ export const SettingsProvider = ({
     [initialData]
   );
 
-  const [settings, setSettings] = useState<SettingsPayload>(initialPayload);
-
   useEffect(() => {
     applyCssVarIfPresent("--my-color", initialPayload.data?.["ui.my_color"]);
     applyCssVarIfPresent("--my-hover-color", initialPayload.data?.["ui.my_hover_color"]);
   }, [initialPayload]);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchSettings() {
-      try {
-        const res = await fetch(apiPath("/api/settings"));
-        if (!res.ok) throw new Error("Gagal memuat settings");
-
-        const json = await res.json();
-        if (cancelled) return;
-
-        const payload: SettingsPayload = {
-          success: Boolean(json?.success),
-          data: json?.data ?? {},
-        };
-
-        setSettings(payload);
-
-        applyCssVarIfPresent("--my-color", payload.data?.["ui.my_color"]);
-        applyCssVarIfPresent("--my-hover-color", payload.data?.["ui.my_hover_color"]);
-      } catch (error) {
-        console.error("Gagal memuat settings:", error);
-      }
-    }
-
-    fetchSettings();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return <SettingsContext.Provider value={settings}>{children}</SettingsContext.Provider>;
+  return <SettingsContext.Provider value={initialPayload}>{children}</SettingsContext.Provider>;
 };
