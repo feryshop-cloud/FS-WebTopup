@@ -1,8 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db, hasDatabaseConnection, sqlClient, users } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { db, hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 
 export const authOptions: NextAuthOptions = {
@@ -44,72 +43,11 @@ export const authOptions: NextAuthOptions = {
             token: `TSON-JWT-${Date.now()}`,
             role: "member",
             saldo: 0,
-            whatsapp: null,
           } as any;
         } catch (e) {
           console.warn("Credentials auth failed:", e);
           return null;
         }
-      },
-    }),
-
-    CredentialsProvider({
-      id: "otp",
-      name: "OTP",
-      credentials: {
-        whatsapp: { label: "WhatsApp", type: "text" },
-        otp: { label: "OTP", type: "text" },
-        purpose: { label: "Purpose", type: "text" },
-        name: { label: "Name", type: "text" },
-        turnstile_token: { label: "Turnstile", type: "text" },
-      },
-      async authorize(credentials) {
-        const whatsapp = typeof credentials?.whatsapp === "string" ? credentials.whatsapp.trim() : "";
-        const name = typeof credentials?.name === "string" ? credentials.name : "Member Feryshop";
-
-        if (!whatsapp) return null;
-
-        let foundUser: any = null;
-
-        if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
-          try {
-            const dbUsers = await db.select().from(users).where(eq(users.whatsapp, whatsapp)).limit(1);
-            if (dbUsers && dbUsers[0]) {
-              const u = dbUsers[0];
-              foundUser = {
-                id: u.id,
-                name: u.name,
-                email: u.email || `${whatsapp}@feryshop.id`,
-                role: u.role || "member",
-                saldo: Number(u.balance || 0),
-                whatsapp: u.whatsapp || whatsapp,
-              };
-            }
-          } catch (e) {
-            console.warn("Fallback OTP DB lookup:", e);
-          }
-        }
-
-        if (!foundUser) {
-          foundUser = {
-            id: `USR-${whatsapp.slice(-4)}`,
-            name: name,
-            email: `${whatsapp}@feryshop.id`,
-            role: "member",
-            saldo: 50000,
-            whatsapp: whatsapp,
-          };
-        }
-
-        return {
-          id: String(foundUser.id),
-          name: foundUser.name,
-          email: foundUser.email,
-          token: `FERY-JWT-${Date.now()}`,
-          role: foundUser.role,
-          saldo: foundUser.saldo,
-          whatsapp: foundUser.whatsapp,
-        } as any;
       },
     }),
   ],
@@ -120,7 +58,6 @@ export const authOptions: NextAuthOptions = {
         (user as any).token = `FERY-GOOGLE-${Date.now()}`;
         (user as any).role = "member";
         (user as any).saldo = 50000;
-        (user as any).whatsapp = "081234567890";
       }
       return true;
     },
@@ -130,7 +67,6 @@ export const authOptions: NextAuthOptions = {
         (token as any).jwtToken = (user as any).token;
         (token as any).role = (user as any).role ?? null;
         (token as any).saldo = (user as any).saldo ?? null;
-        (token as any).whatsapp = (user as any).whatsapp ?? null;
       }
       return token;
     },
@@ -140,7 +76,6 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).token = typeof (token as any).jwtToken === "string" ? (token as any).jwtToken : undefined;
         (session.user as any).role = (token as any).role ?? null;
         (session.user as any).saldo = (token as any).saldo ?? null;
-        (session.user as any).whatsapp = (token as any).whatsapp ?? null;
       }
       return session;
     },

@@ -9,8 +9,6 @@ import { FcGoogle } from "react-icons/fc";
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
-import MethodToggle from "@/components/auth/method-toggle";
-import OtpForm from "@/components/auth/otp-form";
 import TurnstileWidget from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,8 +47,6 @@ function SignupForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-  const [method, setMethod] = useState<"email" | "whatsapp">("email");
-
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
@@ -74,24 +70,6 @@ function SignupForm() {
     };
   }, []);
 
-  const otpLength = useMemo(() => {
-    const v = settings?.["otp.length"];
-    const n = typeof v === "number" ? v : parseInt(String(v || ""), 10);
-    return Number.isFinite(n) && n > 0 ? n : 6;
-  }, [settings]);
-
-  const expiryMinutes = useMemo(() => {
-    const v = settings?.["otp.expiry_minutes"];
-    const n = typeof v === "number" ? v : parseInt(String(v || ""), 10);
-    return Number.isFinite(n) && n > 0 ? n : 5;
-  }, [settings]);
-
-  const cooldownSeconds = useMemo(() => {
-    const v = settings?.["otp.resend_cooldown_seconds"];
-    const n = typeof v === "number" ? v : parseInt(String(v || ""), 10);
-    return Number.isFinite(n) && n > 0 ? n : 60;
-  }, [settings]);
-
   const turnstileEnabled = useMemo(() => {
     const v = settings?.["turnstile.enabled"];
     return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
@@ -109,11 +87,6 @@ function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loadingEmail, setLoadingEmail] = useState(false);
-
-  useEffect(() => {
-    setSignupError(null);
-    setTurnstileTokenEmail("");
-  }, [method]);
 
   const captchaReadyEmail = !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
 
@@ -173,7 +146,7 @@ function SignupForm() {
   return (
     <AuthCard
       title="Daftar"
-      description="Buat akun baru dengan Email atau WhatsApp."
+      description="Buat akun baru dengan email."
       footer={
         <div className="text-sm text-muted-foreground text-center">
           Sudah punya akun?{" "}
@@ -190,95 +163,63 @@ function SignupForm() {
         </Alert>
       ) : null}
 
-      <MethodToggle value={method} onChange={setMethod} />
-
-      {method === "email" ? (
-        <div className="space-y-4" role="tabpanel">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nama</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nama kamu"
-              autoComplete="name"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              autoComplete="email"
-              inputMode="email"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimal 6 karakter"
-              type="password"
-              autoComplete="new-password"
-            />
-          </div>
-
-          {turnstileEnabled && turnstileSiteKey ? (
-            <div className="pt-1">
-              <TurnstileWidget
-                siteKey={turnstileSiteKey}
-                onToken={(t) => setTurnstileTokenEmail(t)}
-                onExpire={() => setTurnstileTokenEmail("")}
-                onError={() => setTurnstileTokenEmail("")}
-                className="flex justify-center"
-              />
-              {settingsLoaded && !turnstileTokenEmail ? (
-                <div className="text-xs text-muted-foreground text-center mt-2">
-                  Selesaikan captcha dulu untuk melanjutkan.
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          <Button onClick={handleRegisterEmail} disabled={!canRegisterEmail} className="w-full h-10">
-            {loadingEmail ? "Memproses..." : "Daftar"}
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-4" role="tabpanel">
-          <div className="space-y-2">
-            <Label htmlFor="name_wa">Nama</Label>
-            <Input
-              id="name_wa"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nama kamu"
-              autoComplete="name"
-            />
-          </div>
-
-          <OtpForm
-            purpose="register"
-            name={name.trim()}
-            otpLength={otpLength}
-            expiryMinutes={expiryMinutes}
-            defaultCooldownSeconds={cooldownSeconds}
-            showHelpLink
-            helpLinkHref="/signin"
-            helpLinkLabel="Sudah punya akun?"
-            turnstileEnabled={turnstileEnabled}
-            turnstileSiteKey={turnstileSiteKey}
-            onDuplicateAccount={showDuplicateAlert}
-            onLoggedIn={() => router.push(callbackUrl)}
+      <div className="space-y-4" role="tabpanel">
+        <div className="space-y-2">
+          <Label htmlFor="name">Nama</Label>
+          <Input
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nama kamu"
+            autoComplete="name"
           />
         </div>
-      )}
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nama@email.com"
+            autoComplete="email"
+            inputMode="email"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Minimal 6 karakter"
+            type="password"
+            autoComplete="new-password"
+          />
+        </div>
+
+        {turnstileEnabled && turnstileSiteKey ? (
+          <div className="pt-1">
+            <TurnstileWidget
+              siteKey={turnstileSiteKey}
+              onToken={(t) => setTurnstileTokenEmail(t)}
+              onExpire={() => setTurnstileTokenEmail("")}
+              onError={() => setTurnstileTokenEmail("")}
+              className="flex justify-center"
+            />
+            {settingsLoaded && !turnstileTokenEmail ? (
+              <div className="text-xs text-muted-foreground text-center mt-2">
+                Selesaikan captcha dulu untuk melanjutkan.
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <Button onClick={handleRegisterEmail} disabled={!canRegisterEmail} className="w-full h-10">
+          {loadingEmail ? "Memproses..." : "Daftar"}
+        </Button>
+      </div>
 
       <Separator />
 

@@ -25,7 +25,6 @@ type AccountMe = {
     email: string | null;
     whatsapp: string | null;
     role: string | null;
-    login_method?: "email" | "whatsapp";
     login_provider?: string | null;
   };
   message?: string;
@@ -58,7 +57,6 @@ export default function AccountSettingsPage() {
     fetcher
   );
 
-  const loginMethod = me?.data?.login_method ?? null;
   const role = me?.data?.role ?? "Member";
   const nameValue = me?.data?.name ?? "";
   const emailValue = me?.data?.email ?? "";
@@ -144,7 +142,6 @@ export default function AccountSettingsPage() {
               <h2 className="text-xl font-bold">{meLoading ? <Skeleton className="h-6 w-32" /> : (me?.data?.name || "User")}</h2>
               <div className="flex gap-2 mt-1">
                 <Badge variant="outline" className="rounded-full font-bold uppercase text-[10px] tracking-wider"><Shield className="mr-1 h-3 w-3" /> {role}</Badge>
-                <Badge variant="secondary" className="rounded-full text-[10px] font-bold uppercase tracking-wider">{loginMethod === "whatsapp" ? "WhatsApp" : "Email"}</Badge>
               </div>
             </div>
           </div>
@@ -177,22 +174,16 @@ export default function AccountSettingsPage() {
           </div>
           <Card className="md:col-span-2 rounded-2xl border-none shadow-sm">
             <CardContent className="pt-6">
-              {loginMethod !== "email" ? (
-                <div className="bg-muted/50 p-4 rounded-xl text-xs text-muted-foreground border">
-                  Akun ini terhubung via WhatsApp OTP. Fitur ubah password tidak tersedia untuk metode login ini.
+              <div className="space-y-4">
+                <div className="space-y-2"><Label>Password Lama</Label><Input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} className="rounded-xl" /></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2"><Label>Password Baru</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label>Konfirmasi</Label><Input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} className="rounded-xl" /></div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="space-y-2"><Label>Password Lama</Label><Input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} className="rounded-xl" /></div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2"><Label>Password Baru</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" /></div>
-                    <div className="space-y-2"><Label>Konfirmasi</Label><Input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} className="rounded-xl" /></div>
-                  </div>
-                  <Button onClick={savePassword} disabled={savingPassword} className="rounded-xl px-6">
-                    {savingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Update Password
-                  </Button>
-                </div>
-              )}
+                <Button onClick={savePassword} disabled={savingPassword} className="rounded-xl px-6">
+                  {savingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Update Password
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -16,17 +16,17 @@ Feryshop provides a customer-facing storefront and transaction interface for dig
 
 ## Positioning
 
-The product combines top-up ordering, marketplace account browsing, promo handling, invoice lookup, member dashboard, WhatsApp/OTP authentication, and real-time transaction status in one branded Feryshop web experience.
+The product combines top-up ordering, marketplace account browsing, promo handling, invoice lookup, member dashboard, Google/email authentication, and real-time transaction status in one branded Feryshop web experience.
 
 ## Operating Context
 
-Users browse product categories, popular games, account marketplace listings, articles, price lists, calculators, and order pages. Checkout depends on product configuration, payment methods, promo-code validation, invoice generation, and payment/order status updates. Account workflows include Google login, email/password login, WhatsApp OTP, password reset, profile settings, API credentials, and invoice lookup by order ID or WhatsApp number.
+Users browse product categories, popular games, account marketplace listings, articles, price lists, calculators, and order pages. Checkout depends on product configuration, payment methods, promo-code validation, invoice generation, and payment/order status updates. Account workflows include Google login, email/password login, password reset, profile settings, API credentials, and invoice lookup by order ID or WhatsApp number.
 
 ## Capabilities and Constraints
 
 - Next.js App Router web application with API routes under `src/app/api`.
 - Data access uses Drizzle ORM with PostgreSQL/Supabase-style environment variables.
-- Authentication uses NextAuth with Google, credentials, and OTP providers.
+- Authentication uses NextAuth with Google and credentials providers.
 - Catalog, orders, payments, reviews, articles, promos, settings, and user profiles are represented in `src/lib/db/schema.ts`.
 - External API access uses an `X-API-KEY` header through shared fetch utilities.
 - Product facts not confirmed here should remain marked as open rather than invented.

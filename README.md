@@ -12,7 +12,7 @@ Feryshop terhubung langsung ke backend via API untuk menyajikan layanan transaks
 
 ## Fitur-Fitur
 
-- Registrasi & Login User (OAuth Google & OTP)
+- Registrasi & Login User (OAuth Google & Email/Password)
 - Dashboard Pengguna & Pengaturan Akun
 - Browse dan Pesan Produk Digital & Marketplace Akun
 - Riwayat & Status Transaksi Real Time

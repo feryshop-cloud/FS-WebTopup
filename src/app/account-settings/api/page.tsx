@@ -51,7 +51,6 @@ type AccountMe = {
     email: string | null;
     whatsapp: string | null;
     role: string | null;
-    login_method?: "email" | "whatsapp";
     login_provider?: string | null;
   };
 };
@@ -153,7 +152,6 @@ export default function AccountSettingsApiPage() {
   const [togglingStatus, setTogglingStatus] = useState(false);
 
   const displayRole = me?.data?.role ?? "basic";
-  const loginMethod = me?.data?.login_method ?? "email";
   const displayIdentity = me?.data?.whatsapp || me?.data?.email || "Akun terautentikasi";
 
   useEffect(() => {
@@ -377,9 +375,6 @@ export default function AccountSettingsApiPage() {
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline" className="rounded-full px-3 py-1 uppercase">
                     {displayRole}
-                  </Badge>
-                  <Badge variant="secondary" className="rounded-full px-3 py-1">
-                    Login via {loginMethod}
                   </Badge>
                   <Badge variant={credential?.is_active ? "default" : "outline"} className="rounded-full px-3 py-1">
                     {credentialStatusText}

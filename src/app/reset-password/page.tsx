@@ -2,13 +2,10 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
-import MethodToggle from "@/components/auth/method-toggle";
-import OtpForm from "@/components/auth/otp-form";
 import TurnstileWidget from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,10 +34,6 @@ export default function ForgotPasswordPage() {
 }
 
 function ForgotPasswordForm() {
-  const searchParams = useSearchParams();
-  const preset = (searchParams.get("method") || "").toLowerCase();
-  const [method, setMethod] = useState<"email" | "whatsapp">(preset === "whatsapp" ? "whatsapp" : "email");
-
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
@@ -62,24 +55,6 @@ function ForgotPasswordForm() {
     };
   }, []);
 
-  const otpLength = useMemo(() => {
-    const v = settings?.["otp.length"];
-    const n = typeof v === "number" ? v : parseInt(String(v || ""), 10);
-    return Number.isFinite(n) && n > 0 ? n : 6;
-  }, [settings]);
-
-  const expiryMinutes = useMemo(() => {
-    const v = settings?.["otp.expiry_minutes"];
-    const n = typeof v === "number" ? v : parseInt(String(v || ""), 10);
-    return Number.isFinite(n) && n > 0 ? n : 5;
-  }, [settings]);
-
-  const cooldownSeconds = useMemo(() => {
-    const v = settings?.["otp.resend_cooldown_seconds"];
-    const n = typeof v === "number" ? v : parseInt(String(v || ""), 10);
-    return Number.isFinite(n) && n > 0 ? n : 60;
-  }, [settings]);
-
   const turnstileEnabled = useMemo(() => {
     const v = settings?.["turnstile.enabled"];
     return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
@@ -88,10 +63,6 @@ function ForgotPasswordForm() {
   const turnstileSiteKey = useMemo(() => String(settings?.["turnstile.site_key"] || ""), [settings]);
 
   const [turnstileTokenEmail, setTurnstileTokenEmail] = useState("");
-
-  useEffect(() => {
-    setTurnstileTokenEmail("");
-  }, [method]);
 
   const [email, setEmail] = useState("");
   const [loadingEmail, setLoadingEmail] = useState(false);
@@ -128,12 +99,12 @@ function ForgotPasswordForm() {
     }
   };
 
-  const showTurnstileForEmail = method === "email" && turnstileEnabled && !!turnstileSiteKey;
+  const showTurnstileForEmail = turnstileEnabled && !!turnstileSiteKey;
 
   return (
     <AuthCard
       title="Lupa Password"
-      description="Pilih metode pemulihan akun, lalu ikuti instruksi yang dikirimkan."
+      description="Masukkan email kamu, lalu ikuti instruksi yang dikirimkan."
       footer={
         <div className="text-sm text-muted-foreground text-center">
           Ingat password?{" "}
@@ -143,68 +114,49 @@ function ForgotPasswordForm() {
         </div>
       }
     >
-      <MethodToggle value={method} onChange={setMethod} emailLabel="Email" whatsappLabel="WhatsApp" />
-
-      {method === "email" ? (
-        <div className="space-y-4" role="tabpanel">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="nama@email.com"
-              autoComplete="email"
-              inputMode="email"
-              disabled={loadingEmail}
-            />
-          </div>
-
-          {showTurnstileForEmail ? (
-            <div className="pt-1">
-              <TurnstileWidget
-                siteKey={turnstileSiteKey}
-                onToken={(t) => setTurnstileTokenEmail(t)}
-                onExpire={() => setTurnstileTokenEmail("")}
-                onError={() => setTurnstileTokenEmail("")}
-                className="flex justify-center"
-              />
-              {settingsLoaded && !turnstileTokenEmail ? (
-                <div className="text-xs text-muted-foreground text-center mt-2">
-                  Selesaikan captcha dulu untuk melanjutkan.
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          <Button onClick={handleSendEmail} disabled={!canSendEmail} className="w-full h-10">
-            {loadingEmail ? "Mengirim..." : "Kirim Link Reset"}
-          </Button>
-
-          <div className="text-xs text-muted-foreground">
-            Jika link sudah kamu dapat, lanjutkan ke halaman{" "}
-            <Link href="/reset-password" className="underline underline-offset-4">
-              reset password
-            </Link>
-            .
-          </div>
+      <div className="space-y-4" role="tabpanel">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nama@email.com"
+            autoComplete="email"
+            inputMode="email"
+            disabled={loadingEmail}
+          />
         </div>
-      ) : (
-        <OtpForm
-          purpose="reset_password"
-          otpLength={otpLength}
-          expiryMinutes={expiryMinutes}
-          defaultCooldownSeconds={cooldownSeconds}
-          showHelpLink
-          helpLinkHref="/forgot-password?method=email"
-          helpLinkLabel="Gunakan email saja"
-          turnstileEnabled={turnstileEnabled}
-          turnstileSiteKey={turnstileSiteKey}
-          onResetLinkReceived={(resetUrl) => {
-            window.location.href = resetUrl;
-          }}
-        />
-      )}
+
+        {showTurnstileForEmail ? (
+          <div className="pt-1">
+            <TurnstileWidget
+              siteKey={turnstileSiteKey}
+              onToken={(t) => setTurnstileTokenEmail(t)}
+              onExpire={() => setTurnstileTokenEmail("")}
+              onError={() => setTurnstileTokenEmail("")}
+              className="flex justify-center"
+            />
+            {settingsLoaded && !turnstileTokenEmail ? (
+              <div className="text-xs text-muted-foreground text-center mt-2">
+                Selesaikan captcha dulu untuk melanjutkan.
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <Button onClick={handleSendEmail} disabled={!canSendEmail} className="w-full h-10">
+          {loadingEmail ? "Mengirim..." : "Kirim Link Reset"}
+        </Button>
+
+        <div className="text-xs text-muted-foreground">
+          Jika link sudah kamu dapat, lanjutkan ke halaman{" "}
+          <Link href="/reset-password" className="underline underline-offset-4">
+            reset password
+          </Link>
+          .
+        </div>
+      </div>
     </AuthCard>
   );
 }
