@@ -1,10 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CategoryLogo } from "@/components/home/category-icon";
 
 interface Category {
   id: number | string;
   title: string;
+  logo?: string | null;
 }
 
 interface GameCategoriesProps {
@@ -65,13 +67,16 @@ export function GameCategories({
                   type="button"
                   key={id}
                   onClick={() => setSelectedCategory(id)}
-                  className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold outline-none duration-300 ${
-                    active ? "bg-my-color text-white" : "border border-border bg-muted"
+                  className={`inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-my-color focus-visible:ring-offset-1 focus-visible:ring-offset-background ${
+                    active
+                      ? "border border-my-color/40 bg-my-color/10 font-bold text-my-color shadow-sm"
+                      : "border border-border bg-muted text-muted-foreground hover:border-my-color/30 hover:text-foreground"
                   }`}
                   variants={categoryItemVariants}
-                  whileHover={{ scale: 1.06 }}
+                  whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.98 }}
                 >
+                  <CategoryLogo logo={category.logo} className="h-4 w-4 shrink-0" />
                   {category.title}
                 </motion.button>
               );
@@ -93,7 +98,7 @@ export function GameCategories({
           <motion.div className="absolute left-0 z-10 rounded-full shadow-md bg-muted" style={{ width: 40, height: 40 }} />
           <div className="hide-scrollbar mx-11 flex transform items-center gap-2 overflow-auto duration-300 ease-in-out md:gap-3">
             {[...Array(3)].map((_, index) => (
-              <motion.div key={index} className="whitespace-nowrap rounded-full px-14 py-3 h-8 w-24 bg-muted" />
+              <motion.div key={index} className="whitespace-nowrap rounded-full h-9 w-28 bg-muted" />
             ))}
           </div>
           <motion.div className="absolute right-0 z-10 rounded-full shadow-md bg-muted" style={{ width: 40, height: 40 }} />
