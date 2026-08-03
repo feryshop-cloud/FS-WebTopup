@@ -155,7 +155,7 @@ export default function PriceListPage() {
                         ? `/order/${selectedGame.slug}?product_id=${encodeURIComponent(String(product.id))}`
                         : "#";
 
-                      const imageUrl = product.logo || product.images || null;
+                      const imageUrl = product.logo;
 
                       return (
                         <TableRow key={product.id}>

@@ -27,7 +27,7 @@ export async function GET() {
             selling_price_platinum: product.selling_price_platinum ? Number(product.selling_price_platinum) : Number(product.selling_price),
             status: product.is_gangguan ? 0 : (product.is_active ? 1 : 0),
             is_active: product.is_active,
-            logo: product.logo || product.images || null,
+            logo: product.logo || product.images || game.logo || game.image || null,
           }));
 
         const finalProducts = gameProductsFromDb.length > 0
