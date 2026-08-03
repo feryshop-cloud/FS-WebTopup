@@ -544,8 +544,10 @@ export default function OrderPage() {
       <GuideDrawer
         open={isGuideOpen}
         onOpenChange={setIsGuideOpen}
-        guideImage={guideImagePath ? apiPath(`/api/proxy-image?path=${encodeURIComponent(guideImagePath)}`) : undefined}
+        guideImage={guideImagePath}
         guideText={gameConfig?.guide_text}
+        steps={gameConfig?.steps || (Array.isArray(gameConfig?.instructions?.steps) ? gameConfig.instructions.steps : undefined)}
+        title={gameConfig?.title || "Panduan Menemukan ID"}
       />
 
       <ConfirmDrawer
