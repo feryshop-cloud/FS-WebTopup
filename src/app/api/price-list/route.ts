@@ -69,7 +69,7 @@ export async function GET() {
                 promo_price: p.promoPrice ? Number(p.promoPrice) : null,
                 status: p.isActive ? 1 : 0,
                 is_active: p.isActive,
-                logo: p.logo || p.images || null,
+                logo: p.logo || p.images || g.logo || g.image || null,
               }));
 
             return {
