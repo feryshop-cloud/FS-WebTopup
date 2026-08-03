@@ -21,16 +21,25 @@ export interface PublicProduct {
   id: string;
   game_slug: string;
   title: string;
-  selling_price: number;
-  selling_price_gold?: number;
-  selling_price_platinum?: number;
-  cost_price?: number;
+  selling_price: number | string;
+  selling_price_gold?: number | string | null;
+  selling_price_platinum?: number | string | null;
+  cost_price?: number | string | null;
   sku?: string | null;
-  is_active: boolean;
-  is_gangguan?: boolean;
+  is_active?: boolean | null;
+  is_gangguan?: boolean | null;
   logo?: string | null;
   images?: string | null;
   brand?: string | null;
+}
+
+export interface PublicCategory {
+  id: number;
+  title: string;
+  logo?: string | null;
+  game_slug?: string | null;
+  sort_order?: number | null;
+  is_active?: boolean | null;
 }
 
 export interface RemoteSetting {
@@ -256,6 +265,54 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
       console.warn("Live Supabase products query unavailable:", error);
       return [];
     });
+}
+
+async function getLivePublicCategoriesFromRest(): Promise<PublicCategory[]> {
+  const restUrl = getSupabaseRestUrl();
+  const publishableKey = getSupabasePublishableKey();
+  if (!restUrl || !publishableKey) return [];
+
+  try {
+    const response = await fetch(
+      `${restUrl}/rest/v1/categories?select=id,title,logo,game_slug,sort_order,is_active&is_active=eq.true&order=sort_order.asc`,
+      {
+        headers: {
+          apikey: publishableKey,
+          Authorization: `Bearer ${publishableKey}`,
+        },
+        next: { revalidate: 60 },
+      },
+    );
+
+    if (!response.ok) return [];
+    return (await response.json()) as PublicCategory[];
+  } catch (error) {
+    console.warn("Live Supabase REST categories query unavailable:", error);
+    return [];
+  }
+}
+
+export async function getLivePublicCategories(): Promise<PublicCategory[]> {
+  const restCategories = await getLivePublicCategoriesFromRest();
+  if (restCategories.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
+    return restCategories;
+  }
+
+  return sqlClient<PublicCategory[]>`
+    select
+      id,
+      title,
+      logo,
+      game_slug,
+      sort_order,
+      is_active
+    from public.categories
+    where is_active = true
+    order by sort_order asc
+  `.catch((error) => {
+    console.warn("Live Supabase categories query unavailable:", error);
+    return [];
+  });
 }
 
 export async function hasCompatibleSettingsTable(): Promise<boolean> {

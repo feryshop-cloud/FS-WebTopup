@@ -1,7 +1,7 @@
 import { asc, desc, eq } from "drizzle-orm";
 
 import { db, articles, categories, games } from "@/lib/db";
-import { getLivePublicGames, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
+import { getLivePublicGames, getLivePublicCategories, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
 import { seedCategories, seedGames, seedSliders } from "@/lib/db/seed-data";
 import { getSeedArticles, hasArticleDatabaseEnabled, normalizeArticle } from "@/lib/data/articles";
 
@@ -74,14 +74,14 @@ export async function getGamesPayload() {
 
 export async function getCategoriesPayload() {
   let allCategories: any[] = [];
-  const liveGames = await getLivePublicGames();
+  const liveCategories = await getLivePublicCategories();
 
-  if (liveGames.length > 0) {
-    allCategories = liveGames.map((game) => ({
-      id: game.id,
-      title: game.title,
-      logo: game.logo || game.image,
-      game: game.slug,
+  if (liveCategories.length > 0) {
+    allCategories = liveCategories.map((c) => ({
+      id: c.id,
+      title: c.title,
+      logo: c.logo,
+      game: c.game_slug || c.title,
     }));
   }
 
