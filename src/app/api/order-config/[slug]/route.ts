@@ -23,41 +23,43 @@ export async function GET(_req: Request, context: any) {
       gameData = liveGame;
     }
 
-    // 1. Coba ambil dari Supabase / Drizzle
-    if (!gameData && shouldQueryLegacyStorefrontSchema()) {
+    // 1. Coba ambil dari Supabase / Drizzle jika productsData masih kosong
+    if (shouldQueryLegacyStorefrontSchema()) {
       try {
-        const dbGame = await db.select().from(games).where(eq(games.slug, slug)).limit(1);
-        if (dbGame && dbGame[0]) {
-          const g = dbGame[0];
-          gameData = {
-            id: g.id,
-            title: g.title,
-            slug: g.slug,
-            image: g.image,
-            banner: g.banner,
-            logo: g.logo,
-            developers: g.developers || "Game Developer",
-            category_id: g.categoryId || 1,
-            description: g.description,
-            instructions: g.instructions,
-            is_popular: g.isPopular,
-          };
-
-          const dbProducts = await db.select().from(products).where(eq(products.gameSlug, slug)).orderBy(asc(products.sortOrder));
-          if (dbProducts && dbProducts.length > 0) {
-            productsData = dbProducts.map((p) => ({
-              id: p.id,
-              title: p.title,
-              brand: g.title,
-              selling_price: Number(p.sellingPrice),
-              selling_price_gold: Number(p.sellingPriceGold),
-              selling_price_platinum: Number(p.sellingPricePlatinum),
-              promo_price: p.promoPrice ? Number(p.promoPrice) : null,
-              status: p.isActive ? 1 : 0,
-              is_active: p.isActive,
-              logo: p.logo || p.images || null,
-            }));
+        if (!gameData) {
+          const dbGame = await db.select().from(games).where(eq(games.slug, slug)).limit(1);
+          if (dbGame && dbGame[0]) {
+            const g = dbGame[0];
+            gameData = {
+              id: g.id,
+              title: g.title,
+              slug: g.slug,
+              image: g.image,
+              banner: g.banner,
+              logo: g.logo,
+              developers: g.developers || "Game Developer",
+              category_id: g.categoryId || 1,
+              description: g.description,
+              instructions: g.instructions,
+              is_popular: g.isPopular,
+            };
           }
+        }
+
+        const dbProducts = await db.select().from(products).where(eq(products.gameSlug, slug)).orderBy(asc(products.sortOrder));
+        if (dbProducts && dbProducts.length > 0) {
+          productsData = dbProducts.map((p) => ({
+            id: p.id,
+            title: p.title,
+            brand: gameData?.title || slug,
+            selling_price: Number(p.sellingPrice),
+            selling_price_gold: Number(p.sellingPriceGold),
+            selling_price_platinum: Number(p.sellingPricePlatinum),
+            promo_price: p.promoPrice ? Number(p.promoPrice) : null,
+            status: p.isActive ? 1 : 0,
+            is_active: p.isActive,
+            logo: p.logo || p.images || null,
+          }));
         }
 
         const dbPayments = await db.select().from(paymentMethods).where(eq(paymentMethods.status, 'active')).orderBy(asc(paymentMethods.sortOrder));
