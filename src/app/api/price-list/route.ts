@@ -2,27 +2,50 @@ import { NextResponse } from "next/server";
 import { db, games, products } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
-import { getLivePublicGames, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
+import { getLivePublicGames, getLivePublicProducts, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     let resultGames: any[] = [];
-    const liveGames = await getLivePublicGames();
+    const [liveGames, liveProducts] = await Promise.all([
+      getLivePublicGames(),
+      getLivePublicProducts(),
+    ]);
 
     if (liveGames.length > 0) {
-      resultGames = liveGames.map((game) => ({
-        id: game.id,
-        title: game.title,
-        slug: game.slug,
-        logo: game.logo || game.image,
-        products: (seedProducts[game.slug] || []).map((product) => ({
-          ...product,
-          brand: game.title,
-          status: product.is_active ? 1 : 0,
-        })),
-      }));
+      resultGames = liveGames.map((game) => {
+        const gameProductsFromDb = liveProducts
+          .filter((product) => product.game_slug === game.slug)
+          .map((product) => ({
+            id: product.id,
+            title: product.title,
+            brand: product.brand || game.title,
+            selling_price: Number(product.selling_price),
+            selling_price_gold: product.selling_price_gold ? Number(product.selling_price_gold) : Number(product.selling_price),
+            selling_price_platinum: product.selling_price_platinum ? Number(product.selling_price_platinum) : Number(product.selling_price),
+            status: product.is_gangguan ? 0 : (product.is_active ? 1 : 0),
+            is_active: product.is_active,
+            logo: product.logo || product.images || null,
+          }));
+
+        const finalProducts = gameProductsFromDb.length > 0
+          ? gameProductsFromDb
+          : (seedProducts[game.slug] || []).map((product) => ({
+              ...product,
+              brand: game.title,
+              status: product.is_active ? 1 : 0,
+            }));
+
+        return {
+          id: game.id,
+          title: game.title,
+          slug: game.slug,
+          logo: game.logo || game.image,
+          products: finalProducts,
+        };
+      });
     }
 
     if (resultGames.length === 0 && shouldQueryLegacyStorefrontSchema()) {

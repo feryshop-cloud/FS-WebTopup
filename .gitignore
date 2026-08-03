@@ -17,4 +17,5 @@ yarn-error.log*
 pnpm-debug.log*
 topup.ferdiananda.web.id.zip
 opencode.json
+tsconfig.tsbuildinfo
 *.tsbuildinfo
