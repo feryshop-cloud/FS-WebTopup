@@ -126,6 +126,41 @@ export async function GET(_req: Request, context: any) {
       return NextResponse.json({ success: false, message: "Game tidak ditemukan" }, { status: 404 });
     }
 
+    const foundSeed = seedGames.find((g) => g.slug === slug);
+
+    let instructionsObj: any = {};
+    if (typeof gameData?.instructions === "string") {
+      try {
+        instructionsObj = JSON.parse(gameData.instructions);
+      } catch {
+        instructionsObj = {};
+      }
+    } else if (typeof gameData?.instructions === "object" && gameData?.instructions) {
+      instructionsObj = gameData.instructions;
+    }
+
+    if (!instructionsObj.required_inputs && Array.isArray(instructionsObj.fields)) {
+      instructionsObj.required_inputs = instructionsObj.fields.map((f: any) => f.name);
+      instructionsObj.input_fields = instructionsObj.fields;
+    }
+
+    const seedInstructions = (foundSeed?.instructions as any) || {};
+
+    // If DB instructions is empty ({}) or has only 1 generic 'id' field while seed has detailed fields (e.g. Roblox, Genshin)
+    const dbHasMultiFields = Array.isArray(instructionsObj.required_inputs) && instructionsObj.required_inputs.length > 1;
+
+    const mergedConfiguration = {
+      ...seedInstructions,
+      ...instructionsObj,
+      required_inputs: (dbHasMultiFields ? instructionsObj.required_inputs : null) || seedInstructions.required_inputs || instructionsObj.required_inputs || ["id", "server"],
+      input_fields: (dbHasMultiFields ? instructionsObj.input_fields : null) || seedInstructions.input_fields || instructionsObj.input_fields,
+      options: instructionsObj.options || seedInstructions.options,
+      code_validation_nickname: instructionsObj.code_validation_nickname || seedInstructions.code_validation_nickname,
+      status_validation_nickname: instructionsObj.status_validation_nickname || seedInstructions.status_validation_nickname,
+      warning_text: instructionsObj.warning_text || seedInstructions.warning_text,
+      guide_image: gameData?.banner || gameData?.image || seedInstructions.guide_image,
+    };
+
     return NextResponse.json({
       success: true,
       game: {
@@ -135,10 +170,7 @@ export async function GET(_req: Request, context: any) {
       products: productsData,
       paymentMethod: paymentMethodsData,
       paymentMethods: paymentMethodsData,
-      gameConfiguration: {
-        ...(typeof gameData?.instructions === "object" && gameData?.instructions ? gameData.instructions : {}),
-        guide_image: gameData?.banner || gameData?.image,
-      },
+      gameConfiguration: mergedConfiguration,
     }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({

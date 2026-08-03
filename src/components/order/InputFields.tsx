@@ -5,9 +5,9 @@ import { CheckCircle2, XCircle } from 'lucide-react'
 import { apiPath } from '@/lib/routes'
 
 interface InputFieldsProps {
-  gameConfig: {
-    required_inputs: string[]
-    input_fields: {
+  gameConfig?: {
+    required_inputs?: string[]
+    input_fields?: {
       name: string
       label: string
       placeholder: string
@@ -16,7 +16,8 @@ interface InputFieldsProps {
     options?: { value: string; label: string }[]
     code_validation_nickname?: string
     warning_text?: string
-  }
+    fields?: any[]
+  } | null
   inputs: Record<string, string>
   handleInputChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -96,19 +97,32 @@ const InputFields: React.FC<InputFieldsProps> = ({
     }
   }
 
-  if (!gameConfig || !gameConfig.required_inputs) return null
+  // Extract dynamic inputs or fallback to fields array or default ID & Server
+  const rawFields = (gameConfig as any)?.fields || (gameConfig as any)?.input_fields;
+  const requiredInputs: string[] =
+    gameConfig?.required_inputs ||
+    (Array.isArray(rawFields) && rawFields.length > 0 ? rawFields.map((f: any) => f.name) : undefined) ||
+    ['id', 'server'];
+
+  const inputFieldsList: { name: string; label: string; placeholder: string; type?: string }[] =
+    gameConfig?.input_fields ||
+    (Array.isArray(rawFields) && rawFields.length > 0 ? rawFields : undefined) || [
+      { name: 'id', label: 'User ID', placeholder: 'Masukkan User ID', type: 'text' },
+      { name: 'server', label: 'Server ID', placeholder: 'Masukkan Zone ID / Server', type: 'text' },
+    ];
 
   const commonClassNames =
     'w-full rounded-lg border-0 bg-muted px-4 py-3 text-xs text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-my-color'
 
-  const totalInputs = gameConfig.required_inputs.length;
+  const totalInputs = requiredInputs.length;
+  const optionsList = gameConfig?.options || [];
 
   return (
     <>
-      {gameConfig.required_inputs.map((inputName, index) => {
-        const field = (gameConfig.input_fields || []).find((f) => f.name === inputName)
+      {requiredInputs.map((inputName, index) => {
+        const field = inputFieldsList.find((f) => f.name === inputName)
         const isDropdown =
-          inputName === 'server' && (gameConfig.options?.length || 0) > 0
+          inputName === 'server' && optionsList.length > 0
 
         const label =
           field?.label || inputName.charAt(0).toUpperCase() + inputName.slice(1)
@@ -150,7 +164,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
                 className={commonClassNames}
               >
                 <option value="">Pilih {label}</option>
-                {gameConfig.options!.map((option) => (
+                {optionsList.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -173,7 +187,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
       })}
 
       <div className="col-span-2 space-y-2">
-        {gameConfig.warning_text && (
+        {gameConfig?.warning_text && (
           <div className="w-full rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-600 dark:text-amber-400">
             <strong>Catatan / Peringatan:</strong> {gameConfig.warning_text}
           </div>
