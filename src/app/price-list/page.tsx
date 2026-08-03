@@ -114,7 +114,7 @@ export default function PriceListPage() {
               <SelectContent>
                 {gameList.map((game: any) => (
                   <SelectItem key={game.id} value={String(game.id)}>
-                    {game.game_name}
+                    {game.title || game.game_name || game.name}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -41,6 +41,8 @@ export async function GET() {
         return {
           id: game.id,
           title: game.title,
+          game_name: game.title,
+          name: game.title,
           slug: game.slug,
           logo: game.logo || game.image,
           products: finalProducts,
