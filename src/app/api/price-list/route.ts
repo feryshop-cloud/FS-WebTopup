@@ -36,6 +36,7 @@ export async function GET() {
               ...product,
               brand: game.title,
               status: product.is_active ? 1 : 0,
+              logo: product.logo || product.images || game.logo || game.image || null,
             }));
 
         return {
