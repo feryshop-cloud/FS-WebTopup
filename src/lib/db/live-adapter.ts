@@ -160,12 +160,12 @@ function mapLiveGames(rows: {
 }
 
 export async function getLivePublicGames(): Promise<PublicGame[]> {
-  liveGamesPromise ??= getLivePublicGamesFromRest().then(async (restGames) => {
-    if (restGames.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
-      return restGames;
-    }
+  const restGames = await getLivePublicGamesFromRest();
+  if (restGames.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
+    return restGames;
+  }
 
-    return sqlClient<{
+  return sqlClient<{
     id: string;
     title: string;
     slug: string;
@@ -199,9 +199,6 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
       console.warn("Live Supabase games query unavailable:", error);
       return [];
     });
-  });
-
-  return liveGamesPromise;
 }
 
 async function getLivePublicProductsFromRest(): Promise<PublicProduct[]> {
@@ -231,37 +228,34 @@ async function getLivePublicProductsFromRest(): Promise<PublicProduct[]> {
 }
 
 export async function getLivePublicProducts(): Promise<PublicProduct[]> {
-  liveProductsPromise ??= getLivePublicProductsFromRest().then(async (restProducts) => {
-    if (restProducts.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
-      return restProducts;
-    }
+  const restProducts = await getLivePublicProductsFromRest();
+  if (restProducts.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
+    return restProducts;
+  }
 
-    return sqlClient<PublicProduct[]>`
-      select
-        id::text as id,
-        game_slug,
-        title,
-        selling_price,
-        selling_price_gold,
-        selling_price_platinum,
-        cost_price,
-        sku,
-        is_active,
-        is_gangguan,
-        logo,
-        images,
-        brand
-      from public.products
-      where is_active = true
-      order by title asc
-    `
-      .catch((error) => {
-        console.warn("Live Supabase products query unavailable:", error);
-        return [];
-      });
-  });
-
-  return liveProductsPromise;
+  return sqlClient<PublicProduct[]>`
+    select
+      id::text as id,
+      game_slug,
+      title,
+      selling_price,
+      selling_price_gold,
+      selling_price_platinum,
+      cost_price,
+      sku,
+      is_active,
+      is_gangguan,
+      logo,
+      images,
+      brand
+    from public.products
+    where is_active = true
+    order by title asc
+  `
+    .catch((error) => {
+      console.warn("Live Supabase products query unavailable:", error);
+      return [];
+    });
 }
 
 export async function hasCompatibleSettingsTable(): Promise<boolean> {
