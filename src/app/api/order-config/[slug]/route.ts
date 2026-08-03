@@ -44,18 +44,20 @@ export async function GET(_req: Request, context: any) {
           };
 
           const dbProducts = await db.select().from(products).where(eq(products.gameSlug, slug)).orderBy(asc(products.sortOrder));
-          productsData = dbProducts.map((p) => ({
-            id: p.id,
-            title: p.title,
-            brand: g.title,
-            selling_price: Number(p.sellingPrice),
-            selling_price_gold: Number(p.sellingPriceGold),
-            selling_price_platinum: Number(p.sellingPricePlatinum),
-            promo_price: p.promoPrice ? Number(p.promoPrice) : null,
-            status: p.isActive ? 1 : 0,
-            is_active: p.isActive,
-            logo: p.logo || p.images || null,
-          }));
+          if (dbProducts && dbProducts.length > 0) {
+            productsData = dbProducts.map((p) => ({
+              id: p.id,
+              title: p.title,
+              brand: g.title,
+              selling_price: Number(p.sellingPrice),
+              selling_price_gold: Number(p.sellingPriceGold),
+              selling_price_platinum: Number(p.sellingPricePlatinum),
+              promo_price: p.promoPrice ? Number(p.promoPrice) : null,
+              status: p.isActive ? 1 : 0,
+              is_active: p.isActive,
+              logo: p.logo || p.images || null,
+            }));
+          }
         }
 
         const dbPayments = await db.select().from(paymentMethods).where(eq(paymentMethods.status, 'active')).orderBy(asc(paymentMethods.sortOrder));
@@ -84,29 +86,33 @@ export async function GET(_req: Request, context: any) {
     }
 
     // 2. Fallback ke seed data
-    if (!gameData) {
+    if (!gameData || productsData.length === 0) {
       const foundSeed = seedGames.find((g) => g.slug === slug);
       if (foundSeed) {
-        gameData = {
-          id: foundSeed.id,
-          title: foundSeed.title,
-          slug: foundSeed.slug,
-          image: foundSeed.image,
-          banner: foundSeed.banner,
-          logo: foundSeed.logo,
-          developers: foundSeed.developers,
-          category_id: foundSeed.categoryId,
-          description: foundSeed.description,
-          instructions: foundSeed.instructions,
-          is_popular: foundSeed.isPopular,
-        };
+        if (!gameData) {
+          gameData = {
+            id: foundSeed.id,
+            title: foundSeed.title,
+            slug: foundSeed.slug,
+            image: foundSeed.image,
+            banner: foundSeed.banner,
+            logo: foundSeed.logo,
+            developers: foundSeed.developers,
+            category_id: foundSeed.categoryId,
+            description: foundSeed.description,
+            instructions: foundSeed.instructions,
+            is_popular: foundSeed.isPopular,
+          };
+        }
 
-        const foundProducts = seedProducts[slug] || [];
-        productsData = foundProducts.map((p) => ({
-          ...p,
-          brand: foundSeed.title,
-          status: p.is_active ? 1 : 0,
-        }));
+        if (productsData.length === 0) {
+          const foundProducts = seedProducts[slug] || [];
+          productsData = foundProducts.map((p) => ({
+            ...p,
+            brand: foundSeed.title,
+            status: p.is_active ? 1 : 0,
+          }));
+        }
       }
     }
 
