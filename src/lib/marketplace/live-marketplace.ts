@@ -270,3 +270,41 @@ export async function getMarketplaceAccount(accountId: string) {
   const accounts = await getMarketplaceAccounts();
   return accounts.find((account) => account.id === accountId || account.slug === accountId) || null;
 }
+
+export async function searchLiveMarketplace(query: string, gameSlug?: string, limit: number = 20): Promise<GameAccount[]> {
+  const { restUrl, publishableKey } = getSupabaseRestConfig();
+  if (!restUrl || !publishableKey) return [];
+
+  try {
+    const params = new URLSearchParams({
+      select: "id,title_reference,account_specs,asking_price,status,image_urls,screenshot_url,created_at,games(name,slug,image_url)",
+    });
+
+    const response = await fetch(`${restUrl}/rest/v1/rpc/search_inventory?${params.toString()}`, {
+      method: "POST",
+      headers: {
+        apikey: publishableKey,
+        Authorization: `Bearer ${publishableKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query_text: query,
+        game_slug_filter: gameSlug || null,
+        match_limit: limit,
+      }),
+      next: { revalidate: 10 },
+    });
+
+    if (!response.ok) {
+      console.warn("searchLiveMarketplace response not OK:", response.status, await response.text());
+      return [];
+    }
+
+    const rows = (await response.json()) as PublicStockRow[];
+    return rows.map(mapInventoryToAccount);
+  } catch (error) {
+    console.warn("searchLiveMarketplace error:", error);
+    return [];
+  }
+}
+

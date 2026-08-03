@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Search, Filter, ArrowLeft, SlidersHorizontal, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -19,35 +19,76 @@ export function MarketplaceCategoryView({
   categorySlug,
   accounts = MOCK_ACCOUNTS,
   categories = MARKETPLACE_CATEGORIES,
+  initialQuery = "",
 }: {
   categorySlug: string;
   accounts?: GameAccount[];
   categories?: GameCategory[];
+  initialQuery?: string;
 }) {
-  const category = categories.find((c) => c.slug === categorySlug) || categories[0] || MARKETPLACE_CATEGORIES[0];
-  const allCategoryAccounts = useMemo(() => {
-    return accounts.filter((acc) => acc.gameSlug === category.slug);
-  }, [accounts, category.slug]);
+  const category = categorySlug === "all"
+    ? { name: "Semua Game", slug: "all", subtitle: "Hasil Pencarian Global", bannerUrl: "", colorTheme: "", popularRanks: [] }
+    : (categories.find((c) => c.slug === categorySlug) || categories[0] || MARKETPLACE_CATEGORIES[0]);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const allCategoryAccounts = useMemo(() => {
+    if (categorySlug === "all") return accounts;
+    return accounts.filter((acc) => acc.gameSlug === category.slug);
+  }, [accounts, category.slug, categorySlug]);
+
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [searchResults, setSearchResults] = useState<GameAccount[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [selectedRank, setSelectedRank] = useState<string>("ALL");
   const [selectedSort, setSelectedSort] = useState<string>("DEFAULT");
   const [selectedLogin, setSelectedLogin] = useState<string>("ALL");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Debounced vector search
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (q.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const queryParams = new URLSearchParams({
+          q,
+          ...(categorySlug !== "all" && { gameSlug: category.slug }),
+        });
+        const res = await fetch(`/api/search-accounts?${queryParams.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSearchResults(data);
+        }
+      } catch (err) {
+        console.error("Error fetching search results:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery, categorySlug, category.slug]);
+
   // Extract unique login types from this category's accounts
   const availableLoginTypes = useMemo(() => {
     const types = new Set<string>();
-    allCategoryAccounts.forEach((acc) => types.add(acc.specs.loginVia));
+    const baseAccounts = searchQuery.trim().length >= 2 ? searchResults : allCategoryAccounts;
+    baseAccounts.forEach((acc) => types.add(acc.specs.loginVia));
     return Array.from(types);
-  }, [allCategoryAccounts]);
+  }, [allCategoryAccounts, searchResults, searchQuery]);
 
   // Filter & Sort Logic
   const filteredAccounts = useMemo(() => {
-    return allCategoryAccounts
+    const baseAccounts = searchQuery.trim().length >= 2 ? searchResults : allCategoryAccounts;
+
+    return baseAccounts
       .filter((acc) => {
-        // Search filter
-        if (searchQuery.trim()) {
+        // Client-side search fallback for short queries
+        if (searchQuery.trim() && searchQuery.trim().length < 2) {
           const q = searchQuery.toLowerCase();
           const matchTitle = acc.title.toLowerCase().includes(q);
           const matchRank = acc.specs.rank.toLowerCase().includes(q);
@@ -74,7 +115,7 @@ export function MarketplaceCategoryView({
         }
         return 0; // DEFAULT (Featured first)
       });
-  }, [allCategoryAccounts, searchQuery, selectedRank, selectedLogin, selectedSort]);
+  }, [allCategoryAccounts, searchResults, searchQuery, selectedRank, selectedLogin, selectedSort]);
 
   const resetFilters = () => {
     setSearchQuery("");

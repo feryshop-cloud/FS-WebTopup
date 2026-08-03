@@ -8,6 +8,9 @@ interface CategoryPageProps {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    q?: string;
+  }>;
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
@@ -23,8 +26,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params;
+  const { q = "" } = await searchParams;
   const [accounts, categories] = await Promise.all([getMarketplaceAccounts(), getMarketplaceCategories()]);
   const category = categories.find((c) => c.slug === slug);
 
@@ -35,7 +39,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <ContentLayout title={`Katalog ${category.name}`}>
       <div className="space-y-8">
-        <MarketplaceCategoryView categorySlug={slug} accounts={accounts} categories={categories} />
+        <MarketplaceCategoryView categorySlug={slug} accounts={accounts} categories={categories} initialQuery={q} />
       </div>
     </ContentLayout>
   );
