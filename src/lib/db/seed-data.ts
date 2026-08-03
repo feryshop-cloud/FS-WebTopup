@@ -29,10 +29,13 @@ export const seedGames = [
         'Pilih metode pembayaran yang Anda inginkan',
         'Selesaikan pembayaran dan Diamond akan otomatis masuk ke akun Anda',
       ],
-      fields: [
-        { name: 'id', label: 'User ID', placeholder: 'Masukkan User ID', type: 'text', required: true },
-        { name: 'server', label: 'Zone ID', placeholder: 'Masukkan Zone ID (1234)', type: 'text', required: true },
+      required_inputs: ['id', 'server'],
+      input_fields: [
+        { name: 'id', label: 'User ID', placeholder: 'Masukkan User ID', type: 'text' },
+        { name: 'server', label: 'Server ID', placeholder: 'Masukkan Server ID', type: 'text' },
       ],
+      code_validation_nickname: 'ml',
+      status_validation_nickname: 'yes',
     },
     isPopular: true,
     isActive: true,
@@ -56,8 +59,9 @@ export const seedGames = [
         'Pilih metode pembayaran',
         'Selesaikan pembayaran dan Diamond akan langsung bertambah',
       ],
-      fields: [
-        { name: 'id', label: 'Player ID', placeholder: 'Masukkan Player ID', type: 'text', required: true },
+      required_inputs: ['id'],
+      input_fields: [
+        { name: 'id', label: 'User ID', placeholder: 'Masukkan User ID', type: 'text' },
       ],
     },
     isPopular: true,
@@ -81,9 +85,11 @@ export const seedGames = [
         'Pilih nominal UC',
         'Pilih metode pembayaran dan selesaikan transaksi',
       ],
-      fields: [
-        { name: 'id', label: 'Player ID', placeholder: 'Masukkan Player ID', type: 'text', required: true },
+      required_inputs: ['id'],
+      input_fields: [
+        { name: 'id', label: 'User ID', placeholder: 'Masukkan User ID', type: 'text' },
       ],
+      warning_text: 'ID Indonesia bisa membeli produk Global, tapi ID Global tidak bisa membeli produk Indo (khusus Top Up Instant).',
     },
     isPopular: true,
     isActive: true,
@@ -106,8 +112,9 @@ export const seedGames = [
         'Pilih nominal Valorant Points',
         'Pilih pembayaran dan selesaikan',
       ],
-      fields: [
-        { name: 'id', label: 'Riot ID', placeholder: 'Username#TAG', type: 'text', required: true },
+      required_inputs: ['id'],
+      input_fields: [
+        { name: 'id', label: 'Riot ID (Nama#Tag)', placeholder: 'Contoh: tnaka#sea', type: 'text' },
       ],
     },
     isPopular: true,
@@ -131,9 +138,16 @@ export const seedGames = [
         'Pilih nominal Genesis Crystals atau Welkin Moon',
         'Pilih metode pembayaran dan selesaikan transaksi',
       ],
-      fields: [
-        { name: 'id', label: 'User ID (UID)', placeholder: 'Masukkan UID', type: 'text', required: true },
-        { name: 'server', label: 'Server', placeholder: 'Pilih Server (Asia/America/Europe/TW_HK_MO)', type: 'select', required: true },
+      required_inputs: ['id', 'server'],
+      input_fields: [
+        { name: 'id', label: 'UID', placeholder: 'Masukkan UID', type: 'text' },
+        { name: 'server', label: 'Server', placeholder: 'Pilih Server', type: 'select' },
+      ],
+      options: [
+        { value: 'Asia', label: 'Asia' },
+        { value: 'America', label: 'America' },
+        { value: 'Europe', label: 'Europe' },
+        { value: 'TW_HK_MO', label: 'TW, HK, MO' },
       ],
     },
     isPopular: true,
@@ -153,13 +167,18 @@ export const seedGames = [
     instructions: {
       title: 'Cara Top Up Roblox',
       steps: [
-        'Masukkan Username Roblox Anda',
+        'Masukkan Username/Email, Password, dan 3 Code Backup Anda',
         'Pilih nominal Robux yang diinginkan',
-        'Selesaikan pembayaran',
+        'Matikan Verify-to-Login (V2L) dan Passkey sebelum order',
+        'Selesaikan pembayaran (Proses manual estimasi 10-180 menit)',
       ],
-      fields: [
-        { name: 'id', label: 'Username Roblox', placeholder: 'Masukkan Username', type: 'text', required: true },
+      required_inputs: ['email', 'password', 'code_backup'],
+      input_fields: [
+        { name: 'email', label: 'Username / Email', placeholder: 'Masukkan Username/Email', type: 'text' },
+        { name: 'password', label: 'Password Akun', placeholder: 'Masukkan Password', type: 'password' },
+        { name: 'code_backup', label: '3 Code Backup', placeholder: 'Masukkan 3 Code Backup', type: 'text' },
       ],
+      warning_text: 'Top up manual (06.00–21.59 WIB, estimasi 10–180 menit). Wajib mematikan Verify-to-Login (V2L) dan Passkey sebelum order.',
     },
     isPopular: true,
     isActive: true,
@@ -178,12 +197,13 @@ export const seedGames = [
     instructions: {
       title: 'Cara Top Up Honor of Kings',
       steps: [
-        'Masukkan Player ID Honor of Kings Anda',
+        'Masukkan UID Honor of Kings Anda',
         'Pilih nominal Tokens atau Card',
         'Selesaikan pembayaran',
       ],
-      fields: [
-        { name: 'id', label: 'Player ID', placeholder: 'Masukkan Player ID', type: 'text', required: true },
+      required_inputs: ['id'],
+      input_fields: [
+        { name: 'id', label: 'UID', placeholder: 'Masukkan UID', type: 'text' },
       ],
     },
     isPopular: true,
@@ -203,13 +223,15 @@ export const seedGames = [
     instructions: {
       title: 'Cara Top Up Call of Duty Mobile',
       steps: [
-        'Masukkan OpenID CODM Anda',
+        'Masukkan Player ID CODM Anda',
         'Pilih nominal CP',
         'Selesaikan pembayaran',
       ],
-      fields: [
-        { name: 'id', label: 'OpenID CODM', placeholder: 'Masukkan OpenID', type: 'text', required: true },
+      required_inputs: ['id'],
+      input_fields: [
+        { name: 'id', label: 'Player ID', placeholder: 'Masukkan Player ID', type: 'text' },
       ],
+      warning_text: 'Akun yang terhubung (bind) ke Garena otomatis tidak didukung (akan gagal top up).',
     },
     isPopular: false,
     isActive: true,

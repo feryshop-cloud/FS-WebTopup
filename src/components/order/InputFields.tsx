@@ -15,6 +15,7 @@ interface InputFieldsProps {
     }[]
     options?: { value: string; label: string }[]
     code_validation_nickname?: string
+    warning_text?: string
   }
   inputs: Record<string, string>
   handleInputChange: (
@@ -100,6 +101,8 @@ const InputFields: React.FC<InputFieldsProps> = ({
   const commonClassNames =
     'w-full rounded-lg border-0 bg-muted px-4 py-3 text-xs text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-my-color'
 
+  const totalInputs = gameConfig.required_inputs.length;
+
   return (
     <>
       {gameConfig.required_inputs.map((inputName, index) => {
@@ -124,8 +127,13 @@ const InputFields: React.FC<InputFieldsProps> = ({
           }
         }
 
+        const colSpanClass =
+          totalInputs === 1 || totalInputs > 2
+            ? 'col-span-2'
+            : 'col-span-2 sm:col-span-1'
+
         return (
-          <div key={`${inputName}-${index}`} ref={setRef} className="space-y-1">
+          <div key={`${inputName}-${index}`} ref={setRef} className={`space-y-1 ${colSpanClass}`}>
             <label
               htmlFor={inputName}
               className="block text-xs font-semibold text-card-foreground"
@@ -164,7 +172,13 @@ const InputFields: React.FC<InputFieldsProps> = ({
         )
       })}
 
-      <div className="col-span-2">
+      <div className="col-span-2 space-y-2">
+        {gameConfig.warning_text && (
+          <div className="w-full rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-600 dark:text-amber-400">
+            <strong>Catatan / Peringatan:</strong> {gameConfig.warning_text}
+          </div>
+        )}
+
         {loading && (
           <div className="w-full inline-flex items-center gap-2 rounded-lg border border-muted-foreground/30 bg-muted px-3 py-2 text-xs text-muted-foreground">
             <span className="h-2 w-2 animate-pulse rounded-full bg-muted-foreground" />
