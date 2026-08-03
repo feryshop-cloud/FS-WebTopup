@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { useSettings } from "@/context/settings-context";
 import { apiPath, withBasePath } from "@/lib/routes";
 
 const fetcher = async (url: string) => {
@@ -127,6 +128,9 @@ export default function AccountSettingsApiPage() {
     (session as any)?.user?.token ||
     (session as any)?.user?.accessToken;
   const isAuthed = status === "authenticated" && Boolean(token);
+
+  const settings = useSettings() as { data?: Record<string, any> } | null;
+  const featureEnabled = Boolean(settings?.data?.["enable_account_api_settings"]);
 
   const {
     data: me,
@@ -288,6 +292,30 @@ export default function AccountSettingsApiPage() {
       setTogglingStatus(false);
     }
   };
+
+  if (!featureEnabled) {
+    return (
+      <ContentLayout title="Pengaturan API">
+        <Card className="mx-auto max-w-2xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5" />
+              Pengaturan API
+              <Badge variant="secondary" className="ml-auto">
+                Nonaktif
+              </Badge>
+            </CardTitle>
+            <CardDescription>Fitur ini sedang dinonaktifkan oleh admin.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild variant="secondary">
+              <Link href="/account-settings">Kembali ke Pengaturan Akun</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </ContentLayout>
+    );
+  }
 
   if (status === "loading") {
     return (

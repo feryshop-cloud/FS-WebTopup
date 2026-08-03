@@ -365,4 +365,5 @@ export const seedSettings = {
   social_facebook: 'https://facebook.com',
   social_instagram: 'https://instagram.com',
   social_whatsapp: 'https://wa.me/628123456789',
+  enable_account_api_settings: false,
 };

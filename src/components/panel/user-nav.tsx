@@ -4,6 +4,8 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Store, KeyRound, LogOut, LayoutDashboard, Settings2 } from "lucide-react";
 
+import { useSettings } from "@/context/settings-context";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +22,8 @@ import {
 
 export function UserNav() {
   const { data: session } = useSession();
+  const settings = useSettings() as { data?: Record<string, any> } | null;
+  const enableApiSettings = Boolean(settings?.data?.["enable_account_api_settings"]);
 
   const getBadgeClass = (role?: string | null) => {
     switch (role) {
@@ -80,12 +84,14 @@ export function UserNav() {
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem asChild>
-            <Link href="/account-settings/api" className="flex items-center">
-              <KeyRound className="w-4 h-4 mr-3 text-muted-foreground" />
-              Pengaturan API
-            </Link>
-          </DropdownMenuItem>
+          {enableApiSettings && (
+            <DropdownMenuItem asChild>
+              <Link href="/account-settings/api" className="flex items-center">
+                <KeyRound className="w-4 h-4 mr-3 text-muted-foreground" />
+                Pengaturan API
+              </Link>
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem asChild>
             <Link href="/marketplace" className="flex items-center">
