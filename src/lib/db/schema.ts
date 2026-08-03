@@ -130,12 +130,12 @@ export const orders = pgTable('orders', {
   whatsapp: varchar('whatsapp', { length: 50 }),
   email: varchar('email', { length: 255 }),
   expiredTime: integer('expired_time'), // unix timestamp
+  accountData: jsonb('account_data'),
   pricingJson: jsonb('pricing_json'), // detail breakdown
   gatewayResponse: jsonb('gateway_response'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
-
 // 7. Promo Codes
 export const promoCodes = pgTable('promo_codes', {
   id: serial('id').primaryKey(),

@@ -5,8 +5,9 @@ interface InputSelectionProps {
   gameConfig: any;
   inputs: any;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  idRef: React.RefObject<HTMLDivElement | null>;
-  serverRef: React.RefObject<HTMLDivElement | null>;
+  inputRefs?: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
+  idRef?: React.RefObject<HTMLDivElement | null>;
+  serverRef?: React.RefObject<HTMLDivElement | null>;
   openGuideDrawer: () => void;
 }
 
@@ -14,6 +15,7 @@ export default function InputSelection({
   gameConfig,
   inputs,
   handleInputChange,
+  inputRefs,
   idRef,
   serverRef,
   openGuideDrawer,
@@ -38,6 +40,7 @@ export default function InputSelection({
             gameConfig={gameConfig}
             inputs={inputs}
             handleInputChange={handleInputChange}
+            inputRefs={inputRefs}
             idRef={idRef}
             serverRef={serverRef}
           />

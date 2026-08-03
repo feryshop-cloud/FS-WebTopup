@@ -56,7 +56,7 @@ export default function OrderPage() {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
-  const [inputs, setInputs] = useState({ id: "", server: "" });
+  const [inputs, setInputs] = useState<Record<string, string>>({});
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
 
@@ -83,6 +83,7 @@ export default function OrderPage() {
 
   const productRef = useRef<HTMLDivElement>(null);
   const idRef = useRef<HTMLDivElement>(null);
+  const inputRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const inputRef = useRef(inputs);
   const serverRef = useRef<HTMLDivElement>(null);
   const paymentRef = useRef<HTMLDivElement>(null);
@@ -339,10 +340,10 @@ export default function OrderPage() {
       if (!gameConfig) return;
 
       for (const inputName of gameConfig.required_inputs || []) {
-        if (inputName in inputs && !(inputs as any)[inputName]) {
+        if (!inputs[inputName] || inputs[inputName].trim() === "") {
           toast.error("Silahkan isi data akun terlebih dahulu.");
-          if (inputName === "id") idRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-          if (inputName === "server") serverRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+          const targetEl = inputRefs.current[inputName] || (inputName === "id" ? idRef.current : inputName === "server" ? serverRef.current : null);
+          targetEl?.scrollIntoView({ behavior: "smooth", block: "center" });
           return;
         }
       }
@@ -386,10 +387,16 @@ export default function OrderPage() {
       payment_method_id: selectedPayment,
       whatsapp,
       promo_code: promoCode || null,
+      inputs,
     };
 
-    if (gameConfig.required_inputs?.includes("id")) jsonData.id = inputs.id;
-    if (gameConfig.required_inputs?.includes("server")) jsonData.server = inputs.server;
+    for (const inputName of gameConfig.required_inputs || []) {
+      if (inputs[inputName]) {
+        jsonData[inputName] = inputs[inputName];
+      }
+    }
+    if (inputs.id) jsonData.id = inputs.id;
+    if (inputs.server) jsonData.server = inputs.server;
     if (nickname) jsonData.nickname = nickname;
 
     if (isAdmin) {
@@ -463,6 +470,7 @@ export default function OrderPage() {
                   gameConfig={gameConfig}
                   inputs={inputs}
                   handleInputChange={handleInputChange}
+                  inputRefs={inputRefs}
                   idRef={idRef}
                   serverRef={serverRef}
                   openGuideDrawer={openGuideDrawer}

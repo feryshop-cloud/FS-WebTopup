@@ -9,20 +9,30 @@ export async function POST(req: Request) {
     const now = new Date();
     const expiredTime = Math.floor(now.getTime() / 1000) + 86400; // 24 jam
 
+    // Extract dynamic account inputs if provided
+    const accountInputs = body.inputs || body.account_data || body.accountData || {};
+    const primaryId = accountInputs.id || accountInputs.user_id || accountInputs.uid || accountInputs.email || accountInputs.username || accountInputs.riot_id || body.id_games || body.idGames || body.id || "-";
+    const serverVal = accountInputs.server || body.server_games || body.serverGames || body.server || "";
+
+    // Merge any loose account fields from body if not in accountInputs
+    const fullAccountData = { ...accountInputs };
+    if (body.id && !fullAccountData.id) fullAccountData.id = body.id;
+    if (body.server && !fullAccountData.server) fullAccountData.server = body.server;
+
     const newOrderData = {
       orderId,
       gameSlug: body.game_slug || body.slug || "mobile-legends",
       productId: body.product_id || body.productId || "SKU-001",
       productTitle: body.product_title || body.productTitle || "Nominal Topup",
-      idGames: body.id_games || body.idGames || body.id || "-",
-      serverGames: body.server_games || body.serverGames || body.server || "",
+      idGames: String(primaryId),
+      serverGames: String(serverVal),
       nickname: body.nickname || "Player",
       quantity: Number(body.quantity || 1),
       price: body.price ? String(body.price) : "0",
       totalPrice: body.total_price || body.totalPrice ? String(body.total_price || body.totalPrice) : "0",
-      paymentMethodId: "qris",
-      paymentName: "QRIS (All Bank & E-Wallet)",
-      paymentCode: "QRIS",
+      paymentMethodId: body.payment_method_id || body.paymentMethodId || "qris",
+      paymentName: body.payment_name || body.paymentName || "QRIS (All Bank & E-Wallet)",
+      paymentCode: body.payment_code || body.paymentCode || "QRIS",
       whatsapp: body.whatsapp || "",
       email: body.email || "",
       promoCode: body.promo_code || body.promoCode || "",
@@ -30,6 +40,7 @@ export async function POST(req: Request) {
       paymentStatus: "pending",
       buyStatus: "pending",
       expiredTime,
+      accountData: fullAccountData,
     };
 
     // Coba simpan ke database Supabase

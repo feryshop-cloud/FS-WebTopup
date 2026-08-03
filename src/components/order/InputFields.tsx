@@ -20,6 +20,7 @@ interface InputFieldsProps {
   handleInputChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void
+  inputRefs?: React.MutableRefObject<Record<string, HTMLDivElement | null>>
   idRef?: React.RefObject<HTMLDivElement | null>
   serverRef?: React.RefObject<HTMLDivElement | null>
 }
@@ -38,6 +39,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
   gameConfig,
   inputs,
   handleInputChange,
+  inputRefs,
   idRef,
   serverRef,
 }) => {
@@ -84,7 +86,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
         setCountry(null)
         setError(data?.error || 'Nickname tidak ditemukan.')
       }
-    } catch (err) {
+    } catch {
       setNickname(null)
       setCountry(null)
       setError('Gagal memvalidasi ID. Silakan coba lagi.')
@@ -101,19 +103,29 @@ const InputFields: React.FC<InputFieldsProps> = ({
   return (
     <>
       {gameConfig.required_inputs.map((inputName, index) => {
-        const field = gameConfig.input_fields.find((f) => f.name === inputName)
-        const ref =
-          inputName === 'id' ? idRef : inputName === 'server' ? serverRef : null
+        const field = (gameConfig.input_fields || []).find((f) => f.name === inputName)
         const isDropdown =
           inputName === 'server' && (gameConfig.options?.length || 0) > 0
 
         const label =
           field?.label || inputName.charAt(0).toUpperCase() + inputName.slice(1)
         const placeholder = field?.placeholder || `Masukkan ${label}`
-        const type = field?.type || 'text'
+        const type = field?.type || (inputName === 'password' ? 'password' : 'text')
+
+        const setRef = (el: HTMLDivElement | null) => {
+          if (inputRefs?.current) {
+            inputRefs.current[inputName] = el
+          }
+          if (inputName === 'id' && idRef) {
+            (idRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+          }
+          if (inputName === 'server' && serverRef) {
+            (serverRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+          }
+        }
 
         return (
-          <div key={`${inputName}-${index}`} ref={ref} className="space-y-1">
+          <div key={`${inputName}-${index}`} ref={setRef} className="space-y-1">
             <label
               htmlFor={inputName}
               className="block text-xs font-semibold text-card-foreground"

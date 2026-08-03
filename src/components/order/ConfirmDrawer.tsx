@@ -21,7 +21,7 @@ interface ConfirmDrawerProps {
   promoCode?: string | null;
   promoDiscount?: number;
   quantity?: number;
-  inputs: { id?: string; server?: string };
+  inputs: Record<string, string>;
   nickname?: string | null;
   loggedInEmail?: string | null;
   email?: string;
@@ -115,19 +115,18 @@ const Content = ({
               </div>
             )}
 
-            {gameConfig?.required_inputs?.includes("id") && (
-              <div className="flex justify-between text-sm">
-                <span>Id</span>
-                <span>{inputs.id}</span>
-              </div>
-            )}
-
-            {gameConfig?.required_inputs?.includes("server") && (
-              <div className="flex justify-between text-sm">
-                <span>Server</span>
-                <span>{inputs.server}</span>
-              </div>
-            )}
+            {(gameConfig?.required_inputs || Object.keys(inputs)).map((inputName: string) => {
+              if (!inputs[inputName]) return null;
+              const field = (gameConfig?.input_fields || []).find((f: any) => f.name === inputName);
+              const label = field?.label || inputName.charAt(0).toUpperCase() + inputName.slice(1);
+              const displayVal = inputName === 'password' ? '••••••••' : inputs[inputName];
+              return (
+                <div key={inputName} className="flex justify-between text-sm">
+                  <span>{label}</span>
+                  <span>{displayVal}</span>
+                </div>
+              );
+            })}
 
             <div className="flex justify-between text-sm">
               <span>Items</span>

@@ -44,8 +44,8 @@ export default function PaymentSelection({
 
   useEffect(() => {
     const groups = Object.keys(groupedPaymentMethods);
-    if (groups.length > 0 && !openAccordion) {
-      setOpenAccordion(groups[0]);
+    if (groups.length > 0) {
+      setOpenAccordion((prev) => prev ?? groups[0]);
     }
   }, [groupedPaymentMethods]);
 

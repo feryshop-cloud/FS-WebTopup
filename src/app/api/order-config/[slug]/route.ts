@@ -136,7 +136,8 @@ export async function GET(_req: Request, context: any) {
       paymentMethod: paymentMethodsData,
       paymentMethods: paymentMethodsData,
       gameConfiguration: {
-        guide_image: gameData.banner || gameData.image,
+        ...(typeof gameData?.instructions === "object" && gameData?.instructions ? gameData.instructions : {}),
+        guide_image: gameData?.banner || gameData?.image,
       },
     }, { status: 200 });
   } catch (err: any) {
