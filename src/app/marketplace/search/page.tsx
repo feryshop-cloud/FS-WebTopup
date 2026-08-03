@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ContentLayout } from "@/components/panel/content-layout";
 import { MarketplaceCategoryView } from "@/components/marketplace/category-view";
-import { getMarketplaceAccounts, getMarketplaceCategories } from "@/lib/marketplace/live-marketplace";
+import { getMarketplaceAccounts, getMarketplaceCategories, searchLiveMarketplace } from "@/lib/marketplace/live-marketplace";
 
 export const metadata: Metadata = {
   title: "Feryshop | Pencarian Akun Game Sultan",
@@ -18,8 +18,9 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = "" } = await searchParams;
+  const query = q.trim();
   const [accounts, categories] = await Promise.all([
-    getMarketplaceAccounts(),
+    query ? searchLiveMarketplace(query) : getMarketplaceAccounts(),
     getMarketplaceCategories(),
   ]);
 

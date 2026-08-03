@@ -27,7 +27,17 @@ export function MarketplaceCategoryView({
   initialQuery?: string;
 }) {
   const category = categorySlug === "all"
-    ? { name: "Semua Game", slug: "all", subtitle: "Hasil Pencarian Global", bannerUrl: "", colorTheme: "", popularRanks: [] }
+    ? ({
+        id: "all",
+        name: "Semua Game",
+        slug: "all",
+        subtitle: "Hasil Pencarian Global",
+        iconName: "mlbb",
+        bannerUrl: "",
+        totalAccounts: accounts.length,
+        colorTheme: "from-primary/20 to-secondary/20",
+        popularRanks: []
+      } as GameCategory)
     : (categories.find((c) => c.slug === categorySlug) || categories[0] || MARKETPLACE_CATEGORIES[0]);
 
   const allCategoryAccounts = useMemo(() => {
@@ -36,7 +46,9 @@ export function MarketplaceCategoryView({
   }, [accounts, category.slug, categorySlug]);
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [searchResults, setSearchResults] = useState<GameAccount[]>([]);
+  const [searchResults, setSearchResults] = useState<GameAccount[]>(
+    initialQuery.trim().length >= 2 ? accounts : []
+  );
   const [isSearching, setIsSearching] = useState(false);
   const [selectedRank, setSelectedRank] = useState<string>("ALL");
   const [selectedSort, setSelectedSort] = useState<string>("DEFAULT");
@@ -329,7 +341,12 @@ export function MarketplaceCategoryView({
           )}
         </div>
 
-        {filteredAccounts.length > 0 ? (
+        {isSearching ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+            <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Mencari akun terbaik untukmu...</p>
+          </div>
+        ) : filteredAccounts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-x-6 sm:gap-y-6">
             {filteredAccounts.map((account) => (
               <AccountCard key={account.id} account={account} />
