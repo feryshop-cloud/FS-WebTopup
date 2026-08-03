@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET(_req: Request, context: any) {
   try {
-    const slug = context?.params?.slug;
+    const params = await context?.params;
+    const slug = params?.slug;
     if (!slug || typeof slug !== "string") {
       return NextResponse.json({ success: false, message: "Slug tidak ditemukan" }, { status: 400 });
     }
@@ -110,7 +111,7 @@ export async function GET(_req: Request, context: any) {
     }
 
     if (paymentMethodsData.length === 0) {
-      paymentMethodsData = seedPaymentMethods;
+      paymentMethodsData = seedPaymentMethods.filter((pm) => pm.status === "active");
     }
 
     if (!gameData) {

@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: Request, context: any) {
-  const slug = context?.params?.slug;
+  const params = await context?.params;
+  const slug = params?.slug;
 
   if (!slug || typeof slug !== "string") {
     return NextResponse.json({ message: "Slug tidak ditemukan" }, { status: 400 });

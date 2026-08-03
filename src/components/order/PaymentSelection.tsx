@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PaymentMethod } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +41,13 @@ export default function PaymentSelection({
   sectionId,
 }: PaymentSelectionProps) {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+
+  useEffect(() => {
+    const groups = Object.keys(groupedPaymentMethods);
+    if (groups.length > 0 && !openAccordion) {
+      setOpenAccordion(groups[0]);
+    }
+  }, [groupedPaymentMethods]);
 
   const step = useMemo(() => {
     const n = Number(stepNumber);

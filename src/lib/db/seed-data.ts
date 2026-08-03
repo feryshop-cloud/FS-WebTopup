@@ -170,7 +170,7 @@ export const seedPaymentMethods = [
     fee: 1000,
     fee_percent: 1.5,
     type: 'e-wallet',
-    status: 'active',
+    status: 'inactive',
     group: 'QRIS & E-Wallet',
     instructions: [
       { title: 'Cara Bayar via GoPay', steps: ['Klik tombol Bayar Sekarang untuk membuka aplikasi Gojek/GoPay', 'Konfirmasi nominal pembayaran', 'Masukkan PIN GoPay Anda'] },
@@ -186,7 +186,7 @@ export const seedPaymentMethods = [
     fee: 4000,
     fee_percent: 0,
     type: 'va',
-    status: 'active',
+    status: 'inactive',
     group: 'Virtual Account Bank',
     instructions: [
       { title: 'm-BCA (BCA mobile)', steps: ['Buka BCA mobile dan pilih m-BCA', 'Pilih menu m-Transfer > BCA Virtual Account', 'Masukkan nomor Virtual Account yang tertera', 'Periksa nominal pembayaran dan masukkan PIN m-BCA'] },
@@ -202,7 +202,7 @@ export const seedPaymentMethods = [
     fee: 4000,
     fee_percent: 0,
     type: 'va',
-    status: 'active',
+    status: 'inactive',
     group: 'Virtual Account Bank',
     instructions: [
       { title: 'Livin by Mandiri', steps: ['Buka aplikasi Livin by Mandiri', 'Pilih menu Bayar > Multi Payment', 'Masukkan nomor Virtual Account', 'Konfirmasi dan masukkan PIN'] },
@@ -218,7 +218,7 @@ export const seedPaymentMethods = [
     fee: 5000,
     fee_percent: 0,
     type: 'convenience_store',
-    status: 'active',
+    status: 'inactive',
     group: 'Convenience Store',
     instructions: [
       { title: 'Pembayaran di Alfamart / Alfamidi', steps: ['Kunjungi kasir Alfamart atau Alfamidi terdekat', 'Beritahu kasir ingin membayar transaksi Feryshop / Merchant Kode Pembayaran', 'Tunjukkan Kode Pembayaran kepada kasir', 'Lakukan pembayaran dengan tunai atau non-tunai'] },
