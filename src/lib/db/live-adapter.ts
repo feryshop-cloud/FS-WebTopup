@@ -82,11 +82,15 @@ function getSupabasePublishableKey() {
 export async function getLivePublicGames(): Promise<PublicGame[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
-  if (!restUrl || !publishableKey) return [];
+  if (!restUrl || !publishableKey) {
+    console.warn(`[getLivePublicGames] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    return [];
+  }
 
   try {
+    const url = `${restUrl}/rest/v1/games?select=id,name,title,slug,image_url,banner,logo,developers,category_id,description,instructions,is_popular,is_active,sort_order&is_active=eq.true&order=sort_order.asc&order=name.asc`;
     const response = await fetch(
-      `${restUrl}/rest/v1/games?select=id,name,title,slug,image_url,banner,logo,developers,category_id,description,instructions,is_popular,is_active,sort_order&is_active=eq.true&order=sort_order.asc&order=name.asc`,
+      url,
       {
         headers: {
           apikey: publishableKey,
@@ -96,7 +100,11 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
       },
     );
 
-    if (!response.ok) return [];
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`[getLivePublicGames HTTP ${response.status}]:`, errText);
+      return [];
+    }
 
     const rows = await response.json() as {
       id: string;
@@ -113,9 +121,10 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
       is_popular: boolean | null;
     }[];
 
+    console.log(`[getLivePublicGames SUCCESS] Retrieved ${rows.length} games`);
     return mapLiveGames(rows);
   } catch (error) {
-    console.warn("Live Supabase REST games query unavailable:", error);
+    console.error("[getLivePublicGames ERROR]:", error);
     return [];
   }
 }
@@ -186,7 +195,10 @@ function mapLiveGames(rows: {
 export async function getLivePublicProducts(): Promise<PublicProduct[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
-  if (!restUrl || !publishableKey) return [];
+  if (!restUrl || !publishableKey) {
+    console.warn(`[getLivePublicProducts] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    return [];
+  }
 
   try {
     const response = await fetch(
@@ -200,11 +212,17 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
       },
     );
 
-    if (!response.ok) return [];
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`[getLivePublicProducts HTTP ${response.status}]:`, errText);
+      return [];
+    }
 
-    return await response.json() as PublicProduct[];
+    const data = await response.json() as PublicProduct[];
+    console.log(`[getLivePublicProducts SUCCESS] Retrieved ${data.length} products`);
+    return data;
   } catch (error) {
-    console.warn("Live Supabase REST products query unavailable:", error);
+    console.error("[getLivePublicProducts ERROR]:", error);
     return [];
   }
 }
@@ -212,7 +230,10 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 export async function getLivePublicCategories(): Promise<PublicCategory[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
-  if (!restUrl || !publishableKey) return [];
+  if (!restUrl || !publishableKey) {
+    console.warn(`[getLivePublicCategories] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    return [];
+  }
 
   try {
     const response = await fetch(
@@ -226,10 +247,16 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
       },
     );
 
-    if (!response.ok) return [];
-    return (await response.json()) as PublicCategory[];
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`[getLivePublicCategories HTTP ${response.status}]:`, errText);
+      return [];
+    }
+    const data = (await response.json()) as PublicCategory[];
+    console.log(`[getLivePublicCategories SUCCESS] Retrieved ${data.length} categories`);
+    return data;
   } catch (error) {
-    console.warn("Live Supabase REST categories query unavailable:", error);
+    console.error("[getLivePublicCategories ERROR]:", error);
     return [];
   }
 }
@@ -237,7 +264,10 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
 export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
-  if (!restUrl || !publishableKey) return [];
+  if (!restUrl || !publishableKey) {
+    console.warn(`[getLivePublicPaymentMethods] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    return [];
+  }
 
   try {
     const response = await fetch(
@@ -251,10 +281,16 @@ export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod
       },
     );
 
-    if (!response.ok) return [];
-    return (await response.json()) as PublicPaymentMethod[];
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`[getLivePublicPaymentMethods HTTP ${response.status}]:`, errText);
+      return [];
+    }
+    const data = (await response.json()) as PublicPaymentMethod[];
+    console.log(`[getLivePublicPaymentMethods SUCCESS] Retrieved ${data.length} payment methods`);
+    return data;
   } catch (error) {
-    console.warn("Live Supabase REST payment methods query unavailable:", error);
+    console.error("[getLivePublicPaymentMethods ERROR]:", error);
     return [];
   }
 }

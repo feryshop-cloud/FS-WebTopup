@@ -6,11 +6,14 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    let resultGames: any[] = [];
     const [liveGames, liveProducts] = await Promise.all([
       getLivePublicGames(),
       getLivePublicProducts(),
     ]);
+
+    console.log(`[API /api/price-list] Fetched liveGames count: ${liveGames.length}, liveProducts count: ${liveProducts.length}`);
+
+    let resultGames: any[] = [];
 
     if (liveGames.length > 0) {
       resultGames = liveGames.map((game) => {
@@ -50,6 +53,7 @@ export async function GET() {
     }
 
     if (resultGames.length === 0) {
+      console.warn("[API /api/price-list] liveGames kosong! Fallback ke seedGames.");
       resultGames = seedGames.map((g) => {
         const gameProducts = (seedProducts[g.slug] || []).map((p) => ({
           ...p,
@@ -72,10 +76,11 @@ export async function GET() {
       data: resultGames,
     }, { status: 200 });
   } catch (err: any) {
+    console.error("[API /api/price-list ERROR]:", err);
     return NextResponse.json({
       success: false,
       message: "Gagal memuat daftar harga",
-      error: err?.message,
+      error: err?.message || String(err),
     }, { status: 500 });
   }
 }
