@@ -1,5 +1,3 @@
-import { hasDatabaseConnection, sqlClient } from "@/lib/db";
-
 const FALLBACK_GAME_IMAGE = "/placeholder.png";
 const FALLBACK_GAME_LOGO = "/logo-topup.webp";
 
@@ -47,14 +45,6 @@ export interface RemoteSetting {
   value: unknown;
 }
 
-let liveGamesPromise: Promise<PublicGame[]> | undefined;
-let liveProductsPromise: Promise<PublicProduct[]> | undefined;
-let settingsTablePromise: Promise<boolean> | undefined;
-
-export function shouldQueryLegacyStorefrontSchema() {
-  return process.env.FS_PUBLIC_LEGACY_SCHEMA_SOURCE === "db";
-}
-
 function getSupabaseRestUrl() {
   const configuredUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (configuredUrl) return configuredUrl.replace(/\/+$/, "");
@@ -68,7 +58,7 @@ function getSupabasePublishableKey() {
   return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "";
 }
 
-async function getLivePublicGamesFromRest(): Promise<PublicGame[]> {
+export async function getLivePublicGames(): Promise<PublicGame[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) return [];
@@ -168,49 +158,7 @@ function mapLiveGames(rows: {
   }));
 }
 
-export async function getLivePublicGames(): Promise<PublicGame[]> {
-  const restGames = await getLivePublicGamesFromRest();
-  if (restGames.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
-    return restGames;
-  }
-
-  return sqlClient<{
-    id: string;
-    title: string;
-    slug: string;
-    image_url: string | null;
-    banner: string | null;
-    logo: string | null;
-    developers: string | null;
-    category_id: number | null;
-    description: string | null;
-    instructions: unknown;
-    is_popular: boolean | null;
-  }[]>`
-    select
-      id::text as id,
-      coalesce(title, name) as title,
-      slug,
-      image_url,
-      banner,
-      logo,
-      developers,
-      category_id,
-      description,
-      instructions,
-      is_popular
-    from public.games
-    where is_active = true
-    order by sort_order asc, name asc
-  `
-    .then(mapLiveGames)
-    .catch((error) => {
-      console.warn("Live Supabase games query unavailable:", error);
-      return [];
-    });
-}
-
-async function getLivePublicProductsFromRest(): Promise<PublicProduct[]> {
+export async function getLivePublicProducts(): Promise<PublicProduct[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) return [];
@@ -236,38 +184,7 @@ async function getLivePublicProductsFromRest(): Promise<PublicProduct[]> {
   }
 }
 
-export async function getLivePublicProducts(): Promise<PublicProduct[]> {
-  const restProducts = await getLivePublicProductsFromRest();
-  if (restProducts.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
-    return restProducts;
-  }
-
-  return sqlClient<PublicProduct[]>`
-    select
-      id::text as id,
-      game_slug,
-      title,
-      selling_price,
-      selling_price_gold,
-      selling_price_platinum,
-      cost_price,
-      sku,
-      is_active,
-      is_gangguan,
-      logo,
-      images,
-      brand
-    from public.products
-    where is_active = true
-    order by title asc
-  `
-    .catch((error) => {
-      console.warn("Live Supabase products query unavailable:", error);
-      return [];
-    });
-}
-
-async function getLivePublicCategoriesFromRest(): Promise<PublicCategory[]> {
+export async function getLivePublicCategories(): Promise<PublicCategory[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) return [];
@@ -290,56 +207,4 @@ async function getLivePublicCategoriesFromRest(): Promise<PublicCategory[]> {
     console.warn("Live Supabase REST categories query unavailable:", error);
     return [];
   }
-}
-
-export async function getLivePublicCategories(): Promise<PublicCategory[]> {
-  const restCategories = await getLivePublicCategoriesFromRest();
-  if (restCategories.length > 0 || !hasDatabaseConnection || !shouldQueryLegacyStorefrontSchema()) {
-    return restCategories;
-  }
-
-  return sqlClient<PublicCategory[]>`
-    select
-      id,
-      title,
-      logo,
-      game_slug,
-      sort_order,
-      is_active
-    from public.categories
-    where is_active = true
-    order by sort_order asc
-  `.catch((error) => {
-    console.warn("Live Supabase categories query unavailable:", error);
-    return [];
-  });
-}
-
-export async function hasCompatibleSettingsTable(): Promise<boolean> {
-  if (!hasDatabaseConnection) return false;
-
-  settingsTablePromise ??= sqlClient<{ has_table: boolean }[]>`
-    select (
-      exists (
-        select 1
-        from information_schema.tables
-        where table_schema = 'public'
-          and table_name = 'settings'
-      )
-      and (
-        select count(*)
-        from information_schema.columns
-        where table_schema = 'public'
-          and table_name = 'settings'
-          and column_name in ('key', 'value')
-      ) = 2
-    ) as has_table
-  `
-    .then((rows) => Boolean(rows[0]?.has_table))
-    .catch((error) => {
-      console.warn("Settings table metadata check unavailable:", error);
-      return false;
-    });
-
-  return settingsTablePromise;
 }

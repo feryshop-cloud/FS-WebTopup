@@ -1,7 +1,7 @@
-import { asc, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
-import { db, articles, categories, games } from "@/lib/db";
-import { getLivePublicGames, getLivePublicCategories, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
+import { db, articles } from "@/lib/db";
+import { getLivePublicGames, getLivePublicCategories } from "@/lib/db/live-adapter";
 import { seedCategories, seedGames, seedSliders } from "@/lib/db/seed-data";
 import { getSeedArticles, hasArticleDatabaseEnabled, normalizeArticle } from "@/lib/data/articles";
 
@@ -23,29 +23,6 @@ export async function getSliderPayload() {
 
 export async function getGamesPayload() {
   let allGames: any[] = await getLivePublicGames();
-
-  if (allGames.length === 0 && shouldQueryLegacyStorefrontSchema()) {
-    try {
-      const dbGames = await db.select().from(games).where(eq(games.isActive, true)).orderBy(asc(games.sortOrder));
-      if (dbGames.length > 0) {
-        allGames = dbGames.map((g) => ({
-          id: g.id,
-          title: g.title,
-          slug: g.slug,
-          image: g.image,
-          banner: g.banner,
-          logo: g.logo,
-          developers: g.developers || "Game Developer",
-          category_id: g.categoryId || 1,
-          description: g.description,
-          instructions: g.instructions,
-          is_popular: g.isPopular,
-        }));
-      }
-    } catch (error) {
-      console.warn("Fallback ke seed games karena kueri Supabase gagal/belum disetup:", error);
-    }
-  }
 
   if (allGames.length === 0) {
     allGames = seedGames.map((g) => ({
@@ -83,22 +60,6 @@ export async function getCategoriesPayload() {
       logo: c.logo,
       game: c.game_slug || c.title,
     }));
-  }
-
-  if (allCategories.length === 0 && shouldQueryLegacyStorefrontSchema()) {
-    try {
-      const dbCategories = await db.select().from(categories).where(eq(categories.isActive, true)).orderBy(asc(categories.sortOrder));
-      if (dbCategories.length > 0) {
-        allCategories = dbCategories.map((c) => ({
-          id: c.id,
-          title: c.title,
-          logo: c.logo,
-          game: c.gameSlug || c.title,
-        }));
-      }
-    } catch (error) {
-      console.warn("Fallback ke seed categories:", error);
-    }
   }
 
   if (allCategories.length === 0) {

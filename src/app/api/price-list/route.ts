@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { db, games, products } from "@/lib/db";
-import { eq, asc } from "drizzle-orm";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
-import { getLivePublicGames, getLivePublicProducts, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
+import { getLivePublicGames, getLivePublicProducts } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -49,42 +47,6 @@ export async function GET() {
           products: finalProducts,
         };
       });
-    }
-
-    if (resultGames.length === 0 && shouldQueryLegacyStorefrontSchema()) {
-      try {
-        const dbGames = await db.select().from(games).where(eq(games.isActive, true)).orderBy(asc(games.sortOrder));
-        if (dbGames && dbGames.length > 0) {
-          const dbProducts = await db.select().from(products).where(eq(products.isActive, true)).orderBy(asc(products.sortOrder));
-          
-          resultGames = dbGames.map((g) => {
-            const gameProducts = dbProducts
-              .filter((p) => p.gameSlug === g.slug)
-              .map((p) => ({
-                id: p.id,
-                title: p.title,
-                brand: g.title,
-                selling_price: Number(p.sellingPrice),
-                selling_price_gold: Number(p.sellingPriceGold),
-                selling_price_platinum: Number(p.sellingPricePlatinum),
-                promo_price: p.promoPrice ? Number(p.promoPrice) : null,
-                status: p.isActive ? 1 : 0,
-                is_active: p.isActive,
-                logo: p.logo || p.images || g.logo || g.image || null,
-              }));
-
-            return {
-              id: g.id,
-              title: g.title,
-              slug: g.slug,
-              logo: g.logo || g.image,
-              products: gameProducts,
-            };
-          });
-        }
-      } catch (e) {
-        console.warn("Fallback price-list ke seed data:", e);
-      }
     }
 
     if (resultGames.length === 0) {

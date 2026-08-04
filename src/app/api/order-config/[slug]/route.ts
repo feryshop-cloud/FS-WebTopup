@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { db, games, products, paymentMethods } from "@/lib/db";
-import { eq, asc } from "drizzle-orm";
 import { seedGames, seedProducts, seedPaymentMethods } from "@/lib/db/seed-data";
-import { getLivePublicGames, shouldQueryLegacyStorefrontSchema } from "@/lib/db/live-adapter";
+import { getLivePublicGames } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -21,70 +19,6 @@ export async function GET(_req: Request, context: any) {
     const liveGame = (await getLivePublicGames()).find((game) => game.slug === slug);
     if (liveGame) {
       gameData = liveGame;
-    }
-
-    // 1. Coba ambil dari Supabase / Drizzle jika productsData masih kosong
-    if (shouldQueryLegacyStorefrontSchema()) {
-      try {
-        if (!gameData) {
-          const dbGame = await db.select().from(games).where(eq(games.slug, slug)).limit(1);
-          if (dbGame && dbGame[0]) {
-            const g = dbGame[0];
-            gameData = {
-              id: g.id,
-              title: g.title,
-              slug: g.slug,
-              image: g.image,
-              banner: g.banner,
-              logo: g.logo,
-              developers: g.developers || "Game Developer",
-              category_id: g.categoryId || 1,
-              description: g.description,
-              instructions: g.instructions,
-              is_popular: g.isPopular,
-            };
-          }
-        }
-
-        const dbProducts = await db.select().from(products).where(eq(products.gameSlug, slug)).orderBy(asc(products.sortOrder));
-        if (dbProducts && dbProducts.length > 0) {
-          productsData = dbProducts.map((p) => ({
-            id: p.id,
-            title: p.title,
-            brand: gameData?.title || slug,
-            selling_price: Number(p.sellingPrice),
-            selling_price_gold: Number(p.sellingPriceGold),
-            selling_price_platinum: Number(p.sellingPricePlatinum),
-            promo_price: p.promoPrice ? Number(p.promoPrice) : null,
-            status: p.isActive ? 1 : 0,
-            is_active: p.isActive,
-            logo: p.logo || p.images || null,
-          }));
-        }
-
-        const dbPayments = await db.select().from(paymentMethods).where(eq(paymentMethods.status, 'active')).orderBy(asc(paymentMethods.sortOrder));
-        if (dbPayments && dbPayments.length > 0) {
-          paymentMethodsData = dbPayments.map((pm) => ({
-            id: pm.id,
-            name: pm.name,
-            images: pm.images,
-            payment_id: pm.paymentId,
-            minimum_amount: Number(pm.minimumAmount),
-            maximum_amount: Number(pm.maximumAmount),
-            fee: Number(pm.fee),
-            fee_percent: Number(pm.feePercent),
-            type: pm.type,
-            status: pm.status,
-            group: pm.group,
-            is_outside_group: pm.isOutsideGroup,
-            badge_text: pm.badgeText,
-            outside_sort: pm.outsideSort,
-            instructions: pm.instructions,
-          }));
-        }
-      } catch (e) {
-        console.warn(`Fallback order-config [${slug}] ke seed data:`, e);
-      }
     }
 
     // 2. Fallback ke seed data

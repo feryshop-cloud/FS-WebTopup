@@ -1,5 +1,5 @@
 import { db, settings } from "@/lib/db";
-import { getRemoteSettingsFromRest, hasCompatibleSettingsTable } from "@/lib/db/live-adapter";
+import { getRemoteSettingsFromRest } from "@/lib/db/live-adapter";
 import { seedSettings } from "@/lib/db/seed-data";
 
 export interface SettingsPayload {
@@ -14,7 +14,7 @@ export async function getSiteSettings(): Promise<SettingsPayload> {
 
     Object.assign(siteSettings, remoteSettings);
 
-    if (process.env.FS_PUBLIC_SETTINGS_SOURCE === "db" && await hasCompatibleSettingsTable()) {
+    if (process.env.FS_PUBLIC_SETTINGS_SOURCE === "db") {
       try {
         const dbSettings = await db.select().from(settings);
         if (dbSettings && dbSettings.length > 0) {
