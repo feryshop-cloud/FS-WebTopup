@@ -4,12 +4,27 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { db, hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("NEXTAUTH_SECRET is not set. Set it before starting the app (see .env.local or Railway Variables).");
+}
+
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+if (!!googleClientId !== !!googleClientSecret) {
+  throw new Error("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must both be set to enable Google sign-in.");
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "dummy-client-id",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "dummy-client-secret",
-    }),
+    ...(googleClientId && googleClientSecret
+      ? [
+          GoogleProvider({
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+          }),
+        ]
+      : []),
 
     CredentialsProvider({
       id: "credentials",
@@ -80,6 +95,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET || "feryshop-super-secret-key-2026",
+  secret: process.env.NEXTAUTH_SECRET,
 };
 

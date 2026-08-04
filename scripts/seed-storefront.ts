@@ -6,7 +6,14 @@ const SEED_DATA_PATH = path.join(process.cwd(), 'src', 'lib', 'db', 'seed-data.t
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://trviikqvvujcibplqwud.supabase.co';
 // We require the service role key to insert records safely
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRydmlpa3F2dnVqY2licGxxd3VkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTM5MjkxNiwiZXhwIjoyMTAwOTY4OTE2fQ.AM6Hy-MCqWIATF8rrtadTZK-dExyNIPDZ26P77S1EU4';
+const SUPABASE_KEY_ENV = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_KEY_ENV) {
+  console.error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable. Refusing to seed without it.');
+  process.exit(1);
+}
+
+const SUPABASE_KEY: string = SUPABASE_KEY_ENV;
 
 async function seedData() {
   console.log('Seeding storefront master data to Supabase...');
