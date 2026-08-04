@@ -17,7 +17,7 @@ import type { HomeFallbackData } from "@/lib/data/home";
 
 const swrOptions = {
   revalidateOnFocus: false,
-  revalidateIfStale: false,
+  revalidateIfStale: true,
   dedupingInterval: 300_000,
   keepPreviousData: true,
 };

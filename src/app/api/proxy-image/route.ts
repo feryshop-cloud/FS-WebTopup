@@ -1,6 +1,19 @@
 import { NextResponse } from "next/server";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const dynamic = "force-dynamic";
+
+const s3 = new S3Client({
+  region: process.env.REGION || "auto",
+  endpoint: process.env.ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
+  },
+});
+
+const BUCKET = process.env.BUCKET || "";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -10,34 +23,40 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing path" }, { status: 422 });
   }
 
-  // Jika imagePath sudah merupakan URL lengkap, fetch langsung
-  let targetUrl = imagePath;
-  if (!imagePath.startsWith("http://") && !imagePath.startsWith("https://")) {
-    return NextResponse.redirect(new URL(`/images/${imagePath.replace(/^\//, '')}`, req.url));
-  }
+  // Normalize: strip leading slash
+  const key = imagePath.replace(/^\/+/, "");
 
   try {
-    const res = await fetch(targetUrl, {
-      cache: "no-store",
-      headers: {
-        Accept: "image/*",
-      },
+    const command = new GetObjectCommand({ Bucket: BUCKET, Key: key });
+
+    // Try direct authenticated fetch first (faster than presigned URL)
+    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    const res = await fetch(signedUrl, {
+      headers: { Accept: "image/*" },
+      next: { revalidate: 86400 },
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: "Failed to fetch image" }, { status: res.status });
+      return NextResponse.json(
+        { error: "Failed to fetch image", status: res.status },
+        { status: res.status }
+      );
     }
 
-    const contentType = res.headers.get("content-type") ?? "image/jpeg";
+    const contentType = res.headers.get("content-type") ?? "image/webp";
     const buf = await res.arrayBuffer();
 
     return new NextResponse(buf, {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
       },
     });
   } catch (err: any) {
-    return NextResponse.json({ error: "Image fetch error", details: err?.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Image fetch error", details: err?.message },
+      { status: 500 }
+    );
   }
 }

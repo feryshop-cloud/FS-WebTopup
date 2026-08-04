@@ -42,6 +42,26 @@ async function fetchSettings(): Promise<SettingsPayload | null> {
   }
 }
 
+// --- Sanitize RSC-safe settings ---
+// Next.js RSC inlines serialized props as JavaScript literals in HTML.
+// Strings containing line separators (U+2028/U+2029) or </script> will
+// produce a SyntaxError in the browser. Escape them before passing to
+// any client component.
+function sanitizeForRSC(data: Record<string, any>): Record<string, any> {
+  const safe: Record<string, any> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === "string") {
+      safe[key] = value
+        .replace(/\u2028/g, "\\u2028")
+        .replace(/\u2029/g, "\\u2029")
+        .replace(/<\/script>/gi, "<\\/script>");
+    } else {
+      safe[key] = value;
+    }
+  }
+  return safe;
+}
+
 // --- Metadata Generator ---
 export async function generateMetadata(): Promise<Metadata> {
   const metadataBase = new URL(siteUrl);
@@ -56,7 +76,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // OG & Twitter
   const ogTitle = safeString(data["seo.og_title"] || metaTitle);
   const ogDescription = safeString(data["seo.og_description"] || metaDescription);
-  
+
   const favicon = resolveSingle(data["general.favicon"]);
   const ogImage = resolveSingle(data["seo.og_image"]) || resolveSingle(data["general.logo"]) || "/logo-2.png";
 
@@ -97,7 +117,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
     fetchSettings(),
     getServerSession(authOptions),
   ]);
+
   const data = settingsPayload?.data ?? {};
+
+  // Sanitize before passing to client components via RSC serialization
+  const safeData = sanitizeForRSC(data);
+  const safeSettingsPayload: SettingsPayload | null = settingsPayload
+    ? { success: settingsPayload.success, data: safeData }
+    : null;
 
   // --- Logic Schema.org ---
   const schemas: any[] = [];
@@ -145,7 +172,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             enableSystem
           >
             <SWRProvider>
-              <SettingsProvider initialData={settingsPayload}>
+              <SettingsProvider initialData={safeSettingsPayload}>
                 <PanelLayout session={session}>{children}</PanelLayout>
               </SettingsProvider>
             </SWRProvider>

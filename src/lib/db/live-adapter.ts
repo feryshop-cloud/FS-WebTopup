@@ -4,6 +4,19 @@ import { logger } from "@/lib/logger";
 const FALLBACK_GAME_IMAGE = "/placeholder.png";
 const FALLBACK_GAME_LOGO = "/logo-topup.webp";
 
+/**
+ * Converts a DB-stored path (e.g. "/games/logo/mlbb-icon.webp") to a URL
+ * routed through the internal /api/proxy-image route, which adds S3 auth.
+ * Full http(s) URLs are returned as-is (external CDN, Unsplash, etc.).
+ * If path is empty/null, returns null.
+ */
+function resolveStorageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `/api/proxy-image?path=${encodeURIComponent(cleanPath)}`;
+}
+
 export interface PublicGame {
   id: string;
   title: string;
@@ -72,8 +85,17 @@ function getSupabaseRestUrl() {
   if (configuredUrl) return configuredUrl.replace(/\/+$/, "");
 
   const connectionString = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
-  const projectRef = connectionString?.match(/@(?:db\.)?([a-z0-9]+)\.supabase\.co/i)?.[1];
-  return projectRef ? `https://${projectRef}.supabase.co` : "";
+  if (!connectionString) return "";
+
+  // Match standard host: db.{ref}.supabase.co
+  const refFromHost = connectionString.match(/@(?:db\.)?([a-z0-9]+)\.supabase\.co/i)?.[1];
+  if (refFromHost) return `https://${refFromHost}.supabase.co`;
+
+  // Match Supabase pooler host: *.pooler.supabase.com - project ref is embedded in the username (postgres.{ref})
+  const refFromUser = connectionString.match(/\/\/(?:[^:]+\.)?([a-z0-9]+):[^@]+@[^/]*\.pooler\.supabase\.com/i)?.[1];
+  if (refFromUser) return `https://${refFromUser}.supabase.co`;
+
+  return "";
 }
 
 function getSupabasePublishableKey() {
@@ -177,13 +199,17 @@ function mapLiveGames(rows: {
   return rows.map((game, index) => {
     const seedGame = seedGames.find((s) => s.slug === game.slug);
 
+    const imageUrl = resolveStorageUrl(game.image_url);
+    const bannerUrl = resolveStorageUrl(game.banner);
+    const logoUrl = resolveStorageUrl(game.logo);
+
     return {
       id: game.id,
       title: game.title || game.name || game.slug,
       slug: game.slug,
-      image: game.image_url || seedGame?.image || FALLBACK_GAME_IMAGE,
-      banner: game.banner || game.image_url || seedGame?.banner || seedGame?.image || FALLBACK_GAME_IMAGE,
-      logo: game.logo || seedGame?.logo || FALLBACK_GAME_LOGO,
+      image: imageUrl || seedGame?.image || FALLBACK_GAME_IMAGE,
+      banner: bannerUrl || imageUrl || seedGame?.banner || seedGame?.image || FALLBACK_GAME_IMAGE,
+      logo: logoUrl || seedGame?.logo || FALLBACK_GAME_LOGO,
       developers: game.developers || seedGame?.developers || "Game Developer",
       category_id: game.category_id ?? index + 1,
       description: game.description ?? seedGame?.description ?? null,
