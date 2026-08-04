@@ -63,31 +63,17 @@ async function getHandler(req: Request, context: { params: Promise<Params> }) {
       }
     }
 
-    // 2. Fallback demo order jika tidak ditemukan di DB
+    // 2. Jika pesanan tidak ditemukan di database
     if (!orderData) {
-      orderData = {
-        order_id: orderId,
-        game_slug: "mobile-legends",
-        product_id: "ML-86",
-        product_title: "86 Diamonds (78 + 8 Bonus)",
-        id_games: "12345678",
-        server_games: "1234",
-        nickname: "Feryshop Player",
-        quantity: 1,
-        price: 23500,
-        total_price: 23500,
-        payment_name: "QRIS (All Bank & E-Wallet)",
-        payment_code: "QRIS",
-        payment_status: "pending",
-        buy_status: "pending",
-        whatsapp: "081234567890",
-        created_at: new Date().toISOString(),
-        expired_time: Math.floor(Date.now() / 1000) + 86400,
-      };
-
-      gameData = seedGames[0];
-      productData = seedProducts['mobile-legends'][0];
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Data pesanan dengan ID ${orderId} tidak ditemukan.`,
+        },
+        { status: 404 },
+      );
     }
+
 
     return NextResponse.json({
       success: true,

@@ -32,6 +32,9 @@ async function postHandler(req: Request) {
       quantity: Number(body.quantity || 1),
       price: body.price ? String(body.price) : "0",
       totalPrice: body.total_price || body.totalPrice ? String(body.total_price || body.totalPrice) : "0",
+      fee: body.fee ? String(body.fee) : "0",
+      discountPrice: body.discount_price || body.discountPrice ? String(body.discount_price || body.discountPrice) : "0",
+      promoPrice: body.promo_price || body.promoPrice ? String(body.promo_price || body.promoPrice) : "0",
       paymentMethodId: body.payment_method_id || body.paymentMethodId || "qris",
       paymentName: body.payment_name || body.paymentName || "QRIS (All Bank & E-Wallet)",
       paymentCode: body.payment_code || body.paymentCode || "QRIS",
@@ -45,17 +48,26 @@ async function postHandler(req: Request) {
       accountData: fullAccountData,
     };
 
-    // Coba simpan ke database Supabase
+    // Simpan ke database Supabase (Wajib sukses di produksi)
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
         await db.insert(orders).values(newOrderData);
-      } catch (dbErr) {
-        logger.warn("order insert fell back to demo mode", {
+      } catch (dbErr: any) {
+        logger.error("Gagal menyimpan pesanan ke database", {
           orderId,
           error: dbErr,
         });
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Gagal membuat pesanan. Terjadi kendala saat menyimpan ke database.",
+            error: process.env.NODE_ENV === "development" ? dbErr?.message : undefined,
+          },
+          { status: 500 },
+        );
       }
     }
+
 
     logger.info("order created", {
       orderId,
