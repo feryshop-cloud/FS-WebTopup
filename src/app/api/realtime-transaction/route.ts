@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
 import { desc } from "drizzle-orm";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function getHandler() {
   try {
     let results: any[] = [];
 
@@ -25,7 +27,7 @@ export async function GET() {
           });
         }
       } catch (e) {
-        console.warn("Fallback realtime-transaction:", e);
+        logger.warn("realtime-transaction fell back to demo data", { error: e });
       }
     }
 
@@ -34,6 +36,9 @@ export async function GET() {
       data: results,
     }, { status: 200 });
   } catch (err: any) {
+    logger.error("realtime-transaction failed", { error: err });
     return NextResponse.json({ success: false, message: "Gagal memuat transaksi realtime" }, { status: 500 });
   }
 }
+
+export const GET = withRequestLogging(getHandler);

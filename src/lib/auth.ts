@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db, hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
+import { logger } from "@/lib/logger";
 
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("NEXTAUTH_SECRET is not set. Set it before starting the app (see .env.local or Railway Variables).");
@@ -60,7 +61,7 @@ export const authOptions: NextAuthOptions = {
             saldo: 0,
           } as any;
         } catch (e) {
-          console.warn("Credentials auth failed:", e);
+          logger.warn("Credentials auth failed", { error: e });
           return null;
         }
       },

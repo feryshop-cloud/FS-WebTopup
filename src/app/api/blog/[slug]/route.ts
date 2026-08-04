@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db, articles } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { hasArticleDatabaseEnabled, getSeedArticles, normalizeArticle, type ArticleRecord } from "@/lib/data/articles";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function GET(_request: Request, context: any) {
           foundArticle = normalizeArticle(dbArticle[0]);
         }
       } catch (e) {
-        console.warn(`Fallback blog [${slug}] ke dummy data:`, e);
+        logger.warn(`Fallback blog [${slug}] ke dummy data`, { error: e });
       }
     }
 

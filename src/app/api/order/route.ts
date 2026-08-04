@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
-export async function POST(req: Request) {
+async function postHandler(req: Request) {
   try {
     const body = await req.json();
 
@@ -48,9 +50,18 @@ export async function POST(req: Request) {
       try {
         await db.insert(orders).values(newOrderData);
       } catch (dbErr) {
-        console.warn("Gagal insert ke Supabase (menggunakan mode fallback/demo):", dbErr);
+        logger.warn("order insert fell back to demo mode", {
+          orderId,
+          error: dbErr,
+        });
       }
     }
+
+    logger.info("order created", {
+      orderId,
+      gameSlug: newOrderData.gameSlug,
+      totalPrice: Number(newOrderData.totalPrice),
+    });
 
     return NextResponse.json({
       success: true,
@@ -66,6 +77,7 @@ export async function POST(req: Request) {
       redirect_url: `/invoice/${orderId}`,
     }, { status: 200 });
   } catch (error: any) {
+    logger.error("order creation failed", { error });
     return NextResponse.json({
       success: false,
       message: "Gagal memvalidasi atau memproses pesanan",
@@ -73,3 +85,5 @@ export async function POST(req: Request) {
     }, { status: 500 });
   }
 }
+
+export const POST = withRequestLogging(postHandler);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
           foundOrder = dbOrders[0];
         }
       } catch (e) {
-        console.warn("Fallback invoices/search:", e);
+        logger.warn("Fallback invoices/search", { error: e });
       }
     }
 

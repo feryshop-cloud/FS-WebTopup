@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, users } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export async function GET(req: Request) {
           };
         }
       } catch (e) {
-        console.warn("Fallback account/me:", e);
+        logger.warn("Fallback account/me", { error: e });
       }
     }
 

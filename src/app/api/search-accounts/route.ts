@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { searchLiveMarketplace } from "@/lib/marketplace/live-marketplace";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export async function GET(req: Request) {
     const accounts = await searchLiveMarketplace(query, gameSlug);
     return NextResponse.json(accounts);
   } catch (error) {
-    console.error("Error in search-accounts API:", error);
+    logger.error("Error in search-accounts API", { error });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

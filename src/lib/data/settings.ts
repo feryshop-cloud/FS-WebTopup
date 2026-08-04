@@ -1,6 +1,7 @@
 import { db, settings } from "@/lib/db";
 import { getRemoteSettingsFromRest } from "@/lib/db/live-adapter";
 import { seedSettings } from "@/lib/db/seed-data";
+import { logger } from "@/lib/logger";
 
 export interface SettingsPayload {
   success: boolean;
@@ -23,7 +24,7 @@ export async function getSiteSettings(): Promise<SettingsPayload> {
           });
         }
       } catch (e) {
-        console.warn("Fallback getSiteSettings DB query:", e);
+        logger.warn("getSiteSettings DB fallback", { error: e });
       }
     }
 

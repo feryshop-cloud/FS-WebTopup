@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { createSupabaseAuthUser, deleteSupabaseAuthUser } from "@/lib/supabase-auth";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
 const DEFAULT_MEMBER_ROLE_ID = "5acc7db0-2460-40bc-8f12-9420e6543252";
 
-export async function POST(req: Request) {
+async function postHandler(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const name = (body.name || "").trim();
@@ -59,7 +61,7 @@ export async function POST(req: Request) {
       },
     }, { status: 200 });
   } catch (err) {
-    console.error("Register API error:", err);
+    logger.error("register failed", { error: err });
     const message = err instanceof Error ? err.message : "";
     if (message.includes("SUPABASE_URL") || message.includes("SUPABASE_SERVICE_ROLE_KEY")) {
       return NextResponse.json({ success: false, message }, { status: 503 });
@@ -70,3 +72,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, message: "Gagal melakukan registrasi" }, { status: 500 });
   }
 }
+
+export const POST = withRequestLogging(postHandler);

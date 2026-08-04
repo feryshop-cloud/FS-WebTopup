@@ -1,24 +1,35 @@
 import { NextResponse } from "next/server";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
 import { getLivePublicGames, getLivePublicProducts } from "@/lib/db/live-adapter";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function getHandler() {
   try {
     const [liveGames, liveProducts] = await Promise.all([
       getLivePublicGames(),
       getLivePublicProducts(),
     ]);
 
-    console.log(`[API /api/price-list] Fetched liveGames count: ${liveGames.length}, liveProducts count: ${liveProducts.length}`);
+    logger.info("price-list fetched live data", {
+      liveGames: liveGames.length,
+      liveProducts: liveProducts.length,
+    });
 
     let resultGames: any[] = [];
 
     if (liveGames.length > 0) {
       resultGames = liveGames.map((game) => {
         const gameProductsFromDb = liveProducts
-          .filter((product) => product.game_slug === game.slug)
+          .filter((product) => {
+            const pSlug = (product.game_slug || "").toLowerCase();
+            const pBrand = (product.brand || "").toLowerCase();
+            const gSlug = (game.slug || "").toLowerCase();
+            const gTitle = (game.title || "").toLowerCase();
+            return pSlug === gSlug || pSlug === gTitle || pBrand === gSlug || pBrand === gTitle;
+          })
           .map((product) => ({
             id: product.id,
             title: product.title,
@@ -53,7 +64,7 @@ export async function GET() {
     }
 
     if (resultGames.length === 0) {
-      console.warn("[API /api/price-list] liveGames kosong! Fallback ke seedGames.");
+      logger.warn("price-list fell back to seed games");
       resultGames = seedGames.map((g) => {
         const gameProducts = (seedProducts[g.slug] || []).map((p) => ({
           ...p,
@@ -71,16 +82,25 @@ export async function GET() {
       });
     }
 
+    const isLive = liveGames.length > 0;
+    logger.info("price-list source", {
+      source: isLive ? "live_supabase" : "seed_fallback",
+      games: resultGames.length,
+    });
+
     return NextResponse.json({
       success: true,
+      source: isLive ? "live_supabase" : "seed_fallback",
       data: resultGames,
     }, { status: 200 });
-  } catch (err: any) {
-    console.error("[API /api/price-list ERROR]:", err);
+  } catch (err: unknown) {
+    logger.error("price-list failed", { error: err });
     return NextResponse.json({
       success: false,
       message: "Gagal memuat daftar harga",
-      error: err?.message || String(err),
+      error: err instanceof Error ? err.message : String(err),
     }, { status: 500 });
   }
 }
+
+export const GET = withRequestLogging(getHandler);

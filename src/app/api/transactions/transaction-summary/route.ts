@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ export async function GET() {
           });
         }
       } catch (e) {
-        console.warn("Fallback transaction-summary:", e);
+        logger.warn("Fallback transaction-summary", { error: e });
       }
     }
 

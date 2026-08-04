@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db, orders, games, products } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
+import { logger } from "@/lib/logger";
 
 type Params = { orderId: string };
 
@@ -53,7 +54,7 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
           if (dbProduct && dbProduct[0]) productData = dbProduct[0];
         }
       } catch (e) {
-        console.warn(`Fallback orders lookup [${orderId}]:`, e);
+        logger.warn(`Fallback orders lookup [${orderId}]`, { error: e });
       }
     }
 

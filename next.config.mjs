@@ -20,6 +20,9 @@ const nextConfig = {
   output: "standalone",
   ...(basePath ? { basePath } : {}),
   poweredByHeader: false,
+  experimental: {
+    instrumentationHook: true,
+  },
 
   images: {
     remotePatterns: [

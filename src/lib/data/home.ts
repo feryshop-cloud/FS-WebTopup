@@ -4,6 +4,7 @@ import { db, articles } from "@/lib/db";
 import { getLivePublicGames, getLivePublicCategories } from "@/lib/db/live-adapter";
 import { seedCategories, seedGames, seedSliders } from "@/lib/db/seed-data";
 import { getSeedArticles, hasArticleDatabaseEnabled, normalizeArticle } from "@/lib/data/articles";
+import { logger } from "@/lib/logger";
 
 export type HomeFallbackData = {
   slider: Awaited<ReturnType<typeof getSliderPayload>>;
@@ -123,7 +124,7 @@ export async function getBlogLitePayload(page = 1, perPage = 6) {
         allArticles = dbArticles.map(normalizeArticle);
       }
     } catch (error) {
-      console.warn("Fallback blog-lite ke dummy data:", error);
+      logger.warn("Fallback blog-lite ke dummy data", { error });
     }
   }
 

@@ -11,6 +11,7 @@ import { ProgressBarWrapper } from "@/components/progress-bar/progress-bar-wrapp
 import { Toaster } from "sonner";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 import type { Metadata } from "next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3100";
@@ -36,7 +37,7 @@ async function fetchSettings(): Promise<SettingsPayload | null> {
     const payload = await getSiteSettings();
     return payload;
   } catch (error) {
-    console.error("Layout fetch settings failed:", error);
+    logger.error("layout fetch settings failed", { error });
     return null;
   }
 }

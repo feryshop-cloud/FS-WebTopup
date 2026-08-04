@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
 import { eq, desc } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ export async function GET(req: Request) {
           }));
         }
       } catch (e) {
-        console.warn("Fallback search-by-whatsapp:", e);
+        logger.warn("Fallback search-by-whatsapp", { error: e });
       }
     }
 

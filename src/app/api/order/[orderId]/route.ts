@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { db, orders, games, products } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 type Params = { orderId: string };
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request, context: { params: Promise<Params> }) {
+async function getHandler(req: Request, context: { params: Promise<Params> }) {
   try {
     const { orderId } = await context.params;
     if (!orderId) {
@@ -54,7 +56,10 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
           if (dbProduct && dbProduct[0]) productData = dbProduct[0];
         }
       } catch (e) {
-        console.warn(`Fallback order lookup [${orderId}]:`, e);
+        logger.warn("order lookup fell back to demo data", {
+          orderId,
+          error: e,
+        });
       }
     }
 
@@ -92,6 +97,7 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
       message: "Data invoice berhasil dimuat",
     }, { status: 200 });
   } catch (error: any) {
+    logger.error("order lookup failed", { error });
     return NextResponse.json({
       success: false,
       message: "Terjadi kesalahan saat mengambil invoice",
@@ -99,3 +105,5 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
     }, { status: 500 });
   }
 }
+
+export const GET = withRequestLogging(getHandler);

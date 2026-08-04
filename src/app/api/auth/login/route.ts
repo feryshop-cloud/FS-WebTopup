@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request) {
+async function postHandler(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const email = (body.email || "").trim();
@@ -49,7 +51,9 @@ export async function POST(req: Request) {
       },
     }, { status: 200 });
   } catch (err) {
-    console.error("Login API error:", err);
+    logger.error("login failed", { error: err });
     return NextResponse.json({ success: false, message: "Terjadi kesalahan sistem saat login" }, { status: 500 });
   }
 }
+
+export const POST = withRequestLogging(postHandler);

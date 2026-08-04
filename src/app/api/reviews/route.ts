@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, reviews } from "@/lib/db";
 import { eq, desc } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET() {
           }));
         }
       } catch (e) {
-        console.warn("Fallback reviews:", e);
+        logger.warn("Fallback reviews", { error: e });
       }
     }
 

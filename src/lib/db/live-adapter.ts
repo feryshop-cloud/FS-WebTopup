@@ -1,4 +1,5 @@
 import { seedGames } from "@/lib/db/seed-data";
+import { logger } from "@/lib/logger";
 
 const FALLBACK_GAME_IMAGE = "/placeholder.png";
 const FALLBACK_GAME_LOGO = "/logo-topup.webp";
@@ -83,7 +84,7 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    console.warn(`[getLivePublicGames] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    logger.warn("getLivePublicGames missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
     return [];
   }
 
@@ -102,7 +103,7 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error(`[getLivePublicGames HTTP ${response.status}]:`, errText);
+      logger.error("getLivePublicGames http error", { status: response.status, body: errText });
       return [];
     }
 
@@ -121,10 +122,10 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
       is_popular: boolean | null;
     }[];
 
-    console.log(`[getLivePublicGames SUCCESS] Retrieved ${rows.length} games`);
+    logger.info("getLivePublicGames success", { count: rows.length });
     return mapLiveGames(rows);
   } catch (error) {
-    console.error("[getLivePublicGames ERROR]:", error);
+    logger.error("getLivePublicGames failed", { error });
     return [];
   }
 }
@@ -154,7 +155,7 @@ export async function getRemoteSettingsFromRest(): Promise<Record<string, unknow
       return settings;
     }, {});
   } catch (error) {
-    console.warn("Remote settings query unavailable:", error);
+    logger.warn("getRemoteSettingsFromRest unavailable", { error });
     return {};
   }
 }
@@ -196,7 +197,7 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    console.warn(`[getLivePublicProducts] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    logger.warn("getLivePublicProducts missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
     return [];
   }
 
@@ -214,15 +215,15 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error(`[getLivePublicProducts HTTP ${response.status}]:`, errText);
+      logger.error("getLivePublicProducts http error", { status: response.status, body: errText });
       return [];
     }
 
     const data = await response.json() as PublicProduct[];
-    console.log(`[getLivePublicProducts SUCCESS] Retrieved ${data.length} products`);
+    logger.info("getLivePublicProducts success", { count: data.length });
     return data;
   } catch (error) {
-    console.error("[getLivePublicProducts ERROR]:", error);
+    logger.error("getLivePublicProducts failed", { error });
     return [];
   }
 }
@@ -231,7 +232,7 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    console.warn(`[getLivePublicCategories] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    logger.warn("getLivePublicCategories missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
     return [];
   }
 
@@ -249,14 +250,14 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error(`[getLivePublicCategories HTTP ${response.status}]:`, errText);
+      logger.error("getLivePublicCategories http error", { status: response.status, body: errText });
       return [];
     }
     const data = (await response.json()) as PublicCategory[];
-    console.log(`[getLivePublicCategories SUCCESS] Retrieved ${data.length} categories`);
+    logger.info("getLivePublicCategories success", { count: data.length });
     return data;
   } catch (error) {
-    console.error("[getLivePublicCategories ERROR]:", error);
+    logger.error("getLivePublicCategories failed", { error });
     return [];
   }
 }
@@ -265,7 +266,7 @@ export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    console.warn(`[getLivePublicPaymentMethods] Missing credentials. restUrl: "${restUrl}", hasKey: ${Boolean(publishableKey)}`);
+    logger.warn("getLivePublicPaymentMethods missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
     return [];
   }
 
@@ -283,14 +284,14 @@ export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error(`[getLivePublicPaymentMethods HTTP ${response.status}]:`, errText);
+      logger.error("getLivePublicPaymentMethods http error", { status: response.status, body: errText });
       return [];
     }
     const data = (await response.json()) as PublicPaymentMethod[];
-    console.log(`[getLivePublicPaymentMethods SUCCESS] Retrieved ${data.length} payment methods`);
+    logger.info("getLivePublicPaymentMethods success", { count: data.length });
     return data;
   } catch (error) {
-    console.error("[getLivePublicPaymentMethods ERROR]:", error);
+    logger.error("getLivePublicPaymentMethods failed", { error });
     return [];
   }
 }

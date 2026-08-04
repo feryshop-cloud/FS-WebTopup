@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, promoCodes } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export async function GET() {
           }));
         }
       } catch (e) {
-        console.warn("Fallback promo-codes:", e);
+        logger.warn("Fallback promo-codes", { error: e });
       }
     }
 

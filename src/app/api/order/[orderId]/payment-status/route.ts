@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 type Params = { orderId: string };
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request, context: { params: Promise<Params> }) {
+async function getHandler(req: Request, context: { params: Promise<Params> }) {
   try {
     const { orderId } = await context.params;
 
@@ -25,7 +27,10 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
           buyStatus = dbOrders[0].buyStatus;
         }
       } catch (e) {
-        console.warn("Fallback payment-status:", e);
+        logger.warn("payment-status fell back to demo data", {
+          orderId,
+          error: e,
+        });
       }
     }
 
@@ -39,6 +44,9 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
       },
     }, { status: 200 });
   } catch (err: any) {
+    logger.error("payment-status failed", { error: err });
     return NextResponse.json({ success: false, message: "Gagal memuat status pembayaran" }, { status: 500 });
   }
 }
+
+export const GET = withRequestLogging(getHandler);

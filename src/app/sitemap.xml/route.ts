@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiPath } from "@/lib/routes";
+import { logger } from "@/lib/logger";
 
 type SitemapUrl = {
   loc: string;
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Sitemap generation error:", error);
+    logger.error("Sitemap generation error", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import {
   type GameAccount,
   type GameCategory,
 } from "@/lib/data/mock-marketplace";
+import { logger } from "@/lib/logger";
 
 type PublicStockRow = {
   id: string;
@@ -221,7 +222,7 @@ export async function getLiveMarketplaceAccounts(): Promise<GameAccount[]> {
     const rows = (await response.json()) as PublicStockRow[];
     return rows.map(mapInventoryToAccount);
   } catch (error) {
-    console.warn("Live marketplace inventory query unavailable:", error);
+    logger.warn("Live marketplace inventory query unavailable", { error });
     return [];
   }
 }
@@ -296,14 +297,14 @@ export async function searchLiveMarketplace(query: string, gameSlug?: string, li
     });
 
     if (!response.ok) {
-      console.warn("searchLiveMarketplace response not OK:", response.status, await response.text());
+      logger.warn("searchLiveMarketplace response not OK", { status: response.status, details: await response.text() });
       return [];
     }
 
     const rows = (await response.json()) as PublicStockRow[];
     return rows.map(mapInventoryToAccount);
   } catch (error) {
-    console.warn("searchLiveMarketplace error:", error);
+    logger.warn("searchLiveMarketplace error", { error });
     return [];
   }
 }

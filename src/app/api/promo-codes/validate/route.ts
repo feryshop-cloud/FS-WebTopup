@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { db, promoCodes } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request) {
+async function postHandler(req: Request) {
   try {
     const body = await req.json();
     const codeInput = (body.promo_code || body.code || "").trim().toUpperCase();
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
           };
         }
       } catch (e) {
-        console.warn("Fallback promo validate:", e);
+        logger.warn("promo validate fell back to built-in codes", { error: e });
       }
     }
 
@@ -77,6 +79,9 @@ export async function POST(req: Request) {
       },
     }, { status: 200 });
   } catch (error: any) {
+    logger.error("promo validate failed", { error });
     return NextResponse.json({ success: false, message: "Gagal memvalidasi kode promo" }, { status: 500 });
   }
 }
+
+export const POST = withRequestLogging(postHandler);

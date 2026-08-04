@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword, updateSupabaseAuthPassword } from "@/lib/supabase-auth";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,7 @@ export async function PUT(req: Request) {
       message: "Password berhasil diubah",
     }, { status: 200 });
   } catch (err) {
-    console.error("Change password API error:", err);
+    logger.error("Change password API error", { error: err });
     return NextResponse.json({ success: false, message: "Gagal mengubah password" }, { status: 500 });
   }
 }

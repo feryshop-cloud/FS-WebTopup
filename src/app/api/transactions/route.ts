@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { db, orders } from "@/lib/db";
 import { desc } from "drizzle-orm";
+import { logger } from "@/lib/logger";
+import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function getHandler() {
   try {
     let results: any[] = [];
 
@@ -24,7 +26,7 @@ export async function GET() {
           }));
         }
       } catch (e) {
-        console.warn("Fallback transactions:", e);
+        logger.warn("transactions fell back to demo data", { error: e });
       }
     }
 
@@ -45,6 +47,9 @@ export async function GET() {
       },
     }, { status: 200 });
   } catch (err: any) {
+    logger.error("transactions failed", { error: err });
     return NextResponse.json({ success: false, message: "Gagal memuat histori transaksi" }, { status: 500 });
   }
 }
+
+export const GET = withRequestLogging(getHandler);
