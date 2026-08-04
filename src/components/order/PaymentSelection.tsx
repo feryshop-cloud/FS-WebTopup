@@ -33,19 +33,24 @@ const isDisabledByLimit = (method: PaymentMethod) => {
 
 const PAYMENT_IMAGE_FALLBACK = "/placeholder.png";
 
-const resolvePaymentImage = (images: unknown): string => {
+const resolvePaymentImage = (images: unknown, method: PaymentMethod): string => {
+  const isQris =
+    String(method.id).toLowerCase() === "qris" ||
+    String(method.payment_id ?? "").toLowerCase() === "qris";
+  const fallback = isQris ? "/qris.webp" : PAYMENT_IMAGE_FALLBACK;
+
   if (Array.isArray(images)) {
     for (const item of images) {
       if (typeof item === "string" && item.trim() !== "") return item.trim();
     }
-    return PAYMENT_IMAGE_FALLBACK;
+    return fallback;
   }
 
-  if (typeof images !== "string") return PAYMENT_IMAGE_FALLBACK;
+  if (typeof images !== "string") return fallback;
 
   const trimmed = images.trim();
-  if (!trimmed) return PAYMENT_IMAGE_FALLBACK;
-  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}") return PAYMENT_IMAGE_FALLBACK;
+  if (!trimmed) return fallback;
+  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}") return fallback;
   return trimmed;
 };
 
@@ -93,7 +98,7 @@ export default function PaymentSelection({
             {outsidePaymentMethods.map((method) => {
               const isDisabled = isDisabledByLimit(method);
               const isSelected = selectedPayment === method.id;
-              const imgSrc = resolvePaymentImage(method.images);
+              const imgSrc = resolvePaymentImage(method.images, method);
 
               return (
                 <label
@@ -181,7 +186,7 @@ export default function PaymentSelection({
                   {methods.map((method) => {
                     const isDisabled = isDisabledByLimit(method);
                     const isSelected = selectedPayment === method.id;
-                    const imgSrc = resolvePaymentImage(method.images);
+                    const imgSrc = resolvePaymentImage(method.images, method);
 
                     return (
                       <label
@@ -246,7 +251,7 @@ export default function PaymentSelection({
                   className="hide-scrollbar flex w-full items-center gap-2 overflow-x-auto rounded-b-xl bg-muted/10 px-3 py-2"
                 >
                   {methods.map((method) => {
-                    const imgSrc = resolvePaymentImage(method.images);
+                    const imgSrc = resolvePaymentImage(method.images, method);
 
                     return (
                       imgSrc && (
