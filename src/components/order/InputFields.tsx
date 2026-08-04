@@ -97,16 +97,25 @@ const InputFields: React.FC<InputFieldsProps> = ({
     }
   }
 
-  // Extract dynamic inputs or fallback to fields array or default ID & Server
-  const rawFields = (gameConfig as any)?.fields || (gameConfig as any)?.input_fields;
+  // Extract dynamic inputs or fallback to instructions / fields array or default ID & Server
+  const rawFields = (gameConfig as any)?.instructions || (gameConfig as any)?.fields || (gameConfig as any)?.input_fields;
   const requiredInputs: string[] =
     gameConfig?.required_inputs ||
-    (Array.isArray(rawFields) && rawFields.length > 0 ? rawFields.map((f: any) => f.name) : undefined) ||
+    (Array.isArray(rawFields) && rawFields.length > 0 ? rawFields.map((f: any) => f.name || f.id) : undefined) ||
     ['id', 'server'];
 
-  const inputFieldsList: { name: string; label: string; placeholder: string; type?: string }[] =
-    gameConfig?.input_fields ||
-    (Array.isArray(rawFields) && rawFields.length > 0 ? rawFields : undefined) || [
+  const inputFieldsList: { name: string; label: string; placeholder: string; type?: string; regex?: string; errorMessage?: string }[] =
+    (Array.isArray(rawFields) && rawFields.length > 0
+      ? rawFields.map((f: any) => ({
+          name: f.name || f.id,
+          label: f.label,
+          placeholder: f.placeholder,
+          type: f.type,
+          regex: f.regex,
+          errorMessage: f.errorMessage,
+        }))
+      : undefined) ||
+    gameConfig?.input_fields || [
       { name: 'id', label: 'User ID', placeholder: 'Masukkan User ID', type: 'text' },
       { name: 'server', label: 'Server ID', placeholder: 'Masukkan Zone ID / Server', type: 'text' },
     ];
