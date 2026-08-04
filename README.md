@@ -21,7 +21,16 @@ Feryshop terhubung langsung ke backend via API untuk menyajikan layanan transaks
 - Admin Panel / Seller Management
 - Responsive Design (Mobile & Desktop)
 - Dark Theme Only dengan Estetika Premium
-- Integrasi ke Payment Gateway
+- Menyajikan metode pembayaran (QRIS / e-wallet / transfer) beserta kode/QR pembayaran & status order/pembayaran
+
+---
+
+## Scope & Batasan
+
+Repo ini adalah **storefront (customer-facing)** Feryshop: katalog top-up, marketplace akun, invoice, promo, dan dashboard member.
+
+- **Pembayaran:** Checkout menampilkan metode pembayaran (QRIS, e-wallet, transfer bank) beserta kode/QR pembayaran, dan menyimpan status order/pembayaran (termasuk `gateway_response`). **Penyelesaian dana bersifat eksternal** — pelanggan membayar lewat kode yang ditampilkan; repo ini **tidak** melakukan settlement/kallback otomatis ke payment gateway.
+- **Admin & pembukuan** (inventori, deal, ledger, laporan) ada di repo terpisah: `game-inventori` (admin ERP). Di repo tersebut integrasi payment gateway **secara eksplisit di luar scope**; transaksi hanya dicatat manual oleh admin.
 
 ---
 
@@ -52,7 +61,7 @@ Feryshop terhubung langsung ke backend via API untuk menyajikan layanan transaks
 
 1. **Clone Project / Masuk ke Direktori**
    ```bash
-   cd TopupSon
+   cd FS-Public
    ```
 
 2. **Install Dependency**
@@ -61,11 +70,14 @@ Feryshop terhubung langsung ke backend via API untuk menyajikan layanan transaks
    ```
 
 3. **Siapkan Konfigurasi Environment**
-   - Salin dan edit file `.env`, contoh:
+   - Salin dan edit file `.env.local`, contoh minimum untuk koneksi DB & auth:
      ```env
-     NEXT_PUBLIC_APP_NAME="Feryshop"
-     NEXT_PUBLIC_API_URL=http://localhost:8000
+     NEXT_PUBLIC_SUPABASE_URL=https://<project_ref>.supabase.co
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+     NEXTAUTH_SECRET=your_nextauth_secret
+     NEXTAUTH_URL=http://localhost:3000
      ```
+   - Variabel lain yang dibaca app (storage, pusher, oauth, dsb.) terdaftar di `src/` — lihat `AGENTS.md` repo ini.
 
 4. **Jalankan Development Server**
    ```bash
