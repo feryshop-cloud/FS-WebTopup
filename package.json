@@ -10,7 +10,7 @@
     "start:railway": "HOSTNAME=:: node .next/standalone/server.js",
     "lint": "eslint .",
     "registry:build": "tsx ./scripts/build-registry.ts",
-    "cb": "rm -rf .next node_modules/.cache && npm run build && pm2 restart all && pm2 save"
+    "cb": "node scripts/clean-build.mjs && npm run build && pm2 restart all && pm2 save"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
