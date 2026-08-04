@@ -16,12 +16,12 @@ export async function GET(req: Request) {
           const u = dbUsers[0];
           userData = {
             id: u.id,
-            name: u.name,
+            name: u.fullName,
             email: u.email,
-            phone: u.whatsapp || "081234567890",
-            whatsapp: u.whatsapp || "081234567890",
-            role: u.role || "member",
-            balance: Number(u.balance || 0),
+            phone: "081234567890",
+            whatsapp: "081234567890",
+            role: "member",
+            balance: 0,
             created_at: u.createdAt,
           };
         }

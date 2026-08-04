@@ -10,21 +10,16 @@ import {
   serial,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
 
-// 1. Users & Profiles
+// 1. Users & Profiles (Matches live DB: public.users)
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  role: varchar('role', { length: 50 }).default('member').notNull(), // member | gold | platinum | admin
-  balance: numeric('balance', { precision: 15, scale: 2 }).default('0').notNull(),
-  whatsapp: varchar('whatsapp', { length: 50 }),
-  avatarUrl: text('avatar_url'),
-  apiKey: varchar('api_key', { length: 255 }),
-  secretKey: varchar('secret_key', { length: 255 }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  roleId: uuid('role_id'),
+  fullName: varchar('full_name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  status: varchar('status', { length: 50 }).default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 // 2. Categories (e.g. Mobile Legends, Free Fire, PUBG, Voucher)
@@ -38,30 +33,31 @@ export const categories = pgTable('categories', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-// 3. Games / Catalog
+// 3. Games / Catalog (Matches live DB: public.games with UUID primary key)
 export const games = pgTable('games', {
-  id: serial('id').primaryKey(),
-  title: varchar('title', { length: 255 }).notNull(),
-  slug: varchar('slug', { length: 255 }).notNull().unique(),
-  image: text('image').notNull(),
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name'),
+  slug: text('slug').notNull().unique(),
+  title: text('title'),
+  imageUrl: text('image_url'),
   banner: text('banner'),
   logo: text('logo'),
-  developers: varchar('developers', { length: 255 }),
-  categoryId: integer('category_id').references(() => categories.id, { onDelete: 'set null' }),
+  developers: text('developers'),
+  categoryId: integer('category_id'),
   description: text('description'),
-  instructions: jsonb('instructions'), // e.g. steps or input field config
+  instructions: jsonb('instructions'),
   isPopular: boolean('is_popular').default(false),
   isActive: boolean('is_active').default(true),
   sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-// 4. Products / Nominal Vouchers
+// 4. Products / Nominal Vouchers (Matches live DB: public.products)
 export const products = pgTable('products', {
   id: varchar('id', { length: 100 }).primaryKey(), // SKU / Provider Product ID
-  gameSlug: varchar('game_slug', { length: 255 }).notNull().references(() => games.slug, { onDelete: 'cascade' }),
-  categoryId: integer('category_id').references(() => categories.id, { onDelete: 'set null' }),
+  gameSlug: varchar('game_slug', { length: 255 }).notNull(),
+  categoryId: integer('category_id'),
   title: varchar('title', { length: 255 }).notNull(),
   sellingPrice: numeric('selling_price', { precision: 15, scale: 2 }).notNull(),
   sellingPriceGold: numeric('selling_price_gold', { precision: 15, scale: 2 }).notNull(),
@@ -78,31 +74,32 @@ export const products = pgTable('products', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-// 5. Payment Methods
+// 5. Payment Methods (Matches live DB: public.payment_methods)
 export const paymentMethods = pgTable('payment_methods', {
   id: varchar('id', { length: 100 }).primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   images: text('images').notNull(),
-  paymentId: varchar('payment_id', { length: 100 }).notNull(), // code used by gateway e.g. QRIS, VA_BCA
+  paymentId: varchar('payment_id', { length: 100 }).notNull(),
   minimumAmount: numeric('minimum_amount', { precision: 15, scale: 2 }).default('1000').notNull(),
   maximumAmount: numeric('maximum_amount', { precision: 15, scale: 2 }).default('10000000').notNull(),
   fee: numeric('fee', { precision: 15, scale: 2 }).default('0').notNull(),
   feePercent: numeric('fee_percent', { precision: 5, scale: 2 }).default('0').notNull(),
-  type: varchar('type', { length: 100 }).notNull(), // e-wallet | va | qris | convenience_store
-  status: varchar('status', { length: 50 }).default('active').notNull(),
+  type: varchar('type', { length: 100 }).notNull(),
+  status: varchar('status', { length: 50 }).default('ACTIVE').notNull(),
   group: varchar('group', { length: 100 }).default('E-Wallet').notNull(),
   isOutsideGroup: boolean('is_outside_group').default(false),
   badgeText: varchar('badge_text', { length: 100 }),
   outsideSort: integer('outside_sort').default(0),
-  instructions: jsonb('instructions'), // array of { title, steps }
+  instructions: jsonb('instructions'),
   sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-// 6. Orders / Transactions
+// 6. Orders / Transactions (Matches live DB: public.orders)
 export const orders = pgTable('orders', {
   id: uuid('id').primaryKey().defaultRandom(),
-  orderId: varchar('order_id', { length: 100 }).notNull().unique(), // e.g. TSON-20260726-1234
+  orderId: varchar('order_id', { length: 100 }).notNull().unique(),
   userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
   gameSlug: varchar('game_slug', { length: 255 }).notNull(),
   productId: varchar('product_id', { length: 100 }).notNull(),
@@ -124,23 +121,24 @@ export const orders = pgTable('orders', {
   paymentCodeDisplay: varchar('payment_code_display', { length: 255 }),
   qrString: text('qr_string'),
   qrImageUrl: text('qr_image_url'),
-  paymentStatus: varchar('payment_status', { length: 50 }).default('pending').notNull(), // pending | paid | failed | expired
-  buyStatus: varchar('buy_status', { length: 50 }).default('pending').notNull(), // pending | processing | success | failed
+  paymentStatus: varchar('payment_status', { length: 50 }).default('pending').notNull(),
+  buyStatus: varchar('buy_status', { length: 50 }).default('pending').notNull(),
   serialNumber: text('serial_number').default(''),
   whatsapp: varchar('whatsapp', { length: 50 }),
   email: varchar('email', { length: 255 }),
-  expiredTime: integer('expired_time'), // unix timestamp
+  expiredTime: integer('expired_time'),
   accountData: jsonb('account_data'),
-  pricingJson: jsonb('pricing_json'), // detail breakdown
+  pricingJson: jsonb('pricing_json'),
   gatewayResponse: jsonb('gateway_response'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
 // 7. Promo Codes
 export const promoCodes = pgTable('promo_codes', {
   id: serial('id').primaryKey(),
   code: varchar('code', { length: 100 }).notNull().unique(),
-  discountType: varchar('discount_type', { length: 50 }).default('percent').notNull(), // percent | fixed
+  discountType: varchar('discount_type', { length: 50 }).default('percent').notNull(),
   discountValue: numeric('discount_value', { precision: 15, scale: 2 }).notNull(),
   minOrder: numeric('min_order', { precision: 15, scale: 2 }).default('0'),
   maxDiscount: numeric('max_discount', { precision: 15, scale: 2 }).default('0'),
@@ -180,12 +178,12 @@ export const articles = pgTable('articles', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-// 10. Settings / Configuration
+// 10. Settings / Configuration (Matches live DB: public.settings)
 export const settings = pgTable('settings', {
-  key: varchar('key', { length: 100 }).primaryKey(),
+  key: text('key').primaryKey(),
   value: jsonb('value').notNull(),
   description: text('description'),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 // Types export
