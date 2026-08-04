@@ -76,10 +76,6 @@ const nextConfig = {
         source: "/admin/:path*",
         destination: `${adminDashboardOrigin}/admin/:path*`,
       },
-      {
-        source: "/api/storage/:path*",
-        destination: `${adminDashboardOrigin}/api/storage/:path*`,
-      },
     ];
   },
 };

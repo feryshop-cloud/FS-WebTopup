@@ -1,3 +1,5 @@
+import { seedGames } from "@/lib/db/seed-data";
+
 const FALLBACK_GAME_IMAGE = "/placeholder.png";
 const FALLBACK_GAME_LOGO = "/logo-topup.webp";
 
@@ -38,6 +40,25 @@ export interface PublicCategory {
   game_slug?: string | null;
   sort_order?: number | null;
   is_active?: boolean | null;
+}
+
+export interface PublicPaymentMethod {
+  id: string;
+  name: string;
+  images?: string | null;
+  payment_id?: string | null;
+  minimum_amount?: number | string | null;
+  maximum_amount?: number | string | null;
+  fee?: number | string | null;
+  fee_percent?: number | string | null;
+  type?: string | null;
+  status?: string | null;
+  group?: string | null;
+  is_outside_group?: boolean | null;
+  badge_text?: string | null;
+  outside_sort?: number | null;
+  instructions?: unknown;
+  sort_order?: number | null;
 }
 
 export interface RemoteSetting {
@@ -143,19 +164,23 @@ function mapLiveGames(rows: {
   instructions?: unknown;
   is_popular?: boolean | null;
 }[]): PublicGame[] {
-  return rows.map((game, index) => ({
-    id: game.id,
-    title: game.title || game.name || game.slug,
-    slug: game.slug,
-    image: game.image_url || FALLBACK_GAME_IMAGE,
-    banner: game.banner || game.image_url || FALLBACK_GAME_IMAGE,
-    logo: game.logo || FALLBACK_GAME_LOGO,
-    developers: game.developers || "Game Developer",
-    category_id: game.category_id ?? index + 1,
-    description: game.description ?? null,
-    instructions: game.instructions ?? null,
-    is_popular: Boolean(game.is_popular),
-  }));
+  return rows.map((game, index) => {
+    const seedGame = seedGames.find((s) => s.slug === game.slug);
+
+    return {
+      id: game.id,
+      title: game.title || game.name || game.slug,
+      slug: game.slug,
+      image: game.image_url || seedGame?.image || FALLBACK_GAME_IMAGE,
+      banner: game.banner || game.image_url || seedGame?.banner || seedGame?.image || FALLBACK_GAME_IMAGE,
+      logo: game.logo || seedGame?.logo || FALLBACK_GAME_LOGO,
+      developers: game.developers || seedGame?.developers || "Game Developer",
+      category_id: game.category_id ?? index + 1,
+      description: game.description ?? seedGame?.description ?? null,
+      instructions: game.instructions ?? seedGame?.instructions ?? null,
+      is_popular: Boolean(game.is_popular ?? seedGame?.isPopular),
+    };
+  });
 }
 
 export async function getLivePublicProducts(): Promise<PublicProduct[]> {
@@ -205,6 +230,31 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
     return (await response.json()) as PublicCategory[];
   } catch (error) {
     console.warn("Live Supabase REST categories query unavailable:", error);
+    return [];
+  }
+}
+
+export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod[]> {
+  const restUrl = getSupabaseRestUrl();
+  const publishableKey = getSupabasePublishableKey();
+  if (!restUrl || !publishableKey) return [];
+
+  try {
+    const response = await fetch(
+      `${restUrl}/rest/v1/payment_methods?select=id,name,images,payment_id,minimum_amount,maximum_amount,fee,fee_percent,type,status,group,is_outside_group,badge_text,outside_sort,instructions,sort_order&status=eq.active&order=sort_order.asc`,
+      {
+        headers: {
+          apikey: publishableKey,
+          Authorization: `Bearer ${publishableKey}`,
+        },
+        next: { revalidate: 60 },
+      },
+    );
+
+    if (!response.ok) return [];
+    return (await response.json()) as PublicPaymentMethod[];
+  } catch (error) {
+    console.warn("Live Supabase REST payment methods query unavailable:", error);
     return [];
   }
 }

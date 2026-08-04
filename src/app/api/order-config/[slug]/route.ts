@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { seedGames, seedProducts, seedPaymentMethods } from "@/lib/db/seed-data";
-import { getLivePublicGames } from "@/lib/db/live-adapter";
+import { getLivePublicGames, getLivePublicProducts, getLivePublicPaymentMethods } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
 
@@ -16,12 +16,31 @@ export async function GET(_req: Request, context: any) {
     let productsData: any[] = [];
     let paymentMethodsData: any[] = [];
 
-    const liveGame = (await getLivePublicGames()).find((game) => game.slug === slug);
+    const [allLiveGames, allLiveProducts, allLivePaymentMethods] = await Promise.all([
+      getLivePublicGames(),
+      getLivePublicProducts(),
+      getLivePublicPaymentMethods(),
+    ]);
+
+    const liveGame = allLiveGames.find((game) => game.slug === slug);
     if (liveGame) {
       gameData = liveGame;
     }
 
-    // 2. Fallback ke seed data
+    const liveProducts = allLiveProducts.filter((p) => p.game_slug === slug);
+    if (liveProducts.length > 0) {
+      productsData = liveProducts.map((p) => ({
+        ...p,
+        brand: gameData?.title || slug,
+        status: p.is_active ? 1 : 0,
+      }));
+    }
+
+    if (allLivePaymentMethods.length > 0) {
+      paymentMethodsData = allLivePaymentMethods;
+    }
+
+    // 2. Fallback ke seed data jika live data kosong
     if (!gameData || productsData.length === 0) {
       const foundSeed = seedGames.find((g) => g.slug === slug);
       if (foundSeed) {
