@@ -17,7 +17,17 @@ export const users = pgTable('users', {
   roleId: uuid('role_id'),
   fullName: varchar('full_name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
+  whatsapp: varchar('whatsapp', { length: 50 }),
+  balance: numeric('balance', { precision: 15, scale: 2 }).default('0').notNull(),
   status: varchar('status', { length: 50 }).default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const roles = pgTable('roles', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 50 }).notNull(),
+  description: text('description'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
