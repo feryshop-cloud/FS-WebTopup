@@ -29,14 +29,6 @@ export async function GET() {
       }
     }
 
-    if (results.length === 0) {
-      results = [
-        { id: 1, nickname: "K***a", game: "Mobile Legends", product: "Weekly Diamond Pass", created_at: "1 menit lalu" },
-        { id: 2, nickname: "S***i", game: "Valorant", product: "625 Points", created_at: "3 menit lalu" },
-        { id: 3, nickname: "M***d", game: "Free Fire", product: "355 Diamonds", created_at: "7 menit lalu" },
-      ];
-    }
-
     return NextResponse.json({
       success: true,
       data: results,
