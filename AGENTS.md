@@ -59,6 +59,19 @@ Recent history uses Conventional Commit-style messages, for example `feat: ...` 
 
 Do not commit secrets or local environment files. Keep database access through `src/lib/db` and validate external input in API routes with existing schema or validation utilities. Run `npm audit --audit-level=high` after dependency updates.
 
+### Logging & Observability
+
+- **LOG_LEVEL**: Controls structured log verbosity. Set in `.env.local`:
+  - `debug` — local development, verbose tracing
+  - `info` — production default (also the default when `NODE_ENV=production`)
+  - `warn` — only warnings and errors
+  - `error` — only errors
+- **x-request-id**: Every HTTP request gets a correlation ID (from the `x-request-id` header, or a fresh UUID). It is:
+  - Bound to the async-local request context so every `logger` call inside the handler carries it.
+  - Echoed back in the response `x-request-id` header.
+  - Included in every JSON log line as `requestId`.
+- **Log format**: JSON lines (one JSON object per line) with fields `timestamp`, `service`, `level`, `message`, `requestId` (optional), and custom attributes flattened at the top level (no `meta` nesting). See `.env.example` for the full list of environment variables.
+
 ## Key Architecture Notes
 
 - **`forcedTheme` in ThemeProvider was removed** — it was forcing the theme to always be dark, breaking the `ModeToggle` component. The `ThemeProvider` now uses `defaultTheme="dark"` with `enableSystem` and no `forcedTheme`.
