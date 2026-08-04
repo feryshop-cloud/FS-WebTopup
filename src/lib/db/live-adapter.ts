@@ -1,4 +1,3 @@
-import { seedGames } from "@/lib/db/seed-data";
 import { logger } from "@/lib/logger";
 
 const FALLBACK_GAME_IMAGE = "/placeholder.png";
@@ -38,6 +37,7 @@ export interface PublicProduct {
   selling_price: number | string;
   selling_price_gold?: number | string | null;
   selling_price_platinum?: number | string | null;
+  promo_price?: number | string | null;
   cost_price?: number | string | null;
   sku?: string | null;
   is_active?: boolean | null;
@@ -119,7 +119,7 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        next: { revalidate: 60 },
+        cache: "no-store",
       },
     );
 
@@ -165,7 +165,7 @@ export async function getRemoteSettingsFromRest(): Promise<Record<string, unknow
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        next: { revalidate: 30 },
+        cache: "no-store",
       },
     );
 
@@ -197,8 +197,6 @@ function mapLiveGames(rows: {
   is_popular?: boolean | null;
 }[]): PublicGame[] {
   return rows.map((game, index) => {
-    const seedGame = seedGames.find((s) => s.slug === game.slug);
-
     const imageUrl = resolveStorageUrl(game.image_url);
     const bannerUrl = resolveStorageUrl(game.banner);
     const logoUrl = resolveStorageUrl(game.logo);
@@ -207,14 +205,14 @@ function mapLiveGames(rows: {
       id: game.id,
       title: game.title || game.name || game.slug,
       slug: game.slug,
-      image: imageUrl || seedGame?.image || FALLBACK_GAME_IMAGE,
-      banner: bannerUrl || imageUrl || seedGame?.banner || seedGame?.image || FALLBACK_GAME_IMAGE,
-      logo: logoUrl || seedGame?.logo || FALLBACK_GAME_LOGO,
-      developers: game.developers || seedGame?.developers || "Game Developer",
+      image: imageUrl || FALLBACK_GAME_IMAGE,
+      banner: bannerUrl || imageUrl || FALLBACK_GAME_IMAGE,
+      logo: logoUrl || FALLBACK_GAME_LOGO,
+      developers: game.developers || "Game Developer",
       category_id: game.category_id ?? index + 1,
-      description: game.description ?? seedGame?.description ?? null,
-      instructions: game.instructions ?? seedGame?.instructions ?? null,
-      is_popular: Boolean(game.is_popular ?? seedGame?.isPopular),
+      description: game.description ?? null,
+      instructions: game.instructions ?? null,
+      is_popular: Boolean(game.is_popular),
     };
   });
 }
@@ -229,13 +227,13 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 
   try {
     const response = await fetch(
-      `${restUrl}/rest/v1/products?select=id,game_slug,title,selling_price,selling_price_gold,selling_price_platinum,cost_price,sku,is_active,is_gangguan,logo,images,brand&is_active=eq.true&order=title.asc`,
+      `${restUrl}/rest/v1/products?select=id,game_slug,title,selling_price,selling_price_gold,selling_price_platinum,promo_price,cost_price,sku,is_active,is_gangguan,logo,images&is_active=eq.true&order=title.asc`,
       {
         headers: {
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        next: { revalidate: 60 },
+        cache: "no-store",
       },
     );
 
@@ -270,7 +268,7 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        next: { revalidate: 60 },
+        cache: "no-store",
       },
     );
 
@@ -304,7 +302,7 @@ export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        next: { revalidate: 60 },
+        cache: "no-store",
       },
     );
 

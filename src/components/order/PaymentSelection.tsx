@@ -31,6 +31,24 @@ const isDisabledByLimit = (method: PaymentMethod) => {
   return false;
 };
 
+const PAYMENT_IMAGE_FALLBACK = "/placeholder.png";
+
+const resolvePaymentImage = (images: unknown): string => {
+  if (Array.isArray(images)) {
+    for (const item of images) {
+      if (typeof item === "string" && item.trim() !== "") return item.trim();
+    }
+    return PAYMENT_IMAGE_FALLBACK;
+  }
+
+  if (typeof images !== "string") return PAYMENT_IMAGE_FALLBACK;
+
+  const trimmed = images.trim();
+  if (!trimmed) return PAYMENT_IMAGE_FALLBACK;
+  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}") return PAYMENT_IMAGE_FALLBACK;
+  return trimmed;
+};
+
 export default function PaymentSelection({
   paymentRef,
   groupedPaymentMethods,
@@ -75,6 +93,7 @@ export default function PaymentSelection({
             {outsidePaymentMethods.map((method) => {
               const isDisabled = isDisabledByLimit(method);
               const isSelected = selectedPayment === method.id;
+              const imgSrc = resolvePaymentImage(method.images);
 
               return (
                 <label
@@ -107,13 +126,13 @@ export default function PaymentSelection({
 
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-16 items-center justify-center rounded-md bg-white p-1">
-                      {method.images && method.images !== "noimage.png" && (
+                      {imgSrc && (
                         <Image
                           alt={method.name}
                           width={120}
                           height={60}
                           className="h-full w-full object-contain"
-                          src={method.images}
+                          src={imgSrc}
                         />
                       )}
                     </div>
@@ -162,6 +181,7 @@ export default function PaymentSelection({
                   {methods.map((method) => {
                     const isDisabled = isDisabledByLimit(method);
                     const isSelected = selectedPayment === method.id;
+                    const imgSrc = resolvePaymentImage(method.images);
 
                     return (
                       <label
@@ -191,7 +211,7 @@ export default function PaymentSelection({
 
                               <div className="flex w-full flex-col">
                                 <div className="flex aspect-square h-12 w-16 items-center">
-                                  {method.images && method.images !== "noimage.png" && (
+                                  {imgSrc && (
                                     <Image
                                       alt={method.name}
                                       priority
@@ -199,7 +219,7 @@ export default function PaymentSelection({
                                       height={300}
                                       className="object-contain object-right"
                                       sizes="80vh"
-                                      src={method.images}
+                                      src={imgSrc}
                                     />
                                   )}
                                 </div>
@@ -225,21 +245,23 @@ export default function PaymentSelection({
                   onClick={() => setOpenAccordion(group)}
                   className="hide-scrollbar flex w-full items-center gap-2 overflow-x-auto rounded-b-xl bg-muted/10 px-3 py-2"
                 >
-                  {methods.map(
-                    (method) =>
-                      method.images &&
-                      method.images !== "noimage.png" && (
+                  {methods.map((method) => {
+                    const imgSrc = resolvePaymentImage(method.images);
+
+                    return (
+                      imgSrc && (
                         <div key={method.id} className="flex min-h-[36px] min-w-[36px] items-center justify-center">
                           <Image
                             alt={method.name}
-                            src={method.images}
+                            src={imgSrc}
                             width={36}
                             height={36}
                             className="h-6 w-16 rounded-md bg-white p-1 object-contain"
                           />
                         </div>
                       )
-                  )}
+                    );
+                  })}
                 </button>
               )}
             </div>

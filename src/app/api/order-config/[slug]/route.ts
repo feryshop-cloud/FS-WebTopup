@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { seedGames, seedProducts, seedPaymentMethods } from "@/lib/db/seed-data";
 import { getLivePublicGames, getLivePublicProducts, getLivePublicPaymentMethods } from "@/lib/db/live-adapter";
 
 export const dynamic = "force-dynamic";
@@ -12,10 +11,6 @@ export async function GET(_req: Request, context: any) {
       return NextResponse.json({ success: false, message: "Slug tidak ditemukan" }, { status: 400 });
     }
 
-    let gameData: any = null;
-    let productsData: any[] = [];
-    let paymentMethodsData: any[] = [];
-
     const [allLiveGames, allLiveProducts, allLivePaymentMethods] = await Promise.all([
       getLivePublicGames(),
       getLivePublicProducts(),
@@ -23,107 +18,61 @@ export async function GET(_req: Request, context: any) {
     ]);
 
     const liveGame = allLiveGames.find((game) => game.slug === slug);
-    if (liveGame) {
-      gameData = liveGame;
+    if (!liveGame) {
+      return NextResponse.json({ success: false, message: "Game tidak ditemukan di database" }, { status: 404 });
     }
 
     const liveProducts = allLiveProducts.filter((p) => p.game_slug === slug);
-    if (liveProducts.length > 0) {
-      productsData = liveProducts.map((p) => ({
-        ...p,
-        brand: gameData?.title || slug,
-        status: p.is_active ? 1 : 0,
-      }));
-    }
-
-    if (allLivePaymentMethods.length > 0) {
-      paymentMethodsData = allLivePaymentMethods;
-    }
-
-    // 2. Fallback ke seed data jika live data kosong
-    if (!gameData || productsData.length === 0) {
-      const foundSeed = seedGames.find((g) => g.slug === slug);
-      if (foundSeed) {
-        if (!gameData) {
-          gameData = {
-            id: foundSeed.id,
-            title: foundSeed.title,
-            slug: foundSeed.slug,
-            image: foundSeed.image,
-            banner: foundSeed.banner,
-            logo: foundSeed.logo,
-            developers: foundSeed.developers,
-            category_id: foundSeed.categoryId,
-            description: foundSeed.description,
-            instructions: foundSeed.instructions,
-            is_popular: foundSeed.isPopular,
-          };
-        }
-
-        if (productsData.length === 0) {
-          const foundProducts = seedProducts[slug] || [];
-          productsData = foundProducts.map((p) => ({
-            ...p,
-            brand: foundSeed.title,
-            status: p.is_active ? 1 : 0,
-          }));
-        }
-      }
-    }
-
-    if (paymentMethodsData.length === 0) {
-      paymentMethodsData = seedPaymentMethods.filter((pm) => pm.status === "active");
-    }
-
-    if (!gameData) {
-      return NextResponse.json({ success: false, message: "Game tidak ditemukan" }, { status: 404 });
-    }
-
-    const foundSeed = seedGames.find((g) => g.slug === slug);
+    const productsData = liveProducts.map((p) => ({
+      ...p,
+      brand: liveGame.title || slug,
+      status: p.is_active ? 1 : 0,
+    }));
 
     let instructionsObj: any = {};
-    if (typeof gameData?.instructions === "string") {
+    if (typeof liveGame.instructions === "string") {
       try {
-        instructionsObj = JSON.parse(gameData.instructions);
+        instructionsObj = JSON.parse(liveGame.instructions);
       } catch {
         instructionsObj = {};
       }
-    } else if (typeof gameData?.instructions === "object" && gameData?.instructions) {
-      instructionsObj = gameData.instructions;
+    } else if (typeof liveGame.instructions === "object" && liveGame.instructions) {
+      instructionsObj = liveGame.instructions;
     }
 
-    if (!instructionsObj.required_inputs && Array.isArray(instructionsObj.fields)) {
-      instructionsObj.required_inputs = instructionsObj.fields.map((f: any) => f.name);
-      instructionsObj.input_fields = instructionsObj.fields;
-    }
+    const requiredInputs = Array.isArray(instructionsObj.required_inputs) && instructionsObj.required_inputs.length > 0
+      ? instructionsObj.required_inputs
+      : ["id", "server"];
 
-    const seedInstructions = (foundSeed?.instructions as any) || {};
+    const inputFields = Array.isArray(instructionsObj.input_fields) && instructionsObj.input_fields.length > 0
+      ? instructionsObj.input_fields
+      : [
+          { name: "id", label: "User ID", placeholder: "Masukkan User ID", type: "text" },
+          { name: "server", label: "Server ID", placeholder: "Masukkan Server ID", type: "text" },
+        ];
 
-    // If DB instructions is empty ({}) or has only 1 generic 'id' field while seed has detailed fields (e.g. Roblox, Genshin)
-    const dbHasMultiFields = Array.isArray(instructionsObj.required_inputs) && instructionsObj.required_inputs.length > 1;
-
-    const mergedConfiguration = {
-      ...seedInstructions,
-      ...instructionsObj,
-      required_inputs: (dbHasMultiFields ? instructionsObj.required_inputs : null) || seedInstructions.required_inputs || instructionsObj.required_inputs || ["id", "server"],
-      input_fields: (dbHasMultiFields ? instructionsObj.input_fields : null) || seedInstructions.input_fields || instructionsObj.input_fields,
-      options: instructionsObj.options || seedInstructions.options,
-      code_validation_nickname: instructionsObj.code_validation_nickname || seedInstructions.code_validation_nickname,
-      status_validation_nickname: instructionsObj.status_validation_nickname || seedInstructions.status_validation_nickname,
-      warning_text: instructionsObj.warning_text || seedInstructions.warning_text,
-      guide_image: gameData?.banner || gameData?.image || seedInstructions.guide_image,
+    const gameConfiguration = {
+      title: instructionsObj.title || `Cara Top Up ${liveGame.title}`,
+      steps: Array.isArray(instructionsObj.steps) ? instructionsObj.steps : [],
+      required_inputs: requiredInputs,
+      input_fields: inputFields,
+      options: instructionsObj.options || null,
+      code_validation_nickname: instructionsObj.code_validation_nickname || null,
+      status_validation_nickname: instructionsObj.status_validation_nickname || null,
+      warning_text: instructionsObj.warning_text || null,
+      guide_image: liveGame.banner || liveGame.image || null,
     };
 
     return NextResponse.json({
       success: true,
       game: {
-        ...gameData,
+        ...liveGame,
         products: productsData,
       },
       products: productsData,
-      paymentMethod: paymentMethodsData,
-      paymentMethods: paymentMethodsData,
-      gameConfiguration: mergedConfiguration,
+      paymentMethod: allLivePaymentMethods,
+      paymentMethods: allLivePaymentMethods,
+      gameConfiguration,
     }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({
