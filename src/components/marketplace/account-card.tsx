@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, ShieldCheck, Zap, Flame, Award, CheckCircle2, ChevronRight } from "lucide-react";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
-import { cn } from "@/lib/utils";
+import { cn, resolveStorageUrl } from "@/lib/utils";
 
 export function AccountCard({ account }: { account: GameAccount }) {
   const discountPercentage = account.originalPrice
@@ -34,7 +34,7 @@ export function AccountCard({ account }: { account: GameAccount }) {
       {/* Thumbnail Section */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted/60">
         <Image
-          src={account.images[0] || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop"}
+          src={resolveStorageUrl(account.images[0])}
           alt={account.title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -72,69 +72,53 @@ export function AccountCard({ account }: { account: GameAccount }) {
           <span className="truncate bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1">
             <ShieldCheck className="h-3 w-3 text-emerald-400 inline" /> {account.specs.rank}
           </span>
-          <span className="text-[10px] bg-primary/80 text-primary-foreground px-2 py-0.5 rounded-md font-bold">
+          <span className="truncate bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 text-muted-foreground">
             {account.specs.loginVia}
           </span>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="flex flex-1 flex-col justify-between p-4 space-y-3">
-        <div className="space-y-2">
-          {/* Title */}
-          <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+      {/* Body Content */}
+      <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-4 space-y-3">
+        <div>
+          {/* Game Category Label */}
+          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground mb-1">
+            <span className="text-primary font-bold">{account.gameName}</span>
+            <span className="text-[10px] text-muted-foreground">{account.specs.deliveryType}</span>
+          </div>
+
+          {/* Account Title */}
+          <h3 className="line-clamp-2 text-xs sm:text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
             {account.title}
           </h3>
-
-          {/* Quick Specs Tags */}
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-              <Award className="h-3 w-3 text-amber-400" /> {account.specs.skinsCount} Skin
-            </span>
-            {account.specs.winrate && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-                <Flame className="h-3 w-3 text-orange-400" /> WR {account.specs.winrate}
-              </span>
-            )}
-            <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/50">
-              <Zap className="h-3 w-3 text-brand-blue" /> {account.specs.deliveryType.split(" ")[0]}
-            </span>
-          </div>
         </div>
 
-        {/* Price & Seller Footer */}
-        <div className="pt-3 border-t border-border/40 space-y-2.5">
-          <div className="flex items-baseline justify-between gap-1">
-            <div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Harga Akun</div>
-              <div className="text-base sm:text-lg font-extrabold text-primary">
-                Rp {account.price.toLocaleString("id-ID")}
-              </div>
-            </div>
+        {/* Specifications Pills */}
+        <div className="flex flex-wrap gap-1.5 text-[11px]">
+          <span className="rounded-md bg-muted/80 px-2 py-0.5 text-muted-foreground border border-border/50">
+            Skin: {account.specs.skinsCount}
+          </span>
+          <span className="rounded-md bg-muted/80 px-2 py-0.5 text-muted-foreground border border-border/50">
+            CN: {account.specs.changeName}
+          </span>
+        </div>
+
+        {/* Price & Action Section */}
+        <div className="pt-2 border-t border-border/50 flex items-end justify-between">
+          <div>
             {account.originalPrice && (
-              <div className="text-right">
-                <div className="text-[11px] text-muted-foreground line-through">
-                  Rp {account.originalPrice.toLocaleString("id-ID")}
-                </div>
-                <div className="text-[10px] text-emerald-500 font-bold">Hemat Rp {(account.originalPrice - account.price).toLocaleString("id-ID")}</div>
-              </div>
+              <span className="text-[10px] text-muted-foreground line-through block font-medium">
+                Rp {account.originalPrice.toLocaleString("id-ID")}
+              </span>
             )}
+            <span className="text-sm sm:text-base font-extrabold text-emerald-500">
+              Rp {account.price.toLocaleString("id-ID")}
+            </span>
           </div>
 
-          {/* Seller Bar */}
-          <div className="flex items-center justify-between bg-muted/30 rounded-xl p-2 border border-border/40 text-xs">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-[10px] font-bold">
-                {account.seller.name.charAt(0)}
-              </div>
-              <span className="font-semibold text-foreground truncate text-[11px]">{account.seller.name}</span>
-              {account.seller.isVerified && <CheckCircle2 className="h-3 w-3 text-brand-blue shrink-0" />}
-            </div>
-            <div className="flex items-center gap-1 shrink-0 text-[11px] font-bold text-amber-500">
-              <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-              <span>{account.seller.rating}</span>
-            </div>
-          </div>
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
+            Beli <ChevronRight className="h-3.5 w-3.5" />
+          </span>
         </div>
       </div>
     </Link>

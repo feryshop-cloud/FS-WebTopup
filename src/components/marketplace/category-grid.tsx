@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Gamepad2, Flame, Crosshair, Trophy, Shield, Sparkles, ChevronRight } from "lucide-react";
 import { MARKETPLACE_CATEGORIES, type GameCategory } from "@/lib/data/mock-marketplace";
-import { cn } from "@/lib/utils";
+import { cn, resolveStorageUrl } from "@/lib/utils";
+
 
 export function GameCategoryIcon({ iconName, className }: { iconName: GameCategory["iconName"]; className?: string }) {
   switch (iconName) {
@@ -60,7 +61,7 @@ export function MarketplaceCategoryGrid({ categories = MARKETPLACE_CATEGORIES }:
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="relative flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center overflow-hidden rounded-lg sm:rounded-xl bg-muted/60 border border-border/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                   <Image
-                    src={category.bannerUrl}
+                    src={resolveStorageUrl(category.bannerUrl)}
                     alt={`${category.name} icon`}
                     width={48}
                     height={48}
