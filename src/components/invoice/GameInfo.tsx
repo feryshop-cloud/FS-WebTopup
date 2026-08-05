@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { InvoiceMedia, Transaction } from "@/types";
+import { resolveStorageUrl } from "@/lib/utils";
 
 interface InvoiceGameInfoProps {
   order: Transaction;
@@ -8,7 +9,8 @@ interface InvoiceGameInfoProps {
 }
 
 export function InvoiceGameInfo({ order, game, product }: InvoiceGameInfoProps) {
-  const imageSrc = product?.image || product?.logo || game?.image || game?.logo || null;
+  const rawImage = product?.image || product?.logo || game?.image || game?.logo || null;
+  const imageSrc = resolveStorageUrl(rawImage);
 
   const altText = product?.title || game?.title || order.games || "Product Image";
 
