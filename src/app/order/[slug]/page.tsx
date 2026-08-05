@@ -292,14 +292,22 @@ export default function OrderPage() {
   }, [selectedPaymentMethod, subtotalPrice]);
 
   const checkNickname = useCallback(async () => {
-    try {
-      const game = gameConfig?.code_validation_nickname;
-      const id = inputs.id || "";
-      const server = inputs.server || "";
+    const game = gameConfig?.code_validation_nickname;
+    const requiredInputs = gameConfig?.required_inputs || ["id"];
+    const id = (inputs.id || "").trim();
+    const server = (inputs.server || "").trim();
 
+    const isFormEmpty = requiredInputs.some((inputKey: string) => !inputs[inputKey]?.trim());
+    if (!game || isFormEmpty) {
+      setNickname(null);
+      setNicknameError(null);
+      return;
+    }
+
+    try {
       const res = await fetch(
         apiPath(
-          `/api/check-nickname?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&game=${encodeURIComponent(game || "")}`,
+          `/api/check-nickname?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&game=${encodeURIComponent(game)}`,
         ),
       );
       const data = await res.json().catch(() => ({}));
@@ -329,7 +337,13 @@ export default function OrderPage() {
       (input: string) => currentInputs[input]?.trim() !== "",
     );
 
-    if (requiredInputsFilled) checkNickname();
+    if (!requiredInputsFilled) return;
+
+    const timer = setTimeout(() => {
+      checkNickname();
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [gameConfig, checkNickname]);
 
   const openGuideDrawer = () => setIsGuideOpen(true);
