@@ -81,55 +81,68 @@ export interface RemoteSetting {
 }
 
 function getSupabaseRestUrl() {
-  const configuredUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const configuredUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (configuredUrl) return configuredUrl.replace(/\/+$/, "");
 
-  const connectionString = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
+  const connectionString =
+    process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
   if (!connectionString) return "";
 
   // Match standard host: db.{ref}.supabase.co
-  const refFromHost = connectionString.match(/@(?:db\.)?([a-z0-9]+)\.supabase\.co/i)?.[1];
+  const refFromHost = connectionString.match(
+    /@(?:db\.)?([a-z0-9]+)\.supabase\.co/i,
+  )?.[1];
   if (refFromHost) return `https://${refFromHost}.supabase.co`;
 
   // Match Supabase pooler host: *.pooler.supabase.com - project ref is embedded in the username (postgres.{ref})
-  const refFromUser = connectionString.match(/\/\/(?:[^:]+\.)?([a-z0-9]+):[^@]+@[^/]*\.pooler\.supabase\.com/i)?.[1];
+  const refFromUser = connectionString.match(
+    /\/\/(?:[^:]+\.)?([a-z0-9]+):[^@]+@[^/]*\.pooler\.supabase\.com/i,
+  )?.[1];
   if (refFromUser) return `https://${refFromUser}.supabase.co`;
 
   return "";
 }
 
 function getSupabasePublishableKey() {
-  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "";
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    ""
+  );
 }
 
 export async function getLivePublicGames(): Promise<PublicGame[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    logger.warn("getLivePublicGames missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
+    logger.warn("getLivePublicGames missing credentials", {
+      restUrl,
+      hasKey: Boolean(publishableKey),
+    });
     return [];
   }
 
   try {
     const url = `${restUrl}/rest/v1/games?select=id,name,title,slug,image_url,banner,logo,developers,category_id,description,instructions,is_popular,is_active,sort_order&is_active=eq.true&order=sort_order.asc&order=name.asc`;
-    const response = await fetch(
-      url,
-      {
-        headers: {
-          apikey: publishableKey,
-          Authorization: `Bearer ${publishableKey}`,
-        },
-        cache: "no-store",
+    const response = await fetch(url, {
+      headers: {
+        apikey: publishableKey,
+        Authorization: `Bearer ${publishableKey}`,
       },
-    );
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       const errText = await response.text();
-      logger.error("getLivePublicGames http error", { status: response.status, body: errText });
+      logger.error("getLivePublicGames http error", {
+        status: response.status,
+        body: errText,
+      });
       return [];
     }
 
-    const rows = await response.json() as {
+    const rows = (await response.json()) as {
       id: string;
       name: string;
       title: string | null;
@@ -152,7 +165,9 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
   }
 }
 
-export async function getRemoteSettingsFromRest(): Promise<Record<string, unknown>> {
+export async function getRemoteSettingsFromRest(): Promise<
+  Record<string, unknown>
+> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) return {};
@@ -171,7 +186,7 @@ export async function getRemoteSettingsFromRest(): Promise<Record<string, unknow
 
     if (!response.ok) return {};
 
-    const rows = await response.json() as RemoteSetting[];
+    const rows = (await response.json()) as RemoteSetting[];
     return rows.reduce<Record<string, unknown>>((settings, row) => {
       settings[row.key] = row.value;
       return settings;
@@ -182,20 +197,22 @@ export async function getRemoteSettingsFromRest(): Promise<Record<string, unknow
   }
 }
 
-function mapLiveGames(rows: {
-  id: string;
-  name?: string | null;
-  title?: string | null;
-  slug: string;
-  image_url?: string | null;
-  banner?: string | null;
-  logo?: string | null;
-  developers?: string | null;
-  category_id?: number | null;
-  description?: string | null;
-  instructions?: unknown;
-  is_popular?: boolean | null;
-}[]): PublicGame[] {
+function mapLiveGames(
+  rows: {
+    id: string;
+    name?: string | null;
+    title?: string | null;
+    slug: string;
+    image_url?: string | null;
+    banner?: string | null;
+    logo?: string | null;
+    developers?: string | null;
+    category_id?: number | null;
+    description?: string | null;
+    instructions?: unknown;
+    is_popular?: boolean | null;
+  }[],
+): PublicGame[] {
   return rows.map((game, index) => {
     const imageUrl = resolveStorageUrl(game.image_url);
     const bannerUrl = resolveStorageUrl(game.banner);
@@ -221,7 +238,10 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    logger.warn("getLivePublicProducts missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
+    logger.warn("getLivePublicProducts missing credentials", {
+      restUrl,
+      hasKey: Boolean(publishableKey),
+    });
     return [];
   }
 
@@ -239,11 +259,14 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 
     if (!response.ok) {
       const errText = await response.text();
-      logger.error("getLivePublicProducts http error", { status: response.status, body: errText });
+      logger.error("getLivePublicProducts http error", {
+        status: response.status,
+        body: errText,
+      });
       return [];
     }
 
-    const data = await response.json() as PublicProduct[];
+    const data = (await response.json()) as PublicProduct[];
     logger.info("getLivePublicProducts success", { count: data.length });
     return data;
   } catch (error) {
@@ -256,7 +279,10 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    logger.warn("getLivePublicCategories missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
+    logger.warn("getLivePublicCategories missing credentials", {
+      restUrl,
+      hasKey: Boolean(publishableKey),
+    });
     return [];
   }
 
@@ -274,7 +300,10 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
 
     if (!response.ok) {
       const errText = await response.text();
-      logger.error("getLivePublicCategories http error", { status: response.status, body: errText });
+      logger.error("getLivePublicCategories http error", {
+        status: response.status,
+        body: errText,
+      });
       return [];
     }
     const data = (await response.json()) as PublicCategory[];
@@ -286,17 +315,22 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
   }
 }
 
-export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod[]> {
+export async function getLivePublicPaymentMethods(): Promise<
+  PublicPaymentMethod[]
+> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
-    logger.warn("getLivePublicPaymentMethods missing credentials", { restUrl, hasKey: Boolean(publishableKey) });
+    logger.warn("getLivePublicPaymentMethods missing credentials", {
+      restUrl,
+      hasKey: Boolean(publishableKey),
+    });
     return [];
   }
 
   try {
     const response = await fetch(
-      `${restUrl}/rest/v1/payment_methods?select=id,name,images,payment_id,minimum_amount,maximum_amount,fee,fee_percent,type,status,group,is_outside_group,badge_text,outside_sort,instructions,sort_order&status=eq.active&order=sort_order.asc`,
+      `${restUrl}/rest/v1/payment_methods?select=id,name,images,payment_id,minimum_amount,maximum_amount,fee,fee_percent,type,status,group,is_outside_group,badge_text,outside_sort,instructions,sort_order&status=eq.ACTIVE&order=sort_order.asc`,
       {
         headers: {
           apikey: publishableKey,
@@ -308,7 +342,10 @@ export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod
 
     if (!response.ok) {
       const errText = await response.text();
-      logger.error("getLivePublicPaymentMethods http error", { status: response.status, body: errText });
+      logger.error("getLivePublicPaymentMethods http error", {
+        status: response.status,
+        body: errText,
+      });
       return [];
     }
     const data = (await response.json()) as PublicPaymentMethod[];

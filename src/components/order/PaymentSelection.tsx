@@ -33,7 +33,10 @@ const isDisabledByLimit = (method: PaymentMethod) => {
 
 const PAYMENT_IMAGE_FALLBACK = "/placeholder.png";
 
-const resolvePaymentImage = (images: unknown, method: PaymentMethod): string => {
+const resolvePaymentImage = (
+  images: unknown,
+  method: PaymentMethod,
+): string => {
   const isQris =
     String(method.id).toLowerCase() === "qris" ||
     String(method.payment_id ?? "").toLowerCase() === "qris";
@@ -50,7 +53,8 @@ const resolvePaymentImage = (images: unknown, method: PaymentMethod): string => 
 
   const trimmed = images.trim();
   if (!trimmed) return fallback;
-  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}") return fallback;
+  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}")
+    return fallback;
   return trimmed;
 };
 
@@ -89,7 +93,9 @@ export default function PaymentSelection({
         <div className="flex h-8 w-8 items-center justify-center rounded-md bg-my-color font-semibold text-white">
           {step}
         </div>
-        <h2 className="ml-3 text-sm font-semibold text-card-foreground">Pilih Pembayaran</h2>
+        <h2 className="ml-3 text-sm font-semibold text-card-foreground">
+          Pilih Pembayaran
+        </h2>
       </div>
 
       <div className="space-y-4 p-4">
@@ -104,11 +110,11 @@ export default function PaymentSelection({
                 <label
                   key={method.id}
                   className={cn(
-                    "relative flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/40 px-4 py-4 ring-1 ring-border",
+                    "relative flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/30 px-4 py-4 ring-1 ring-border",
                     !isDisabled &&
                       "hover:ring-2 hover:ring-my-color hover:ring-offset-2 hover:ring-offset-background",
                     isDisabled && "cursor-not-allowed opacity-50",
-                    isSelected && "ring-2 ring-my-color"
+                    isSelected && "ring-2 ring-my-color",
                   )}
                 >
                   <input
@@ -142,7 +148,9 @@ export default function PaymentSelection({
                       )}
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[13px] font-semibold text-foreground">{method.name}</span>
+                      <span className="text-[13px] font-semibold text-foreground">
+                        {method.name}
+                      </span>
                     </div>
                   </div>
 
@@ -167,19 +175,29 @@ export default function PaymentSelection({
               >
                 <span>{group}</span>
                 <svg
-                  className={cn("h-5 w-5 transition-transform duration-300", isOpen ? "rotate-180" : "rotate-0")}
+                  className={cn(
+                    "h-5 w-5 transition-transform duration-300",
+                    isOpen ? "rotate-180" : "rotate-0",
+                  )}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
 
               <div
                 className={cn(
                   "transition-all duration-300",
-                  isOpen ? "max-h-[90vh] overflow-y-auto py-4 opacity-100" : "max-h-0 overflow-hidden opacity-0"
+                  isOpen
+                    ? "max-h-[90vh] overflow-y-auto py-4 opacity-100"
+                    : "max-h-0 overflow-hidden opacity-0",
                 )}
               >
                 <div className="grid grid-cols-2 gap-4 px-4 sm:grid-cols-3">
@@ -196,7 +214,7 @@ export default function PaymentSelection({
                           !isDisabled &&
                             "hover:ring-2 hover:ring-my-color hover:ring-offset-2 hover:ring-offset-background",
                           isDisabled && "cursor-not-allowed opacity-50",
-                          isSelected && "ring-2 ring-my-color"
+                          isSelected && "ring-2 ring-my-color",
                         )}
                       >
                         <input
@@ -212,17 +230,19 @@ export default function PaymentSelection({
                         <span className="w-full">
                           <span className="flex h-full flex-col justify-between divide-y divide-muted-foreground/10">
                             <div className="flex flex-col justify-start gap-1 p-3">
-                              <span className="block text-[11px] font-semibold">{method.name}</span>
+                              <span className="block text-[11px] font-semibold">
+                                {method.name}
+                              </span>
 
                               <div className="flex w-full flex-col">
-                                <div className="flex aspect-square h-12 w-16 items-center">
+                                <div className="flex h-12 w-16 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm">
                                   {imgSrc && (
                                     <Image
                                       alt={method.name}
                                       priority
                                       width={300}
                                       height={300}
-                                      className="object-contain object-right"
+                                      className="h-full w-full object-contain"
                                       sizes="80vh"
                                       src={imgSrc}
                                     />
@@ -231,7 +251,10 @@ export default function PaymentSelection({
 
                                 <div>
                                   <span className="flex items-center text-[14px] font-semibold text-primary md:text-[16px]">
-                                    Rp {(method.totalPrice ?? 0).toLocaleString("id-ID")}
+                                    Rp{" "}
+                                    {(method.totalPrice ?? 0).toLocaleString(
+                                      "id-ID",
+                                    )}
                                   </span>
                                 </div>
                               </div>
@@ -255,7 +278,10 @@ export default function PaymentSelection({
 
                     return (
                       imgSrc && (
-                        <div key={method.id} className="flex min-h-[36px] min-w-[36px] items-center justify-center">
+                        <div
+                          key={method.id}
+                          className="flex min-h-[36px] min-w-[36px] items-center justify-center"
+                        >
                           <Image
                             alt={method.name}
                             src={imgSrc}
