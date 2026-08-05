@@ -3,11 +3,14 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-// Suppress the false-positive React 19 warning for next-themes script injection
-if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+if (typeof window !== "undefined") {
   const orig = console.error;
   console.error = (...args: unknown[]) => {
-    if (typeof args[0] === "string" && args[0].includes("Encountered a script tag")) {
+    if (
+      typeof args[0] === "string" &&
+      (args[0].includes("Encountered a script tag") ||
+        args[0].includes("Script tag inside"))
+    ) {
       return;
     }
     orig.apply(console, args);

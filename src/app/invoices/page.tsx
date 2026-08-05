@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useOrders } from "@/hooks/use-orders";
 import useRealtimeTransactions from "@/hooks/use-realtime-transactions";
 import { apiPath } from "@/lib/routes";
+import { BuyStatus, BuyStatusLabel, VALID_BUY_STATUSES } from "@/types/status";
 
 export default function InvoiceSearchPage() {
   const router = useRouter();
@@ -282,18 +283,9 @@ export default function InvoiceSearchPage() {
               <tbody>
                 {orders?.data && orders.data.length > 0 ? (
                   orders.data.map((order: any, index: number) => {
-                    const timeVal = order.updated_at || order.created_at || order.createdAt;
+                    const timeVal = order.created_at;
                     const displayTime = (() => {
-                      if (!timeVal) return "Baru saja";
-                      if (
-                        typeof timeVal === "string" &&
-                        (timeVal.includes("lalu") ||
-                          timeVal.includes("Baru") ||
-                          timeVal.includes("menit") ||
-                          timeVal.includes("detik") ||
-                          timeVal.includes("jam"))
-                      )
-                        return timeVal;
+                      if (!timeVal) return "-";
                       try {
                         const d = new Date(timeVal);
                         if (!isNaN(d.getTime())) {
@@ -309,7 +301,7 @@ export default function InvoiceSearchPage() {
                       return String(timeVal);
                     })();
 
-                    const rawId = order.order_id || order.orderId || "";
+                    const rawId = order.order_id || "";
                     const displayId = (() => {
                       if (rawId && typeof rawId === "string") {
                         if (rawId.length >= 6) {
@@ -317,56 +309,52 @@ export default function InvoiceSearchPage() {
                         }
                         return rawId;
                       }
-                      if (order.nickname) return `Player (${order.nickname})`;
                       return `TRX-${order.id || index + 1001}`;
                     })();
 
-                    const displayGame = String(
-                      order.game || order.gameSlug || order.games || "Game Top Up",
-                    );
-                    const displayProduct = String(
-                      order.product || order.product_title || order.productTitle || "-",
-                    );
+                    const displayGame = String(order.game || "Game");
+                    const displayProduct = String(order.product || "-");
 
                     const displayExtra = (() => {
                       if (order.whatsapp) {
                         const wa = String(order.whatsapp);
                         return wa.length > 5 ? wa.replace(/.(?=.{3})/g, "*") : "628********";
                       }
-                      const rawPrice = order.price ?? order.total_price ?? order.totalPrice;
-                      if (rawPrice !== undefined && rawPrice !== null && rawPrice !== "") {
-                        try {
-                          const num = Number(rawPrice);
-                          if (!isNaN(num)) {
-                            const formatted = num.toLocaleString("id-ID");
-                            const firstDot = formatted.indexOf(".");
-                            if (firstDot !== -1) {
-                              const prefix = formatted.slice(0, firstDot);
-                              const digitsBefore = prefix.replace(/\D/g, "").length;
-                              const maskedLen = Math.max(2, String(rawPrice).length - digitsBefore);
-                              return `Rp. ${prefix}.${"x".repeat(maskedLen)}`;
-                            }
-                            return `Rp. ${formatted}`;
+                      const rawPrice = order.total_price;
+                      if (rawPrice !== undefined && rawPrice !== null) {
+                        const num = Number(rawPrice);
+                        if (!isNaN(num) && num > 0) {
+                          const formatted = num.toLocaleString("id-ID");
+                          const firstDot = formatted.indexOf(".");
+                          if (firstDot !== -1) {
+                            const prefix = formatted.slice(0, firstDot);
+                            const digitsBefore = prefix.replace(/\D/g, "").length;
+                            const maskedLen = Math.max(2, String(rawPrice).length - digitsBefore);
+                            return `Rp. ${prefix}.${"x".repeat(maskedLen)}`;
                           }
-                        } catch {}
+                          return `Rp. ${formatted}`;
+                        }
                       }
-                      return "Terverifikasi";
+                      return "-";
                     })();
 
-                    const status = String(
-                      order.buy_status || order.buyStatus || order.payment_status || "Sukses",
-                    );
+                    const rawStatus = order.buy_status as string;
+                    const isValidStatus = VALID_BUY_STATUSES.includes(rawStatus as BuyStatus);
+                    if (!isValidStatus && rawStatus) {
+                      console.warn(`Invalid buy_status: ${rawStatus}`);
+                    }
+                    const status = isValidStatus ? (rawStatus as BuyStatus) : BuyStatus.PENDING;
+                    const statusLabel = BuyStatusLabel[status];
                     const badgeClass =
-                      status === "Pending" || status === "pending"
+                      status === BuyStatus.PENDING
                         ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
-                        : status === "Proses" || status === "Processing" || status === "processing"
+                        : status === BuyStatus.PROCESSING
                           ? "bg-info/10 text-info border border-info/20"
-                          : status === "Batal" ||
-                              status === "Gagal" ||
-                              status === "failed" ||
-                              status === "canceled"
+                          : status === BuyStatus.FAILED
                             ? "bg-destructive/10 text-destructive border border-destructive/20"
-                            : "bg-success/10 text-success border border-success/20";
+                            : status === BuyStatus.SUCCESS
+                              ? "bg-success/10 text-success border border-success/20"
+                              : "bg-muted text-muted-foreground border border-border";
 
                     return (
                       <motion.tr
@@ -387,7 +375,7 @@ export default function InvoiceSearchPage() {
                           <span
                             className={`rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide ${badgeClass}`}
                           >
-                            {status}
+                            {statusLabel}
                           </span>
                         </td>
                       </motion.tr>
