@@ -13,7 +13,10 @@ async function getHandler(req: Request, context: { params: Promise<Params> }) {
     const { orderId } = await context.params;
 
     if (!orderId) {
-      return NextResponse.json({ success: false, message: "Order ID tidak ditemukan" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Order ID tidak ditemukan" },
+        { status: 400 },
+      );
     }
 
     let paymentStatus = "success";
@@ -34,18 +37,24 @@ async function getHandler(req: Request, context: { params: Promise<Params> }) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        order_id: orderId,
-        payment_status: paymentStatus,
-        buy_status: buyStatus,
-        paid_at: new Date().toISOString(),
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          order_id: orderId,
+          payment_status: paymentStatus,
+          buy_status: buyStatus,
+          paid_at: new Date().toISOString(),
+        },
       },
-    }, { status: 200 });
+      { status: 200 },
+    );
   } catch (err: any) {
     logger.error("payment-status failed", { error: err });
-    return NextResponse.json({ success: false, message: "Gagal memuat status pembayaran" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal memuat status pembayaran" },
+      { status: 500 },
+    );
   }
 }
 

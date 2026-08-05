@@ -32,23 +32,47 @@ async function getHandler() {
 
     if (results.length === 0) {
       results = [
-        { id: 1, order_id: "TSON-100234", game: "Mobile Legends", product_title: "86 Diamonds (78 + 8 Bonus)", total_price: 23500, payment_status: "success", buy_status: "success", created_at: "2026-07-25T10:30:00Z" },
-        { id: 2, order_id: "TSON-100198", game: "Valorant", product_title: "300 Points", total_price: 40000, payment_status: "success", buy_status: "success", created_at: "2026-07-24T15:12:00Z" },
+        {
+          id: 1,
+          order_id: "TSON-100234",
+          game: "Mobile Legends",
+          product_title: "86 Diamonds (78 + 8 Bonus)",
+          total_price: 23500,
+          payment_status: "success",
+          buy_status: "success",
+          created_at: "2026-07-25T10:30:00Z",
+        },
+        {
+          id: 2,
+          order_id: "TSON-100198",
+          game: "Valorant",
+          product_title: "300 Points",
+          total_price: 40000,
+          payment_status: "success",
+          buy_status: "success",
+          created_at: "2026-07-24T15:12:00Z",
+        },
       ];
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        data: results,
-        total: results.length,
-        current_page: 1,
-        last_page: 1,
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          data: results,
+          total: results.length,
+          current_page: 1,
+          last_page: 1,
+        },
       },
-    }, { status: 200 });
+      { status: 200 },
+    );
   } catch (err: any) {
     logger.error("transactions failed", { error: err });
-    return NextResponse.json({ success: false, message: "Gagal memuat histori transaksi" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal memuat histori transaksi" },
+      { status: 500 },
+    );
   }
 }
 

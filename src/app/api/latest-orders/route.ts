@@ -33,20 +33,50 @@ async function getHandler() {
 
     if (results.length === 0) {
       results = [
-        { id: 1, nickname: "B***i", game: "Mobile Legends", product: "86 Diamonds", created_at: "Baru saja" },
-        { id: 2, nickname: "R***y", game: "Valorant", product: "300 Points", created_at: "2 menit lalu" },
-        { id: 3, nickname: "D***a", game: "Free Fire", product: "140 Diamonds", created_at: "5 menit lalu" },
-        { id: 4, nickname: "A***n", game: "PUBG Mobile", product: "325 UC", created_at: "8 menit lalu" },
+        {
+          id: 1,
+          nickname: "B***i",
+          game: "Mobile Legends",
+          product: "86 Diamonds",
+          created_at: "Baru saja",
+        },
+        {
+          id: 2,
+          nickname: "R***y",
+          game: "Valorant",
+          product: "300 Points",
+          created_at: "2 menit lalu",
+        },
+        {
+          id: 3,
+          nickname: "D***a",
+          game: "Free Fire",
+          product: "140 Diamonds",
+          created_at: "5 menit lalu",
+        },
+        {
+          id: 4,
+          nickname: "A***n",
+          game: "PUBG Mobile",
+          product: "325 UC",
+          created_at: "8 menit lalu",
+        },
       ];
     }
 
-    return NextResponse.json({
-      success: true,
-      data: results,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: results,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
     logger.error("latest-orders failed", { error: err });
-    return NextResponse.json({ success: false, message: "Gagal memuat pesanan terbaru" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal memuat pesanan terbaru" },
+      { status: 500 },
+    );
   }
 }
 

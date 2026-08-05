@@ -96,17 +96,17 @@ const Content = ({
       {nicknameError ? (
         <div className="flex flex-col items-center rounded-2xl bg-red-50 p-4 text-center shadow-sm dark:bg-red-100/10">
           <XCircle className="h-10 w-10 text-red-500" />
-          <h2 className="mt-2 text-xl text-base font-semibold text-red-600">
+          <h2 className="mt-2 text-base text-xl font-semibold text-red-600">
             Transaksi Dibatalkan
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             {nicknameError || "Nickname tidak ditemukan. Pastikan ID benar."}
           </p>
         </div>
       ) : (
         <>
-          <div className="space-y-3 rounded-2xl border bg-muted/50 p-4 shadow-sm">
-            <h4 className="text-sm font-semibold text-muted-foreground">Detail Produk</h4>
+          <div className="bg-muted/50 space-y-3 rounded-2xl border p-4 shadow-sm">
+            <h4 className="text-muted-foreground text-sm font-semibold">Detail Produk</h4>
 
             {gameConfig?.status_validation_nickname === "yes" && (
               <div className="flex justify-between text-sm">
@@ -119,7 +119,7 @@ const Content = ({
               if (!inputs[inputName]) return null;
               const field = (gameConfig?.input_fields || []).find((f: any) => f.name === inputName);
               const label = field?.label || inputName.charAt(0).toUpperCase() + inputName.slice(1);
-              const displayVal = inputName === 'password' ? '••••••••' : inputs[inputName];
+              const displayVal = inputName === "password" ? "••••••••" : inputs[inputName];
               return (
                 <div key={inputName} className="flex justify-between text-sm">
                   <span>{label}</span>
@@ -139,8 +139,8 @@ const Content = ({
             </div>
           </div>
 
-          <div className="space-y-3 rounded-2xl border bg-muted/50 p-4 shadow-sm">
-            <h4 className="text-sm font-semibold text-muted-foreground">Detail Pembayaran</h4>
+          <div className="bg-muted/50 space-y-3 rounded-2xl border p-4 shadow-sm">
+            <h4 className="text-muted-foreground text-sm font-semibold">Detail Pembayaran</h4>
 
             <div className="flex justify-between text-sm">
               <span>Metode</span>
@@ -196,7 +196,7 @@ const Content = ({
       <div className="flex flex-col gap-2 pt-2">
         {!nicknameError && (
           <button
-            className="w-full rounded-xl bg-my-color py-2.5 text-sm font-medium text-white shadow-md transition hover:bg-my-hoverColor disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-my-color hover:bg-my-hoverColor w-full rounded-xl py-2.5 text-sm font-medium text-white shadow-md transition disabled:cursor-not-allowed disabled:opacity-50"
             onClick={submitOrder}
             disabled={isLoading}
           >
@@ -205,7 +205,7 @@ const Content = ({
         )}
 
         <button
-          className="w-full rounded-xl bg-muted py-2.5 text-sm font-medium text-foreground shadow-sm transition hover:bg-muted/80"
+          className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-xl py-2.5 text-sm font-medium shadow-sm transition"
           onClick={() => onOpenChange(false)}
           disabled={isLoading}
         >

@@ -3,13 +3,7 @@ import { MenuIcon, PanelsTopLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/panel/menu";
-import {
-  Sheet,
-  SheetHeader,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle
-} from "@/components/ui/sheet";
+import { Sheet, SheetHeader, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import Image from "next/image";
 import { useSettings } from "@/context/settings-context";
 
@@ -21,7 +15,7 @@ export function SheetMenu() {
   }
   const settings = useSettings() as unknown as Settings | null;
   const logoUrl = settings?.data?.["general.logo"] ?? "/default-logo.png";
-  
+
   return (
     <Sheet>
       <SheetTrigger className="lg:hidden" asChild>
@@ -29,16 +23,12 @@ export function SheetMenu() {
           <MenuIcon size={20} />
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:w-72 px-3 h-full flex flex-col" side="left">
+      <SheetContent className="flex h-full flex-col px-3 sm:w-72" side="left">
         <SheetHeader>
-          <Button
-            className="flex justify-center items-center pb-2 pt-1"
-            variant="link"
-            asChild
-          >
+          <Button className="flex items-center justify-center pb-2 pt-1" variant="link" asChild>
             <Link href="/" className="flex items-center gap-2">
               <SheetTitle className="flex items-center gap-2">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0F0F0F] p-1.5 shadow-sm ring-1 ring-border/70 sm:hidden">
+                <span className="ring-border/70 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0F0F0F] p-1.5 shadow-sm ring-1 sm:hidden">
                   <Image
                     src={logoUrl || "/logo-2.png"}
                     alt="Feryshop Logo"
@@ -47,7 +37,9 @@ export function SheetMenu() {
                     className="h-full w-full object-contain"
                   />
                 </span>
-                <span className="font-extrabold text-lg tracking-tight text-foreground sm:hidden">Feryshop</span>
+                <span className="text-foreground text-lg font-extrabold tracking-tight sm:hidden">
+                  Feryshop
+                </span>
               </SheetTitle>
             </Link>
           </Button>

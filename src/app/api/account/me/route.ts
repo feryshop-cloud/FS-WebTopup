@@ -56,10 +56,13 @@ export async function GET(req: Request) {
       };
     }
 
-    return NextResponse.json({
-      success: true,
-      data: userData,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: userData,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
     return NextResponse.json({ error: "Gagal memuat data profil" }, { status: 500 });
   }

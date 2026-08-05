@@ -17,7 +17,7 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
   useEffect(() => {
     async function fetchOrders() {
       const res = await fetch(
-        apiPath(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(whatsapp)}`)
+        apiPath(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(whatsapp)}`),
       );
       if (res.ok) {
         const data = await res.json();
@@ -36,55 +36,49 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
       setFiltered(orders);
     } else {
       const lower = value.toLowerCase();
-      setFiltered(
-        orders.filter((o) => o.order_id.toLowerCase().includes(lower))
-      );
+      setFiltered(orders.filter((o) => o.order_id.toLowerCase().includes(lower)));
     }
   };
 
-  if (loading) { 
+  if (loading) {
     return (
-      <div className="w-full h-[80vh] flex justify-center items-center">
+      <div className="flex h-[80vh] w-full items-center justify-center">
         <LoadingSpinner size={40} />
       </div>
     );
   }
-  
+
   if (orders.length === 0)
     return (
-      <div className="text-center py-10 text-muted-foreground">
+      <div className="text-muted-foreground py-10 text-center">
         Tidak ada invoice ditemukan untuk nomor <strong>{whatsapp}</strong>.
       </div>
     );
 
   return (
     <div className="space-y-4">
-      <div className="w-full max-w-6xl mx-auto lg:border lg:rounded-lg lg:p-6">
-        <h2 className="text-xl font-bold mb-2">
-          Transaksi Anda
-        </h2>
-        <p className="text-sm text-gray-400 mb-6">
+      <div className="mx-auto w-full max-w-6xl lg:rounded-lg lg:border lg:p-6">
+        <h2 className="mb-2 text-xl font-bold">Transaksi Anda</h2>
+        <p className="mb-6 text-sm text-gray-400">
           Berikut ini keseluruhan data pesanan anda pada nomor {whatsapp}.
         </p>
-        
+
         <div className="mb-4 sm:flex sm:justify-end">
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Cari berdasarkan Order ID
-            </label>
+            <label className="mb-2 block text-sm font-medium">Cari berdasarkan Order ID</label>
             <Input
               placeholder="Contoh: INV-1742576637"
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full sm:w-[300px] rounded-xl border border-input bg-muted text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="border-input bg-muted text-foreground placeholder:text-muted-foreground w-full rounded-xl border text-sm focus-visible:ring-0 focus-visible:ring-offset-0 sm:w-[300px]"
             />
           </div>
         </div>
-      
+
         <div className="-mx-4 overflow-x-auto lg:mx-0">
-          <table className="min-w-full text-sm whitespace-nowrap">
+          <table className="min-w-full whitespace-nowrap text-sm">
             <thead>
-              <tr className="border-t border-b text-xs text-left">
+              <tr className="border-b border-t text-left text-xs">
                 <th className="p-3 text-left">Order ID</th>
                 <th className="p-3 text-left">Game</th>
                 <th className="p-3 text-left">Produk</th>
@@ -105,39 +99,33 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
                     key={order.order_id}
                     className={`transition-colors ${
                       index % 2 === 0
-                        ? "bg-white dark:bg-background"
-                        : "bg-gray-50 dark:bg-muted/50"
+                        ? "dark:bg-background bg-white"
+                        : "dark:bg-muted/50 bg-gray-50"
                     }`}
                   >
-                    <td className="p-3">
-                      {order.order_id}
-                    </td>
+                    <td className="p-3">{order.order_id}</td>
                     <td className="p-3">{order.games}</td>
                     <td className="p-3">{order.product}</td>
                     <td className="p-3">{order.id_games}</td>
                     <td className="p-3">{order.server_games ?? "-"}</td>
                     <td className="p-3">{order.nickname ?? "-"}</td>
-                    <td className="p-3">
-                      Rp{finalPrice.toLocaleString("id-ID")}
-                    </td>
+                    <td className="p-3">Rp{finalPrice.toLocaleString("id-ID")}</td>
                     <td className="p-3">
                       {format(new Date(order.created_at), "dd MMM yyyy HH:mm")}
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold
-                          ${
-                            order.buy_status === "Pending"
-                              ? "bg-yellow-500 text-black"
-                              : order.buy_status === "Proses"
+                        className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                          order.buy_status === "Pending"
+                            ? "bg-yellow-500 text-black"
+                            : order.buy_status === "Proses"
                               ? "bg-info text-info-foreground"
                               : order.buy_status === "Batal" || order.buy_status === "Gagal"
-                              ? "bg-red-500 text-white"
-                              : order.buy_status === "Sukses"
-                              ? "bg-green-500 text-white"
-                              : "bg-gray-500 text-white"
-                          }
-                        `}
+                                ? "bg-red-500 text-white"
+                                : order.buy_status === "Sukses"
+                                  ? "bg-green-500 text-white"
+                                  : "bg-gray-500 text-white"
+                        } `}
                       >
                         {order.buy_status}
                       </span>
@@ -145,7 +133,7 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
                     <td className="p-3">
                       <Link
                         href={`/invoices/${order.order_id}`}
-                        className="text-my-color hover:underline font-medium"
+                        className="text-my-color font-medium hover:underline"
                       >
                         Detail
                       </Link>

@@ -12,11 +12,11 @@ export function LogoProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let logo = settings?.data?.general?.logo || "/logo.png";
-    
+
     if (!logo.startsWith("http") && !logo.startsWith("/")) {
       logo = apiPath(`/api/proxy-image?path=${encodeURIComponent(logo)}`);
     }
-    
+
     setLogoUrl(logo);
   }, [settings]);
 

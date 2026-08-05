@@ -55,24 +55,29 @@ export function Slider({ slides, autoplay = true }: SliderProps) {
           loop: true,
         }}
         plugins={autoplayPlugin}
-        className="relative group"
+        className="group relative"
         aria-label="Promo berjalan"
       >
         {autoplayEnabled && (
           <p className="sr-only">
-            Slider promo bergulir otomatis setiap {Math.round(autoplayDelay / 1000)} detik dan berhenti sementara saat diarahkan, difokuskan, atau dikontrol manual.
+            Slider promo bergulir otomatis setiap {Math.round(autoplayDelay / 1000)} detik dan
+            berhenti sementara saat diarahkan, difokuskan, atau dikontrol manual.
           </p>
         )}
 
         <CarouselContent>
           {slides.map((slide, index) => {
             const rawImg = slide.image || slide.images || "/default-og-image.jpg";
-            const imgSrc = typeof rawImg === "string" && rawImg.trim() ? rawImg.trim() : "/default-og-image.jpg";
+            const imgSrc =
+              typeof rawImg === "string" && rawImg.trim() ? rawImg.trim() : "/default-og-image.jpg";
             const title = slide.title || "Promo Banner";
-            const targetUrl = slide.url && typeof slide.url === "string" && slide.url.trim() ? slide.url.trim() : null;
+            const targetUrl =
+              slide.url && typeof slide.url === "string" && slide.url.trim()
+                ? slide.url.trim()
+                : null;
 
             const BannerImage = (
-              <div className="relative w-full h-[150px] sm:h-[220px] md:h-[280px] lg:h-[340px] overflow-hidden rounded-2xl border border-border/40 bg-muted/20 shadow-sm transition-all duration-300">
+              <div className="border-border/40 bg-muted/20 relative h-[150px] w-full overflow-hidden rounded-2xl border shadow-sm transition-all duration-300 sm:h-[220px] md:h-[280px] lg:h-[340px]">
                 <Image
                   src={imgSrc}
                   alt={title}
@@ -87,7 +92,10 @@ export function Slider({ slides, autoplay = true }: SliderProps) {
             return (
               <CarouselItem key={slide.id ?? index}>
                 {targetUrl ? (
-                  <Link href={targetUrl} className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl">
+                  <Link
+                    href={targetUrl}
+                    className="focus-visible:ring-primary block w-full rounded-2xl focus:outline-none focus-visible:ring-2"
+                  >
                     {BannerImage}
                   </Link>
                 ) : (
@@ -98,8 +106,8 @@ export function Slider({ slides, autoplay = true }: SliderProps) {
           })}
         </CarouselContent>
 
-        <CarouselPrevious className="left-2 sm:left-4 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-background/70 backdrop-blur-md border border-border/40 text-foreground shadow-md transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 hover:bg-background hover:scale-105" />
-        <CarouselNext className="right-2 sm:right-4 h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-background/70 backdrop-blur-md border border-border/40 text-foreground shadow-md transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0 hover:bg-background hover:scale-105" />
+        <CarouselPrevious className="bg-background/70 border-border/40 text-foreground hover:bg-background left-2 h-8 w-8 rounded-full border opacity-0 shadow-md backdrop-blur-md transition-all hover:scale-105 disabled:opacity-0 group-hover:opacity-100 sm:left-4 sm:h-10 sm:w-10" />
+        <CarouselNext className="bg-background/70 border-border/40 text-foreground hover:bg-background right-2 h-8 w-8 rounded-full border opacity-0 shadow-md backdrop-blur-md transition-all hover:scale-105 disabled:opacity-0 group-hover:opacity-100 sm:right-4 sm:h-10 sm:w-10" />
       </Carousel>
     </div>
   );

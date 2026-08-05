@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { ContentLayout } from "@/components/panel/content-layout";
 import { MarketplaceCategoryView } from "@/components/marketplace/category-view";
-import { getMarketplaceAccounts, getMarketplaceCategories, searchLiveMarketplace } from "@/lib/marketplace/live-marketplace";
+import {
+  getMarketplaceAccounts,
+  getMarketplaceCategories,
+  searchLiveMarketplace,
+} from "@/lib/marketplace/live-marketplace";
 
 export const metadata: Metadata = {
   title: "Feryshop | Pencarian Akun Game Sultan",
-  description: "Cari akun game sultan terverifikasi dengan garansi anti-hack 100% via Rekber resmi Feryshop.",
+  description:
+    "Cari akun game sultan terverifikasi dengan garansi anti-hack 100% via Rekber resmi Feryshop.",
 };
 
 export const dynamic = "force-dynamic";

@@ -30,7 +30,7 @@ export default function SignupPage() {
     <ContentLayout title="Daftar">
       <Suspense
         fallback={
-          <div className="w-full h-[80vh] flex justify-center items-center">
+          <div className="flex h-[80vh] w-full items-center justify-center">
             <LoadingSpinner size={40} />
           </div>
         }
@@ -75,7 +75,10 @@ function SignupForm() {
     return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
   }, [settings]);
 
-  const turnstileSiteKey = useMemo(() => String(settings?.["turnstile.site_key"] || ""), [settings]);
+  const turnstileSiteKey = useMemo(
+    () => String(settings?.["turnstile.site_key"] || ""),
+    [settings],
+  );
 
   useEffect(() => {
     if (session) redirect("/dashboard");
@@ -88,10 +91,15 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [loadingEmail, setLoadingEmail] = useState(false);
 
-  const captchaReadyEmail = !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
+  const captchaReadyEmail =
+    !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
 
   const canRegisterEmail =
-    captchaReadyEmail && !loadingEmail && name.trim().length >= 2 && isValidEmail(email) && password.length >= 6;
+    captchaReadyEmail &&
+    !loadingEmail &&
+    name.trim().length >= 2 &&
+    isValidEmail(email) &&
+    password.length >= 6;
 
   const showDuplicateAlert = () => setSignupError(DUPLICATE_MESSAGE);
 
@@ -148,7 +156,7 @@ function SignupForm() {
       title="Daftar"
       description="Buat akun baru dengan email."
       footer={
-        <div className="text-sm text-muted-foreground text-center">
+        <div className="text-muted-foreground text-center text-sm">
           Sudah punya akun?{" "}
           <Link href="/signin" className="text-primary underline underline-offset-4">
             Masuk sekarang
@@ -209,14 +217,14 @@ function SignupForm() {
               className="flex justify-center"
             />
             {settingsLoaded && !turnstileTokenEmail ? (
-              <div className="text-xs text-muted-foreground text-center mt-2">
+              <div className="text-muted-foreground mt-2 text-center text-xs">
                 Selesaikan captcha dulu untuk melanjutkan.
               </div>
             ) : null}
           </div>
         ) : null}
 
-        <Button onClick={handleRegisterEmail} disabled={!canRegisterEmail} className="w-full h-10">
+        <Button onClick={handleRegisterEmail} disabled={!canRegisterEmail} className="h-10 w-full">
           {loadingEmail ? "Memproses..." : "Daftar"}
         </Button>
       </div>
@@ -227,7 +235,7 @@ function SignupForm() {
         type="button"
         variant="outline"
         onClick={() => signIn("google", { callbackUrl })}
-        className="w-full h-10 flex items-center justify-center gap-2"
+        className="flex h-10 w-full items-center justify-center gap-2"
       >
         <FcGoogle className="text-xl" />
         Daftar dengan Google

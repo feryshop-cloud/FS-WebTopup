@@ -10,10 +10,9 @@ export default function Breadcrumbs() {
   const segments = pathname.split("/").filter((seg) => seg);
 
   return (
-    <div className="flex items-center text-sm text-muted-foreground space-x-1 mb-6">
-
-      <Link href="/" className="hover:text-primary font-medium text-xs transition-colors flex">
-        <ArrowLeft className="w-4 h-4 text-muted-foreground mr-2" /> Beranda
+    <div className="text-muted-foreground mb-6 flex items-center space-x-1 text-sm">
+      <Link href="/" className="hover:text-primary flex text-xs font-medium transition-colors">
+        <ArrowLeft className="text-muted-foreground mr-2 h-4 w-4" /> Beranda
       </Link>
 
       {segments.map((seg, index) => {
@@ -21,10 +20,8 @@ export default function Breadcrumbs() {
 
         return (
           <React.Fragment key={index}>
-            <ChevronRight className="w-4 h-4" />
-            <span className="capitalize text-foreground text-xs">
-              {label}
-            </span>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground text-xs capitalize">{label}</span>
           </React.Fragment>
         );
       })}

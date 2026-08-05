@@ -40,7 +40,12 @@ export function Navbar() {
 
   const kalkulatorItems = [
     { href: "/kalkulator/winrate", label: "Cek Winrate", icon: Percent, enabled: enableWinrate },
-    { href: "/kalkulator/magic-wheel", label: "Cek Magic Wheel", icon: Sparkles, enabled: enableMagicWheel },
+    {
+      href: "/kalkulator/magic-wheel",
+      label: "Cek Magic Wheel",
+      icon: Sparkles,
+      enabled: enableMagicWheel,
+    },
     { href: "/kalkulator/zodiac", label: "Cek Zodiac", icon: Star, enabled: enableZodiac },
   ].filter((x) => x.enabled);
 
@@ -49,12 +54,12 @@ export function Navbar() {
   const menuList = getMenuList(pathname, isLoggedIn);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-4 sm:mx-8 flex h-12 sm:h-16 items-center">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 w-full shadow backdrop-blur">
+      <div className="mx-4 flex h-12 items-center sm:mx-8 sm:h-16">
         <div className="flex items-center space-x-4 lg:space-x-0">
           <SheetMenu />
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0F0F0F] p-1.5 shadow-sm ring-1 ring-border/70">
+            <span className="ring-border/70 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0F0F0F] p-1.5 shadow-sm ring-1">
               <Image
                 src={logoUrl || "/logo-2.png"}
                 alt="Feryshop Logo"
@@ -64,7 +69,7 @@ export function Navbar() {
                 className="h-full w-full object-contain"
               />
             </span>
-            <span className="font-extrabold text-lg tracking-tight text-foreground">Feryshop</span>
+            <span className="text-foreground text-lg font-extrabold tracking-tight">Feryshop</span>
           </Link>
         </div>
 
@@ -76,7 +81,11 @@ export function Navbar() {
                 <Button asChild variant="outline" size="sm" className="shadow-none">
                   <Link href="/signin">Masuk</Link>
                 </Button>
-                <Button asChild size="sm" className="shadow-none bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button
+                  asChild
+                  size="sm"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-none"
+                >
                   <Link href="/signup">Daftar</Link>
                 </Button>
                 <ModeToggle />
@@ -92,7 +101,7 @@ export function Navbar() {
         </div>
       </div>
 
-      <nav className="mx-4 sm:mx-8 border-t border-border pt-2 pb-3 overflow-x-auto hidden md:flex items-center">
+      <nav className="border-border mx-4 hidden items-center overflow-x-auto border-t pb-3 pt-2 sm:mx-8 md:flex">
         <ul className="flex items-center gap-3">
           {menuList.flatMap(({ menus }) =>
             menus.flatMap(({ href, label, icon: Icon, active }) => {
@@ -104,15 +113,17 @@ export function Navbar() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "gap-2 hover:bg-white/5 transition-colors",
-                        pathname === href || pathname.startsWith(`${href}/`) ? "text-primary font-bold bg-transparent hover:bg-transparent" : "text-muted-foreground hover:text-primary"
+                        "gap-2 transition-colors hover:bg-white/5",
+                        pathname === href || pathname.startsWith(`${href}/`)
+                          ? "text-primary bg-transparent font-bold hover:bg-transparent"
+                          : "text-muted-foreground hover:text-primary",
                       )}
                     >
                       <Icon size={16} />
                       <span className="text-sm">{label}</span>
                     </Button>
                   </Link>
-                </li>
+                </li>,
               );
 
               if (href === "/price-list" && kalkulatorItems.length > 0) {
@@ -123,8 +134,10 @@ export function Navbar() {
                         <Button
                           variant="ghost"
                           className={cn(
-                            "gap-2 hover:bg-white/5 transition-colors",
-                            kalkulatorActive ? "text-primary font-bold bg-transparent hover:bg-transparent" : "text-muted-foreground hover:text-primary"
+                            "gap-2 transition-colors hover:bg-white/5",
+                            kalkulatorActive
+                              ? "text-primary bg-transparent font-bold hover:bg-transparent"
+                              : "text-muted-foreground hover:text-primary",
                           )}
                         >
                           <Calculator size={16} />
@@ -135,7 +148,10 @@ export function Navbar() {
                       <DropdownMenuContent align="start" className="min-w-[220px]">
                         {kalkulatorItems.map((item) => (
                           <DropdownMenuItem key={item.href} asChild>
-                            <Link href={item.href} className="w-full px-2 py-1.5 text-sm flex items-center gap-2">
+                            <Link
+                              href={item.href}
+                              className="flex w-full items-center gap-2 px-2 py-1.5 text-sm"
+                            >
                               <item.icon className="h-4 w-4" />
                               {item.label}
                             </Link>
@@ -143,12 +159,12 @@ export function Navbar() {
                         ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </li>
+                  </li>,
                 );
               }
 
               return nodes;
-            })
+            }),
           )}
         </ul>
       </nav>

@@ -92,7 +92,10 @@ export default function PromoCodeSection({
     return Number.isFinite(x) && x > 0 ? Math.floor(x) : 4;
   }, [stepNumber]);
 
-  const resolvedSectionId = useMemo(() => (sectionId ? String(sectionId) : String(step)), [sectionId, step]);
+  const resolvedSectionId = useMemo(
+    () => (sectionId ? String(sectionId) : String(step)),
+    [sectionId, step],
+  );
 
   const fetchList = async () => {
     if (!canFetchList || listLoading) return;
@@ -105,7 +108,7 @@ export default function PromoCodeSection({
       q.set("payment_method_id", String(paymentMethodId));
 
       const res = await fetch(apiPath(`/api/promo-codes?${q.toString()}`), { cache: "no-store" });
-      const json = await res.json().catch(() => ({} as any));
+      const json = await res.json().catch(() => ({}) as any);
 
       if (!res.ok || !json?.success) {
         setPromoList([]);
@@ -141,7 +144,7 @@ export default function PromoCodeSection({
         }),
       });
 
-      const json = await res.json().catch(() => ({} as any));
+      const json = await res.json().catch(() => ({}) as any);
 
       if (!res.ok || !json?.success) {
         toast.error(json?.message || "Kode promo tidak valid.");
@@ -153,7 +156,9 @@ export default function PromoCodeSection({
 
       const discount = money(pricing?.discount ?? 0);
       const finalPrice = money(pricing?.final_price ?? 0);
-      const applied = String(promo?.code ?? code).trim().toUpperCase();
+      const applied = String(promo?.code ?? code)
+        .trim()
+        .toUpperCase();
 
       if (!applied) {
         toast.error("Kode promo tidak valid.");
@@ -187,7 +192,9 @@ export default function PromoCodeSection({
   };
 
   const pickPromo = (c: string) => {
-    const next = String(c || "").trim().toUpperCase();
+    const next = String(c || "")
+      .trim()
+      .toUpperCase();
     if (!next) return;
     setCode(next);
     setOpenList(false);
@@ -196,23 +203,25 @@ export default function PromoCodeSection({
   return (
     <section
       id={resolvedSectionId}
-      className="relative scroll-mt-20 rounded-xl bg-background shadow-sm ring-1 ring-border md:scroll-mt-[7.5rem]"
+      className="bg-background ring-border relative scroll-mt-20 rounded-xl shadow-sm ring-1 md:scroll-mt-[7.5rem]"
     >
-      <div className="flex items-center rounded-t-xl bg-muted px-4 py-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-my-color font-semibold text-white">
+      <div className="bg-muted flex items-center rounded-t-xl px-4 py-2">
+        <div className="bg-my-color flex h-8 w-8 items-center justify-center rounded-md font-semibold text-white">
           {step}
         </div>
-        <h2 className="ml-3 text-sm font-semibold text-card-foreground">Gunakan Kode Promo (Jika Ada)</h2>
+        <h2 className="text-card-foreground ml-3 text-sm font-semibold">
+          Gunakan Kode Promo (Jika Ada)
+        </h2>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="space-y-4 p-4">
         <div className="flex w-full flex-col gap-2 sm:flex-row">
           <input
             type="text"
             placeholder="Masukkan kode promo"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
-            className="w-full rounded-lg border border-border bg-muted px-4 py-3 text-xs text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-my-color"
+            className="border-border bg-muted text-foreground placeholder-muted-foreground focus:ring-my-color w-full rounded-lg border px-4 py-3 text-xs focus:outline-none focus:ring-2"
           />
 
           {appliedCode ? (
@@ -229,7 +238,7 @@ export default function PromoCodeSection({
               type="button"
               onClick={applyPromo}
               disabled={!canApply || loading}
-              className="rounded-lg bg-my-color px-4 py-3 text-xs font-semibold text-white disabled:opacity-60"
+              className="bg-my-color rounded-lg px-4 py-3 text-xs font-semibold text-white disabled:opacity-60"
             >
               {loading ? "Memproses..." : "Gunakan"}
             </button>
@@ -241,21 +250,23 @@ export default function PromoCodeSection({
             type="button"
             onClick={openPromoList}
             disabled={!canFetchList}
-            className="text-xs font-semibold text-my-color hover:underline disabled:opacity-50"
+            className="text-my-color text-xs font-semibold hover:underline disabled:opacity-50"
           >
             Lihat kode promo
           </button>
         </div>
 
         {appliedCode && (
-          <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-xs">
+          <div className="border-border bg-muted/40 rounded-lg border px-4 py-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-foreground">Promo Aktif</span>
-              <span className="font-semibold text-primary">{appliedCode}</span>
+              <span className="text-foreground font-medium">Promo Aktif</span>
+              <span className="text-primary font-semibold">{appliedCode}</span>
             </div>
             <div className="mt-1 flex items-center justify-between">
               <span className="text-muted-foreground">Diskon (per item)</span>
-              <span className="font-semibold text-foreground">Rp {money(appliedDiscount).toLocaleString("id-ID")}</span>
+              <span className="text-foreground font-semibold">
+                Rp {money(appliedDiscount).toLocaleString("id-ID")}
+              </span>
             </div>
           </div>
         )}
@@ -268,11 +279,11 @@ export default function PromoCodeSection({
             <DialogDescription>Pilih promo yang tersedia untuk checkout ini.</DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+          <div className="max-h-[60vh] space-y-3 overflow-y-auto">
             {listLoading ? (
-              <div className="text-sm text-muted-foreground">Memuat promo...</div>
+              <div className="text-muted-foreground text-sm">Memuat promo...</div>
             ) : promoList.length === 0 ? (
-              <div className="text-sm text-muted-foreground">Belum ada promo yang tersedia.</div>
+              <div className="text-muted-foreground text-sm">Belum ada promo yang tersedia.</div>
             ) : (
               promoList.map((p) => {
                 const disabled = !p.is_eligible || String(p.status).toUpperCase() !== "ACTIVE";
@@ -283,13 +294,13 @@ export default function PromoCodeSection({
                     type="button"
                     onClick={() => pickPromo(p.code)}
                     disabled={disabled}
-                    className="w-full text-left rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm disabled:opacity-50"
+                    className="border-border bg-muted/40 w-full rounded-xl border px-4 py-3 text-left text-sm disabled:opacity-50"
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <div className="font-semibold text-foreground">{p.code}</div>
-                      <div className="text-xs font-semibold text-muted-foreground">{p.name}</div>
+                      <div className="text-foreground font-semibold">{p.code}</div>
+                      <div className="text-muted-foreground text-xs font-semibold">{p.name}</div>
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
+                    <div className="text-muted-foreground mt-1 text-xs">
                       {disabled ? "Tidak memenuhi syarat" : "Bisa digunakan"}
                     </div>
                   </button>

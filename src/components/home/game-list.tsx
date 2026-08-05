@@ -32,9 +32,11 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
 
   if (!isLoading && games.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-muted/30 p-6 text-center">
+      <div className="border-border bg-muted/30 rounded-xl border p-6 text-center">
         <div className="text-sm font-medium">Game belum tersedia</div>
-        <div className="mt-1 text-xs text-muted-foreground">Coba pilih kategori lain atau refresh halaman.</div>
+        <div className="text-muted-foreground mt-1 text-xs">
+          Coba pilih kategori lain atau refresh halaman.
+        </div>
       </div>
     );
   }
@@ -52,9 +54,9 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
       >
         {isLoading
           ? [...Array(9)].map((_, index) => (
-              <li key={`skeleton-${index}`} className="relative rounded-xl bg-muted">
-                <Skeleton className="w-full aspect-square rounded-xl" />
-                <div className="p-3 space-y-2">
+              <li key={`skeleton-${index}`} className="bg-muted relative rounded-xl">
+                <Skeleton className="aspect-square w-full rounded-xl" />
+                <div className="space-y-2 p-3">
                   <Skeleton className="h-4 w-3/4 rounded" />
                   <Skeleton className="h-3 w-1/2 rounded" />
                 </div>
@@ -72,8 +74,8 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
                 layout
               >
                 <Link prefetch href={`/order/${game.slug}`} className="block">
-                  <div className="relative transform overflow-hidden rounded-xl bg-muted duration-300 ease-in-out hover:shadow-2xl hover:ring-my-color hover:ring-offset-2 hover:ring-offset-background hover:ring-[3px]">
-                    <div className="w-full aspect-square overflow-hidden rounded-t-xl">
+                  <div className="bg-muted hover:ring-my-color hover:ring-offset-background relative transform overflow-hidden rounded-xl duration-300 ease-in-out hover:shadow-2xl hover:ring-[3px] hover:ring-offset-2">
+                    <div className="aspect-square w-full overflow-hidden rounded-t-xl">
                       <Image
                         src={game.image}
                         alt={game.title}
@@ -84,8 +86,10 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
                       />
                     </div>
                     <div className="p-3">
-                      <h2 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{game.title}</h2>
-                      <p className="text-xs text-gray-400 truncate">{game.developers || ""}</p>
+                      <h2 className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                        {game.title}
+                      </h2>
+                      <p className="truncate text-xs text-gray-400">{game.developers || ""}</p>
                     </div>
                   </div>
                 </Link>
@@ -94,10 +98,10 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
       </motion.ul>
 
       {!isLoading && games.length > 0 && visibleCount < games.length && (
-        <div className="flex justify-center mt-4">
+        <div className="mt-4 flex justify-center">
           <motion.button
             onClick={loadMoreGames}
-            className="px-6 py-2 text-sm font-medium bg-muted rounded-full shadow-md transition-all"
+            className="bg-muted rounded-full px-6 py-2 text-sm font-medium shadow-md transition-all"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             type="button"

@@ -33,11 +33,7 @@ export function Combobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-full justify-between"
-        >
+        <Button variant="outline" role="combobox" className="w-full justify-between">
           {selected?.label || placeholder || "Pilih"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -60,7 +56,7 @@ export function Combobox({
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    selected?.value === option.value ? "opacity-100" : "opacity-0"
+                    selected?.value === option.value ? "opacity-100" : "opacity-0",
                   )}
                 />
                 {option.label}

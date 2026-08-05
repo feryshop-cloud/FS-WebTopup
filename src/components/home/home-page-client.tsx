@@ -92,11 +92,11 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
       <div className="space-y-8">
         <div className="w-full pt-1">
           {isLoadingSlider ? (
-            <Skeleton className="w-full h-[150px] sm:h-[220px] md:h-[280px] lg:h-[340px] rounded-2xl" />
+            <Skeleton className="h-[150px] w-full rounded-2xl sm:h-[220px] md:h-[280px] lg:h-[340px]" />
           ) : errorSlider ? (
-            <div className="rounded-2xl border border-border/50 bg-muted/20 p-6 text-center">
+            <div className="border-border/50 bg-muted/20 rounded-2xl border p-6 text-center">
               <div className="text-sm font-medium">Gagal memuat banner</div>
-              <div className="mt-1 text-xs text-muted-foreground">
+              <div className="text-muted-foreground mt-1 text-xs">
                 {(errorSlider as Error)?.message ?? "Terjadi kesalahan."}
               </div>
               <div className="mt-4">
@@ -111,9 +111,9 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         </div>
 
         {hasAnyError && (
-          <div className="rounded-xl border border-border bg-muted/30 p-6">
+          <div className="border-border bg-muted/30 rounded-xl border p-6">
             <div className="text-sm font-medium">Sebagian data gagal dimuat</div>
-            <div className="mt-1 text-xs text-muted-foreground">
+            <div className="text-muted-foreground mt-1 text-xs">
               {errorGames ? (errorGames as Error)?.message : null}
               {errorGames && (errorCategories || errorSlider) ? " - " : null}
               {errorCategories ? (errorCategories as Error)?.message : null}
@@ -154,7 +154,9 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         <GameList isLoading={isLoadingGames} filteredGames={filteredGames} />
 
         {!isLoadingGames && !errorGames && filteredGames.length === 0 && (
-          <div className="text-center text-sm text-muted-foreground py-6">Tidak ada game pada kategori ini</div>
+          <div className="text-muted-foreground py-6 text-center text-sm">
+            Tidak ada game pada kategori ini
+          </div>
         )}
       </div>
 

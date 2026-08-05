@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -31,28 +31,28 @@ const GuideDrawer: React.FC<GuideDrawerProps> = ({
   const modalTitle = title || "Panduan Menemukan ID";
 
   const Content = (
-    <div className="p-4 space-y-4 mx-auto w-full max-w-full overflow-y-auto">
+    <div className="mx-auto w-full max-w-full space-y-4 overflow-y-auto p-4">
       {/* Gambar Panduan */}
       {guideImage && !imageError && (
-        <div className="relative w-full rounded-lg overflow-hidden bg-muted border border-border">
+        <div className="bg-muted border-border relative w-full overflow-hidden rounded-lg border">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={guideImage}
             alt="Panduan"
-            className="w-full max-h-60 object-contain rounded-lg"
+            className="max-h-60 w-full rounded-lg object-contain"
             onError={() => setImageError(true)}
           />
         </div>
       )}
 
       {/* Teks Panduan */}
-      {guideText && <p className="text-xs text-foreground leading-relaxed">{guideText}</p>}
+      {guideText && <p className="text-foreground text-xs leading-relaxed">{guideText}</p>}
 
       {/* Langkah-langkah Panduan */}
       {steps && steps.length > 0 && (
-        <div className="space-y-2 rounded-lg bg-muted/60 p-3.5 border border-border">
-          <h4 className="text-xs font-semibold text-card-foreground">Langkah-langkah:</h4>
-          <ol className="list-decimal list-inside space-y-1.5 text-xs text-muted-foreground">
+        <div className="bg-muted/60 border-border space-y-2 rounded-lg border p-3.5">
+          <h4 className="text-card-foreground text-xs font-semibold">Langkah-langkah:</h4>
+          <ol className="text-muted-foreground list-inside list-decimal space-y-1.5 text-xs">
             {steps.map((stepItem, idx) => (
               <li key={idx} className="leading-relaxed">
                 {stepItem}

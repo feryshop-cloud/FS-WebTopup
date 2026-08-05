@@ -3,7 +3,14 @@ export interface AccountSpecification {
   level?: string | number;
   skinsCount: number | string;
   heroesCount?: number | string;
-  loginVia: "Moonton All Monsep" | "Garena" | "Riot ID" | "Konami ID" | "Level Infinite" | "Google / FB" | "All Monsep";
+  loginVia:
+    | "Moonton All Monsep"
+    | "Garena"
+    | "Riot ID"
+    | "Konami ID"
+    | "Level Infinite"
+    | "Google / FB"
+    | "All Monsep";
   changeName?: "Ready (Gratis)" | "Off (Beli Card)" | "Available";
   deliveryType: "Instant Delivery" | "Manual Check (< 5 Menit)";
   winrate?: string;
@@ -68,7 +75,13 @@ export const MARKETPLACE_CATEGORIES: GameCategory[] = [
     bannerUrl: "/ff-icon.webp",
     totalAccounts: 18,
     colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
-    popularRanks: ["Heroic / Master", "Grandmaster", "Akun Vault Penuh", "SG 2 Ungu", "Evo Gun Max"],
+    popularRanks: [
+      "Heroic / Master",
+      "Grandmaster",
+      "Akun Vault Penuh",
+      "SG 2 Ungu",
+      "Evo Gun Max",
+    ],
   },
   {
     id: "3",
@@ -487,7 +500,8 @@ export const MOCK_ACCOUNTS: GameAccount[] = [
     slug: "efootball-epic-big-time-104-ovr-messi-ronaldinho",
     gameSlug: "efootball",
     gameName: "eFootball",
-    title: "Akun eFootball Sultan Tim 104+ OVR - Trio Epic Big Time Messi 2015, Cruyff & Ronaldinho",
+    title:
+      "Akun eFootball Sultan Tim 104+ OVR - Trio Epic Big Time Messi 2015, Cruyff & Ronaldinho",
     price: 920000,
     originalPrice: 1800000,
     badge: "Sultan",
@@ -597,7 +611,8 @@ export const MOCK_ACCOUNTS: GameAccount[] = [
     slug: "pubgm-conqueror-m416-glacier-max-lv-7",
     gameSlug: "pubgm",
     gameName: "PUBG Mobile",
-    title: "Akun Sultan Conqueror - M416 Glacier Level 7 MAX (Loot Crate & On-Hit Effect) + X-Suit Firaun Lv 4",
+    title:
+      "Akun Sultan Conqueror - M416 Glacier Level 7 MAX (Loot Crate & On-Hit Effect) + X-Suit Firaun Lv 4",
     price: 1850000,
     originalPrice: 3500000,
     badge: "Sultan",

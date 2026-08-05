@@ -6,13 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function ApiCodeBlock({
-  code,
-  className,
-}: {
-  code: string;
-  className?: string;
-}) {
+export function ApiCodeBlock({ code, className }: { code: string; className?: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -26,7 +20,12 @@ export function ApiCodeBlock({
   };
 
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl border border-primary/10 bg-muted/30", className)}>
+    <div
+      className={cn(
+        "border-primary/10 bg-muted/30 relative overflow-hidden rounded-2xl border",
+        className,
+      )}
+    >
       <Button
         type="button"
         variant="ghost"
@@ -36,7 +35,7 @@ export function ApiCodeBlock({
       >
         {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
       </Button>
-      <pre className="overflow-x-auto whitespace-pre-wrap break-words px-4 py-4 pr-12 text-xs leading-6 text-foreground sm:pr-14">
+      <pre className="text-foreground overflow-x-auto whitespace-pre-wrap break-words px-4 py-4 pr-12 text-xs leading-6 sm:pr-14">
         <code>{code}</code>
       </pre>
     </div>

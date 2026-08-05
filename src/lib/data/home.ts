@@ -85,14 +85,16 @@ export async function getPromoPayload() {
       {
         id: 1,
         title: "Diskon Weekly Pass MLBB",
-        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop",
+        image:
+          "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop",
         description: "Potongan harga spesial untuk Weekly Diamond Pass selama periode promo.",
         url: "/order/mobile-legends",
       },
       {
         id: 2,
         title: "Cashback QRIS 5%",
-        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop",
+        image:
+          "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop",
         description: "Gunakan metode pembayaran QRIS untuk mendapatkan potongan langsung.",
         url: "/order/valorant",
       },
@@ -106,7 +108,8 @@ export async function getPopupPromoPayload() {
     data: {
       id: 1,
       title: "Selamat Datang di Feryshop!",
-      image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
       description: "Nikmati kemudahan top up game 24 jam dengan harga termurah & proses instan.",
       url: "/order/mobile-legends",
       is_active: false,
@@ -119,7 +122,11 @@ export async function getBlogLitePayload(page = 1, perPage = 6) {
 
   if (hasArticleDatabaseEnabled()) {
     try {
-      const dbArticles = await db.select().from(articles).where(eq(articles.isPublished, true)).orderBy(desc(articles.createdAt));
+      const dbArticles = await db
+        .select()
+        .from(articles)
+        .where(eq(articles.isPublished, true))
+        .orderBy(desc(articles.createdAt));
       if (dbArticles.length > 0) {
         allArticles = dbArticles.map(normalizeArticle);
       }

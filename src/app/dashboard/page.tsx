@@ -11,7 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { apiPath } from "@/lib/routes";
 
 type PageMeta = {
@@ -105,7 +112,9 @@ export default function DashboardPage() {
     setErrorSummary(null);
 
     try {
-      const res = await fetch(apiPath("/api/transactions/transaction-summary"), { cache: "no-store" });
+      const res = await fetch(apiPath("/api/transactions/transaction-summary"), {
+        cache: "no-store",
+      });
 
       if (res.status === 401) {
         setErrorSummary("Sesi kamu sudah habis. Silakan login ulang.");
@@ -115,7 +124,9 @@ export default function DashboardPage() {
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        setErrorSummary(data?.error ?? data?.message ?? `Gagal memuat ringkasan. Status: ${res.status}`);
+        setErrorSummary(
+          data?.error ?? data?.message ?? `Gagal memuat ringkasan. Status: ${res.status}`,
+        );
         return;
       }
 
@@ -142,7 +153,7 @@ export default function DashboardPage() {
         return;
       }
 
-      const data: ApiPaged<TxRow> = await res.json().catch(() => ({} as any));
+      const data: ApiPaged<TxRow> = await res.json().catch(() => ({}) as any);
 
       if (!res.ok) {
         setErrorTx(data?.message ?? `Gagal memuat transaksi. Status: ${res.status}`);
@@ -171,13 +182,14 @@ export default function DashboardPage() {
     return tx.filter((r) => (r.order_id || "").toLowerCase().includes(s));
   }, [q, tx]);
 
-  const failedExpiredCount = summary?.failed_expired ?? ((summary?.failed ?? 0) + (summary?.expired ?? 0));
+  const failedExpiredCount =
+    summary?.failed_expired ?? (summary?.failed ?? 0) + (summary?.expired ?? 0);
 
   if (status === "loading") {
     return (
       <ContentLayout title="Dashboard">
         <div className="space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-24 rounded-2xl" />
             ))}
@@ -192,9 +204,9 @@ export default function DashboardPage() {
   if (!isAuthed) {
     return (
       <ContentLayout title="Dashboard">
-        <div className="rounded-2xl border border-border bg-muted/30 p-6">
+        <div className="border-border bg-muted/30 rounded-2xl border p-6">
           <div className="text-sm font-semibold">Kamu belum login</div>
-          <div className="mt-1 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-1 text-xs">
             Silakan login untuk melihat riwayat transaksi dan ringkasan akun.
           </div>
           <div className="mt-4 flex gap-2">
@@ -213,50 +225,65 @@ export default function DashboardPage() {
   return (
     <ContentLayout title="Dashboard">
       <div className="space-y-6">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card className="rounded-2xl">
             <CardHeader className="pb-2">
-              <div className="text-xs text-muted-foreground">Total</div>
+              <div className="text-muted-foreground text-xs">Total</div>
               <CardTitle className="text-2xl">{summary?.total ?? 0}</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 text-xs text-muted-foreground">Semua transaksi</CardContent>
+            <CardContent className="text-muted-foreground pt-0 text-xs">
+              Semua transaksi
+            </CardContent>
           </Card>
 
           <Card className="rounded-2xl">
             <CardHeader className="pb-2">
-              <div className="text-xs text-muted-foreground">Paid</div>
+              <div className="text-muted-foreground text-xs">Paid</div>
               <CardTitle className="text-2xl">{summary?.paid ?? 0}</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 text-xs text-muted-foreground">Berhasil dibayar</CardContent>
+            <CardContent className="text-muted-foreground pt-0 text-xs">
+              Berhasil dibayar
+            </CardContent>
           </Card>
 
           <Card className="rounded-2xl">
             <CardHeader className="pb-2">
-              <div className="text-xs text-muted-foreground">Unpaid</div>
+              <div className="text-muted-foreground text-xs">Unpaid</div>
               <CardTitle className="text-2xl">{summary?.unpaid ?? 0}</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 text-xs text-muted-foreground">Menunggu pembayaran</CardContent>
+            <CardContent className="text-muted-foreground pt-0 text-xs">
+              Menunggu pembayaran
+            </CardContent>
           </Card>
 
           <Card className="rounded-2xl">
             <CardHeader className="pb-2">
-              <div className="text-xs text-muted-foreground">Failed/Expired</div>
+              <div className="text-muted-foreground text-xs">Failed/Expired</div>
               <CardTitle className="text-2xl">{failedExpiredCount}</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 text-xs text-muted-foreground">Gagal / Kadaluarsa</CardContent>
+            <CardContent className="text-muted-foreground pt-0 text-xs">
+              Gagal / Kadaluarsa
+            </CardContent>
           </Card>
         </div>
 
         {loadingSummary ? (
           <Skeleton className="h-12 rounded-2xl" />
         ) : errorSummary ? (
-          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm">{errorSummary}</div>
+          <div className="border-destructive/30 bg-destructive/5 rounded-2xl border p-4 text-sm">
+            {errorSummary}
+          </div>
         ) : null}
 
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm font-semibold">Riwayat Transaksi</div>
           <div className="flex gap-2">
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari INV..." className="sm:w-64" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Cari INV..."
+              className="sm:w-64"
+            />
             <Button type="button" variant="outline" onClick={() => fetchTx()} disabled={loadingTx}>
               Refresh
             </Button>
@@ -264,10 +291,12 @@ export default function DashboardPage() {
         </div>
 
         {errorTx ? (
-          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm">{errorTx}</div>
+          <div className="border-destructive/30 bg-destructive/5 rounded-2xl border p-4 text-sm">
+            {errorTx}
+          </div>
         ) : null}
 
-        <div className="rounded-2xl border overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -288,7 +317,7 @@ export default function DashboardPage() {
                 ))
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-8">
+                  <TableCell colSpan={4} className="text-muted-foreground py-8 text-center text-sm">
                     Belum ada transaksi.
                   </TableCell>
                 </TableRow>
@@ -299,10 +328,15 @@ export default function DashboardPage() {
                     <TableCell>
                       <StatusBadge label={pickStatus(row)} />
                     </TableCell>
-                    <TableCell className="text-right">{fmtRupiah((row.total_price ?? row.amount ?? 0) as any)}</TableCell>
+                    <TableCell className="text-right">
+                      {fmtRupiah((row.total_price ?? row.amount ?? 0) as any)}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button asChild size="sm" variant="outline" className="h-8">
-                        <Link href={`/invoices/${row.order_id}`} className="inline-flex items-center gap-1">
+                        <Link
+                          href={`/invoices/${row.order_id}`}
+                          className="inline-flex items-center gap-1"
+                        >
                           Detail <ExternalLink className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -315,7 +349,7 @@ export default function DashboardPage() {
         </div>
 
         {meta ? (
-          <div className="text-xs text-muted-foreground">
+          <div className="text-muted-foreground text-xs">
             Menampilkan {filtered.length} dari {meta.total} transaksi
           </div>
         ) : null}

@@ -29,7 +29,9 @@ const getSiteUrl = () => process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3
 
 async function fetchCustomPage(slug: string): Promise<CustomPagePayload | null> {
   const siteUrl = getSiteUrl();
-  const res = await fetch(`${siteUrl}${apiPath(`/api/page/${encodeURIComponent(slug)}`)}`, { cache: "no-store" });
+  const res = await fetch(`${siteUrl}${apiPath(`/api/page/${encodeURIComponent(slug)}`)}`, {
+    cache: "no-store",
+  });
   if (!res.ok) return null;
   return (await res.json().catch(() => null)) as CustomPagePayload | null;
 }
@@ -46,9 +48,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const [pagePayload, settingsPayload] = await Promise.all([
     fetchCustomPage(slug),
-    fetchSettings()
+    fetchSettings(),
   ]);
-  
+
   const page = pagePayload?.page;
 
   if (!page) {
@@ -76,34 +78,33 @@ export default async function CustomPage({ params }: PageProps) {
 
   return (
     <ContentLayout title={page.title}>
-      <div className="max-w-4xl mx-auto space-y-8 py-6">
-        <nav className="text-sm text-muted-foreground flex gap-2 items-center">
-          <Link href="/" className="hover:text-primary transition-colors">Beranda</Link>
+      <div className="mx-auto max-w-4xl space-y-8 py-6">
+        <nav className="text-muted-foreground flex items-center gap-2 text-sm">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Beranda
+          </Link>
           <span>/</span>
-          <span className="font-medium text-foreground">{page.title}</span>
+          <span className="text-foreground font-medium">{page.title}</span>
         </nav>
 
         <header className="space-y-2 border-b pb-6">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground">
+          <h1 className="text-foreground text-4xl font-extrabold tracking-tight lg:text-5xl">
             {page.title}
           </h1>
           {page.updated_at && (
-            <p className="text-xs text-muted-foreground italic">
-              Terakhir diperbarui: {new Date(page.updated_at).toLocaleDateString("id-ID", { 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric' 
+            <p className="text-muted-foreground text-xs italic">
+              Terakhir diperbarui:{" "}
+              {new Date(page.updated_at).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
               })}
             </p>
           )}
         </header>
 
         <article
-          className="prose prose-slate dark:prose-invert max-w-none 
-          prose-headings:scroll-mt-20 prose-headings:font-bold
-          prose-a:text-primary hover:prose-a:underline
-          prose-img:rounded-2xl prose-img:shadow-lg
-          break-words"
+          className="prose prose-slate dark:prose-invert prose-headings:scroll-mt-20 prose-headings:font-bold prose-a:text-primary hover:prose-a:underline prose-img:rounded-2xl prose-img:shadow-lg max-w-none break-words"
           dangerouslySetInnerHTML={{ __html: page.content }}
         />
       </div>

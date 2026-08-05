@@ -42,21 +42,30 @@ export async function GET(req: Request) {
     }
 
     if (!foundOrder) {
-      return NextResponse.json({ success: false, message: "Pesanan tidak ditemukan", data: null }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Pesanan tidak ditemukan", data: null },
+        { status: 404 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        order_id: foundOrder.orderId || foundOrder.order_id,
-        product_title: foundOrder.productTitle || foundOrder.product_title,
-        total_price: Number(foundOrder.totalPrice || foundOrder.total_price),
-        payment_status: foundOrder.paymentStatus || foundOrder.payment_status,
-        buy_status: foundOrder.buyStatus || foundOrder.buy_status,
-        created_at: foundOrder.createdAt || foundOrder.created_at,
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          order_id: foundOrder.orderId || foundOrder.order_id,
+          product_title: foundOrder.productTitle || foundOrder.product_title,
+          total_price: Number(foundOrder.totalPrice || foundOrder.total_price),
+          payment_status: foundOrder.paymentStatus || foundOrder.payment_status,
+          buy_status: foundOrder.buyStatus || foundOrder.buy_status,
+          created_at: foundOrder.createdAt || foundOrder.created_at,
+        },
       },
-    }, { status: 200 });
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({ error: "Gagal mencari pesanan", details: err?.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal mencari pesanan", details: err?.message },
+      { status: 500 },
+    );
   }
 }

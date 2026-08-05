@@ -52,10 +52,12 @@ export default function AccountSettingsPage() {
 
   const isAuthed = status === "authenticated" && Boolean(token);
 
-  const { data: me, isLoading: meLoading, error: meError, mutate } = useSWR<AccountMe>(
-    isAuthed ? "/api/account/me" : null,
-    fetcher
-  );
+  const {
+    data: me,
+    isLoading: meLoading,
+    error: meError,
+    mutate,
+  } = useSWR<AccountMe>(isAuthed ? "/api/account/me" : null, fetcher);
 
   const role = me?.data?.role ?? "Member";
   const nameValue = me?.data?.name ?? "";
@@ -96,7 +98,9 @@ export default function AccountSettingsPage() {
       await mutate();
     } catch (e: any) {
       toast.error(e.message);
-    } finally { setSavingName(false); }
+    } finally {
+      setSavingName(false);
+    }
   };
 
   const savePassword = async () => {
@@ -106,25 +110,43 @@ export default function AccountSettingsPage() {
       const res = await fetch(apiPath("/api/account/password"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ old_password: oldPassword, password, password_confirmation: passwordConfirmation }),
+        body: JSON.stringify({
+          old_password: oldPassword,
+          password,
+          password_confirmation: passwordConfirmation,
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Gagal mengubah password.");
       toast.success("Password diperbarui.");
-      setOldPassword(""); setPassword(""); setPasswordConfirmation("");
+      setOldPassword("");
+      setPassword("");
+      setPasswordConfirmation("");
     } catch (e: any) {
       toast.error(e.message);
-    } finally { setSavingPassword(false); }
+    } finally {
+      setSavingPassword(false);
+    }
   };
 
-  if (status === "loading") return <ContentLayout title="Akun"><div className="space-y-6"><Skeleton className="h-24 rounded-2xl" /><Skeleton className="h-64 rounded-2xl" /></div></ContentLayout>;
+  if (status === "loading")
+    return (
+      <ContentLayout title="Akun">
+        <div className="space-y-6">
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-64 rounded-2xl" />
+        </div>
+      </ContentLayout>
+    );
 
   if (!isAuthed) {
     return (
       <ContentLayout title="Akun">
-        <div className="rounded-2xl border border-dashed p-10 text-center space-y-4">
+        <div className="space-y-4 rounded-2xl border border-dashed p-10 text-center">
           <p className="text-muted-foreground">Kamu perlu login untuk mengakses halaman ini.</p>
-          <Button onClick={() => signIn()} className="rounded-full px-8">Login Sekarang</Button>
+          <Button onClick={() => signIn()} className="rounded-full px-8">
+            Login Sekarang
+          </Button>
         </div>
       </ContentLayout>
     );
@@ -133,30 +155,43 @@ export default function AccountSettingsPage() {
   return (
     <ContentLayout title="Pengaturan Akun">
       <div className="mx-auto w-full max-w-4xl space-y-6">
-        <div className="flex flex-col gap-4 rounded-3xl border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between border-primary/10">
+        <div className="bg-card border-primary/10 flex flex-col gap-4 rounded-3xl border p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-2xl">
               <User2 className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">{meLoading ? <Skeleton className="h-6 w-32" /> : (me?.data?.name || "User")}</h2>
-              <div className="flex gap-2 mt-1">
-                <Badge variant="outline" className="rounded-full font-bold uppercase text-[10px] tracking-wider"><Shield className="mr-1 h-3 w-3" /> {role}</Badge>
+              <h2 className="text-xl font-bold">
+                {meLoading ? <Skeleton className="h-6 w-32" /> : me?.data?.name || "User"}
+              </h2>
+              <div className="mt-1 flex gap-2">
+                <Badge
+                  variant="outline"
+                  className="rounded-full text-[10px] font-bold uppercase tracking-wider"
+                >
+                  <Shield className="mr-1 h-3 w-3" /> {role}
+                </Badge>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-1 space-y-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="space-y-2 md:col-span-1">
             <h3 className="font-bold">Informasi Pribadi</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">Kelola identitas publik kamu yang akan tampil pada setiap transaksi.</p>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              Kelola identitas publik kamu yang akan tampil pada setiap transaksi.
+            </p>
           </div>
-          <Card className="md:col-span-2 rounded-2xl border-none shadow-sm">
-            <CardContent className="pt-6 space-y-4">
+          <Card className="rounded-2xl border-none shadow-sm md:col-span-2">
+            <CardContent className="space-y-4 pt-6">
               <div className="space-y-2">
                 <Label>Nama Lengkap</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl border-muted" />
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border-muted rounded-xl"
+                />
               </div>
               <Button onClick={saveProfile} disabled={savingName} className="rounded-xl px-6">
                 {savingName && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Simpan Perubahan
@@ -167,21 +202,52 @@ export default function AccountSettingsPage() {
 
         <Separator />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-1 space-y-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="space-y-2 md:col-span-1">
             <h3 className="font-bold">Keamanan Akun</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">Update password secara berkala untuk menjaga akun tetap aman.</p>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              Update password secara berkala untuk menjaga akun tetap aman.
+            </p>
           </div>
-          <Card className="md:col-span-2 rounded-2xl border-none shadow-sm">
+          <Card className="rounded-2xl border-none shadow-sm md:col-span-2">
             <CardContent className="pt-6">
               <div className="space-y-4">
-                <div className="space-y-2"><Label>Password Lama</Label><Input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} className="rounded-xl" /></div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2"><Label>Password Baru</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label>Konfirmasi</Label><Input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} className="rounded-xl" /></div>
+                <div className="space-y-2">
+                  <Label>Password Lama</Label>
+                  <Input
+                    type="password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    className="rounded-xl"
+                  />
                 </div>
-                <Button onClick={savePassword} disabled={savingPassword} className="rounded-xl px-6">
-                  {savingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Update Password
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>Password Baru</Label>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Konfirmasi</Label>
+                    <Input
+                      type="password"
+                      value={passwordConfirmation}
+                      onChange={(e) => setPasswordConfirmation(e.target.value)}
+                      className="rounded-xl"
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={savePassword}
+                  disabled={savingPassword}
+                  className="rounded-xl px-6"
+                >
+                  {savingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Update
+                  Password
                 </Button>
               </div>
             </CardContent>

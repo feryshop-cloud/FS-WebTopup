@@ -28,20 +28,40 @@ export async function GET() {
 
     if (allPromos.length === 0) {
       allPromos = [
-        { id: 1, code: "FERYSHOP10", discount_type: "percent", discount_value: 10, min_order: 20000, max_discount: 15000 },
-        { id: 2, code: "HEMAT5RB", discount_type: "fixed", discount_value: 5000, min_order: 30000, max_discount: 5000 },
+        {
+          id: 1,
+          code: "FERYSHOP10",
+          discount_type: "percent",
+          discount_value: 10,
+          min_order: 20000,
+          max_discount: 15000,
+        },
+        {
+          id: 2,
+          code: "HEMAT5RB",
+          discount_type: "fixed",
+          discount_value: 5000,
+          min_order: 30000,
+          max_discount: 5000,
+        },
       ];
     }
 
-    return NextResponse.json({
-      success: true,
-      data: allPromos,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: allPromos,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memuat kode promo",
-      error: err?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat kode promo",
+        error: err?.message,
+      },
+      { status: 500 },
+    );
   }
 }

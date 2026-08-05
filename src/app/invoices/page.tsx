@@ -29,7 +29,9 @@ export default function InvoiceSearchPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(apiPath(`/api/invoices/search?order_id=${encodeURIComponent(orderId)}`));
+      const response = await fetch(
+        apiPath(`/api/invoices/search?order_id=${encodeURIComponent(orderId)}`),
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -62,7 +64,9 @@ export default function InvoiceSearchPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(apiPath(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(trimmed)}`));
+      const response = await fetch(
+        apiPath(`/api/invoices/search-by-whatsapp?whatsapp=${encodeURIComponent(trimmed)}`),
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -89,11 +93,11 @@ export default function InvoiceSearchPage() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-16"
+          className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8"
         >
-          <div className="text-center space-y-3">
+          <div className="space-y-3 text-center">
             <motion.h1
-              className="text-3xl md:text-4xl font-bold tracking-tight text-foreground"
+              className="text-foreground text-3xl font-bold tracking-tight md:text-4xl"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -106,17 +110,18 @@ export default function InvoiceSearchPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Masukkan nomor invoice atau nomor WhatsApp Anda untuk melihat detail transaksi pembelian.
+              Masukkan nomor invoice atau nomor WhatsApp Anda untuk melihat detail transaksi
+              pembelian.
             </motion.p>
           </div>
 
-          <div className="mt-8 flex justify-center space-x-4 border-b border-border">
+          <div className="border-border mt-8 flex justify-center space-x-4 border-b">
             <button
               type="button"
               onClick={() => setActiveTab("orderId")}
               className={`px-4 py-2 text-sm font-medium ${
                 activeTab === "orderId"
-                  ? "border-b-2 border-my-color text-my-color"
+                  ? "border-my-color text-my-color border-b-2"
                   : "text-muted-foreground hover:text-foreground"
               } transition`}
             >
@@ -127,7 +132,7 @@ export default function InvoiceSearchPage() {
               onClick={() => setActiveTab("whatsapp")}
               className={`px-4 py-2 text-sm font-medium ${
                 activeTab === "whatsapp"
-                  ? "border-b-2 border-my-color text-my-color"
+                  ? "border-my-color text-my-color border-b-2"
                   : "text-muted-foreground hover:text-foreground"
               } transition`}
             >
@@ -141,10 +146,10 @@ export default function InvoiceSearchPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="mt-6 bg-background border border-border rounded-2xl shadow-sm p-6 space-y-4"
+              className="bg-background border-border mt-6 space-y-4 rounded-2xl border p-6 shadow-sm"
             >
               <div className="space-y-1">
-                <label htmlFor="orderId" className="text-sm font-medium text-foreground">
+                <label htmlFor="orderId" className="text-foreground text-sm font-medium">
                   Nomor Invoice
                 </label>
                 <motion.input
@@ -154,7 +159,7 @@ export default function InvoiceSearchPage() {
                   value={orderId}
                   onChange={(e) => setOrderId(e.target.value)}
                   placeholder="Contoh: INV-123456789"
-                  className="w-full px-4 py-2 h-11 rounded-xl border border-input bg-muted text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-my-color focus:outline-none"
+                  className="border-input bg-muted text-foreground placeholder:text-muted-foreground focus:ring-my-color h-11 w-full rounded-xl border px-4 py-2 text-sm focus:outline-none focus:ring-2"
                   whileFocus={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 />
@@ -163,12 +168,18 @@ export default function InvoiceSearchPage() {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 bg-my-color hover:bg-my-hoverColor text-white font-medium text-sm h-11 px-5 rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                className="bg-my-color hover:bg-my-hoverColor inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl px-5 text-sm font-medium text-white transition-all disabled:cursor-not-allowed disabled:opacity-60"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
               >
                 {loading ? "Mencari..." : "Cari Invoice"}
-                <svg width="20" height="20" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 25 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <path
                     opacity="0.4"
                     d="M11.1384 21L8.96382 20.1117C8.49095 19.919 7.95874 19.9346 7.49852 20.1545L6.72695 20.5232C5.91647 20.9115 4.97852 20.3199 4.97949 19.4209L4.98922 6.98335C4.98922 4.52368 6.35722 3 8.81203 3H16.2202C18.6819 3 20.0197 4.52368 20.0197 6.98335V11.2742"
@@ -195,10 +206,10 @@ export default function InvoiceSearchPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="mt-6 bg-background border border-border rounded-2xl shadow-sm p-6 space-y-4"
+              className="bg-background border-border mt-6 space-y-4 rounded-2xl border p-6 shadow-sm"
             >
               <div className="space-y-1">
-                <label htmlFor="whatsapp" className="text-sm font-medium text-foreground">
+                <label htmlFor="whatsapp" className="text-foreground text-sm font-medium">
                   Nomor WhatsApp
                 </label>
                 <motion.input
@@ -208,7 +219,7 @@ export default function InvoiceSearchPage() {
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="Contoh: 6281234567890"
-                  className="w-full px-4 py-2 h-11 rounded-xl border border-input bg-muted text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-my-color focus:outline-none"
+                  className="border-input bg-muted text-foreground placeholder:text-muted-foreground focus:ring-my-color h-11 w-full rounded-xl border px-4 py-2 text-sm focus:outline-none focus:ring-2"
                   whileFocus={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 />
@@ -217,12 +228,18 @@ export default function InvoiceSearchPage() {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 bg-my-color hover:bg-my-hoverColor text-white font-medium text-sm h-11 px-5 rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                className="bg-my-color hover:bg-my-hoverColor inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl px-5 text-sm font-medium text-white transition-all disabled:cursor-not-allowed disabled:opacity-60"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
               >
                 {loading ? "Mencari..." : "Cari Order"}
-                <svg width="20" height="20" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 25 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <path
                     opacity="0.4"
                     d="M11.1384 21L8.96382 20.1117C8.49095 19.919 7.95874 19.9346 7.49852 20.1545L6.72695 20.5232C5.91647 20.9115 4.97852 20.3199 4.97949 19.4209L4.98922 6.98335C4.98922 4.52368 6.35722 3 8.81203 3H16.2202C18.6819 3 20.0197 4.52368 20.0197 6.98335V11.2742"
@@ -244,16 +261,16 @@ export default function InvoiceSearchPage() {
           )}
         </motion.section>
 
-        <div className="w-full max-w-6xl mx-auto lg:border lg:rounded-lg lg:p-6">
-          <h2 className="text-xl font-bold mb-2 text-left lg:text-center">Transaksi Real-Time</h2>
-          <p className="text-sm text-gray-400 mb-6 text-left lg:text-center">
+        <div className="mx-auto w-full max-w-6xl lg:rounded-lg lg:border lg:p-6">
+          <h2 className="mb-2 text-left text-xl font-bold lg:text-center">Transaksi Real-Time</h2>
+          <p className="mb-6 text-left text-sm text-gray-400 lg:text-center">
             Berikut ini Real-Time data pesanan masuk terbaru.
           </p>
 
           <div className="-mx-4 overflow-x-auto lg:mx-0">
-            <table className="min-w-full text-sm whitespace-nowrap">
+            <table className="min-w-full whitespace-nowrap text-sm">
               <thead>
-                <tr className="border-t border-b border-border text-xs text-muted-foreground font-semibold uppercase tracking-wider text-left bg-muted/20">
+                <tr className="border-border text-muted-foreground bg-muted/20 border-b border-t text-left text-xs font-semibold uppercase tracking-wider">
                   <th className="p-3.5 text-left">Waktu</th>
                   <th className="p-3.5 text-left">Pelanggan / Invoice</th>
                   <th className="p-3.5 text-left">Game</th>
@@ -268,7 +285,15 @@ export default function InvoiceSearchPage() {
                     const timeVal = order.updated_at || order.created_at || order.createdAt;
                     const displayTime = (() => {
                       if (!timeVal) return "Baru saja";
-                      if (typeof timeVal === "string" && (timeVal.includes("lalu") || timeVal.includes("Baru") || timeVal.includes("menit") || timeVal.includes("detik") || timeVal.includes("jam"))) return timeVal;
+                      if (
+                        typeof timeVal === "string" &&
+                        (timeVal.includes("lalu") ||
+                          timeVal.includes("Baru") ||
+                          timeVal.includes("menit") ||
+                          timeVal.includes("detik") ||
+                          timeVal.includes("jam"))
+                      )
+                        return timeVal;
                       try {
                         const d = new Date(timeVal);
                         if (!isNaN(d.getTime())) {
@@ -296,8 +321,12 @@ export default function InvoiceSearchPage() {
                       return `TRX-${order.id || index + 1001}`;
                     })();
 
-                    const displayGame = String(order.game || order.gameSlug || order.games || "Game Top Up");
-                    const displayProduct = String(order.product || order.product_title || order.productTitle || "-");
+                    const displayGame = String(
+                      order.game || order.gameSlug || order.games || "Game Top Up",
+                    );
+                    const displayProduct = String(
+                      order.product || order.product_title || order.productTitle || "-",
+                    );
 
                     const displayExtra = (() => {
                       if (order.whatsapp) {
@@ -324,15 +353,20 @@ export default function InvoiceSearchPage() {
                       return "Terverifikasi";
                     })();
 
-                    const status = String(order.buy_status || order.buyStatus || order.payment_status || "Sukses");
+                    const status = String(
+                      order.buy_status || order.buyStatus || order.payment_status || "Sukses",
+                    );
                     const badgeClass =
                       status === "Pending" || status === "pending"
                         ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
-                      : status === "Proses" || status === "Processing" || status === "processing"
-                        ? "bg-info/10 text-info border border-info/20"
-                      : status === "Batal" || status === "Gagal" || status === "failed" || status === "canceled"
-                        ? "bg-destructive/10 text-destructive border border-destructive/20"
-                        : "bg-success/10 text-success border border-success/20";
+                        : status === "Proses" || status === "Processing" || status === "processing"
+                          ? "bg-info/10 text-info border border-info/20"
+                          : status === "Batal" ||
+                              status === "Gagal" ||
+                              status === "failed" ||
+                              status === "canceled"
+                            ? "bg-destructive/10 text-destructive border border-destructive/20"
+                            : "bg-success/10 text-success border border-success/20";
 
                     return (
                       <motion.tr
@@ -340,15 +374,19 @@ export default function InvoiceSearchPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        className="text-xs border-b border-border/40 hover:bg-muted/40 transition-colors"
+                        className="border-border/40 hover:bg-muted/40 border-b text-xs transition-colors"
                       >
-                        <td className="p-3.5 text-muted-foreground font-medium">{displayTime}</td>
-                        <td className="p-3.5 font-mono font-semibold text-foreground">{displayId}</td>
-                        <td className="p-3.5 text-foreground font-medium">{displayGame}</td>
-                        <td className="p-3.5 text-muted-foreground">{displayProduct}</td>
-                        <td className="p-3.5 font-mono text-muted-foreground">{displayExtra}</td>
+                        <td className="text-muted-foreground p-3.5 font-medium">{displayTime}</td>
+                        <td className="text-foreground p-3.5 font-mono font-semibold">
+                          {displayId}
+                        </td>
+                        <td className="text-foreground p-3.5 font-medium">{displayGame}</td>
+                        <td className="text-muted-foreground p-3.5">{displayProduct}</td>
+                        <td className="text-muted-foreground p-3.5 font-mono">{displayExtra}</td>
                         <td className="p-3.5">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide ${badgeClass}`}>
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide ${badgeClass}`}
+                          >
                             {status}
                           </span>
                         </td>
@@ -357,7 +395,7 @@ export default function InvoiceSearchPage() {
                   })
                 ) : (
                   <tr key="empty">
-                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                    <td colSpan={6} className="text-muted-foreground p-8 text-center">
                       Belum ada transaksi masuk.
                     </td>
                   </tr>

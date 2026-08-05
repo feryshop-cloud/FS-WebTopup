@@ -2,7 +2,7 @@ import useSWR from "swr";
 import Pusher from "pusher-js";
 import { useEffect } from "react";
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useOrders() {
   const { data, mutate } = useSWR("/api/latest-orders", fetcher);

@@ -40,10 +40,15 @@ export function GameCategories({
   return (
     <>
       {dataCategories ? (
-        <motion.div className="relative flex items-center" initial="hidden" animate="visible" variants={categoryContainerVariants}>
+        <motion.div
+          className="relative flex items-center"
+          initial="hidden"
+          animate="visible"
+          variants={categoryContainerVariants}
+        >
           <motion.button
             type="button"
-            className="absolute left-0 bg-my-color p-2 rounded-full text-white shadow-md"
+            className="bg-my-color absolute left-0 rounded-full p-2 text-white shadow-md"
             onClick={() => scrollCategories("left")}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -67,10 +72,10 @@ export function GameCategories({
                   type="button"
                   key={id}
                   onClick={() => setSelectedCategory(id)}
-                  className={`inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-my-color focus-visible:ring-offset-1 focus-visible:ring-offset-background ${
+                  className={`focus-visible:ring-my-color focus-visible:ring-offset-background inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-1 ${
                     active
-                      ? "border border-my-color/40 bg-my-color/10 font-bold text-my-color shadow-sm"
-                      : "border border-border bg-muted text-muted-foreground hover:border-my-color/30 hover:text-foreground"
+                      ? "border-my-color/40 bg-my-color/10 text-my-color border font-bold shadow-sm"
+                      : "border-border bg-muted text-muted-foreground hover:border-my-color/30 hover:text-foreground border"
                   }`}
                   variants={categoryItemVariants}
                   whileHover={{ scale: 1.04 }}
@@ -85,7 +90,7 @@ export function GameCategories({
 
           <motion.button
             type="button"
-            className="absolute right-0 bg-my-color p-2 rounded-full text-white shadow-md"
+            className="bg-my-color absolute right-0 rounded-full p-2 text-white shadow-md"
             onClick={() => scrollCategories("right")}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -95,13 +100,22 @@ export function GameCategories({
         </motion.div>
       ) : (
         <motion.div className="relative flex items-center">
-          <motion.div className="absolute left-0 z-10 rounded-full shadow-md bg-muted" style={{ width: 40, height: 40 }} />
+          <motion.div
+            className="bg-muted absolute left-0 z-10 rounded-full shadow-md"
+            style={{ width: 40, height: 40 }}
+          />
           <div className="hide-scrollbar mx-11 flex transform items-center gap-2 overflow-auto duration-300 ease-in-out md:gap-3">
             {[...Array(3)].map((_, index) => (
-              <motion.div key={index} className="whitespace-nowrap rounded-full h-9 w-28 bg-muted" />
+              <motion.div
+                key={index}
+                className="bg-muted h-9 w-28 whitespace-nowrap rounded-full"
+              />
             ))}
           </div>
-          <motion.div className="absolute right-0 z-10 rounded-full shadow-md bg-muted" style={{ width: 40, height: 40 }} />
+          <motion.div
+            className="bg-muted absolute right-0 z-10 rounded-full shadow-md"
+            style={{ width: 40, height: 40 }}
+          />
         </motion.div>
       )}
     </>

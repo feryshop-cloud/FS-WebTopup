@@ -31,13 +31,19 @@ async function getHandler() {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: results,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: results,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
     logger.error("realtime-transaction failed", { error: err });
-    return NextResponse.json({ success: false, message: "Gagal memuat transaksi realtime" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal memuat transaksi realtime" },
+      { status: 500 },
+    );
   }
 }
 

@@ -13,8 +13,19 @@ async function postHandler(req: Request) {
 
     // Extract dynamic account inputs if provided
     const accountInputs = body.inputs || body.account_data || body.accountData || {};
-    const primaryId = accountInputs.id || accountInputs.user_id || accountInputs.uid || accountInputs.email || accountInputs.username || accountInputs.riot_id || body.id_games || body.idGames || body.id || "-";
-    const serverVal = accountInputs.server || body.server_games || body.serverGames || body.server || "";
+    const primaryId =
+      accountInputs.id ||
+      accountInputs.user_id ||
+      accountInputs.uid ||
+      accountInputs.email ||
+      accountInputs.username ||
+      accountInputs.riot_id ||
+      body.id_games ||
+      body.idGames ||
+      body.id ||
+      "-";
+    const serverVal =
+      accountInputs.server || body.server_games || body.serverGames || body.server || "";
 
     // Merge any loose account fields from body if not in accountInputs
     const fullAccountData = { ...accountInputs };
@@ -31,10 +42,15 @@ async function postHandler(req: Request) {
       nickname: body.nickname || "Player",
       quantity: Number(body.quantity || 1),
       price: body.price ? String(body.price) : "0",
-      totalPrice: body.total_price || body.totalPrice ? String(body.total_price || body.totalPrice) : "0",
+      totalPrice:
+        body.total_price || body.totalPrice ? String(body.total_price || body.totalPrice) : "0",
       fee: body.fee ? String(body.fee) : "0",
-      discountPrice: body.discount_price || body.discountPrice ? String(body.discount_price || body.discountPrice) : "0",
-      promoPrice: body.promo_price || body.promoPrice ? String(body.promo_price || body.promoPrice) : "0",
+      discountPrice:
+        body.discount_price || body.discountPrice
+          ? String(body.discount_price || body.discountPrice)
+          : "0",
+      promoPrice:
+        body.promo_price || body.promoPrice ? String(body.promo_price || body.promoPrice) : "0",
       paymentMethodId: body.payment_method_id || body.paymentMethodId || "qris",
       paymentName: body.payment_name || body.paymentName || "QRIS (All Bank & E-Wallet)",
       paymentCode: body.payment_code || body.paymentCode || "QRIS",
@@ -68,33 +84,38 @@ async function postHandler(req: Request) {
       }
     }
 
-
     logger.info("order created", {
       orderId,
       gameSlug: newOrderData.gameSlug,
       totalPrice: Number(newOrderData.totalPrice),
     });
 
-    return NextResponse.json({
-      success: true,
-      message: "Pesanan berhasil dibuat",
-      data: {
-        order_id: orderId,
-        payment_code: newOrderData.paymentCode,
-        payment_name: newOrderData.paymentName,
-        total_price: Number(newOrderData.totalPrice),
-        payment_status: "pending",
-        expired_time: expiredTime,
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Pesanan berhasil dibuat",
+        data: {
+          order_id: orderId,
+          payment_code: newOrderData.paymentCode,
+          payment_name: newOrderData.paymentName,
+          total_price: Number(newOrderData.totalPrice),
+          payment_status: "pending",
+          expired_time: expiredTime,
+        },
+        redirect_url: `/invoice/${orderId}`,
       },
-      redirect_url: `/invoice/${orderId}`,
-    }, { status: 200 });
+      { status: 200 },
+    );
   } catch (error: any) {
     logger.error("order creation failed", { error });
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memvalidasi atau memproses pesanan",
-      error: error?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memvalidasi atau memproses pesanan",
+        error: error?.message,
+      },
+      { status: 500 },
+    );
   }
 }
 

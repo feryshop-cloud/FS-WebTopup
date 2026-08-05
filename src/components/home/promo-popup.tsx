@@ -10,7 +10,11 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import type { HomeFallbackData } from "@/lib/data/home";
 
-export default function PromoPopup({ initialData }: { initialData?: HomeFallbackData["popupPromo"] }) {
+export default function PromoPopup({
+  initialData,
+}: {
+  initialData?: HomeFallbackData["popupPromo"];
+}) {
   const { data } = useSWR("/api/popup-promo", fetcher, { fallbackData: initialData });
   const [showPopup, setShowPopup] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -47,7 +51,7 @@ export default function PromoPopup({ initialData }: { initialData?: HomeFallback
     <AnimatePresence>
       {showPopup && (
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
-          <DialogContent className="max-w-sm p-0 overflow-hidden rounded-lg">
+          <DialogContent className="max-w-sm overflow-hidden rounded-lg p-0">
             <DialogTitle className="sr-only">{data.promo.title}</DialogTitle>
 
             <motion.div
@@ -78,7 +82,11 @@ export default function PromoPopup({ initialData }: { initialData?: HomeFallback
                 </DialogClose>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
                 <Image
                   src={data.promo.image_url}
                   alt={data.promo.title}
@@ -96,19 +104,23 @@ export default function PromoPopup({ initialData }: { initialData?: HomeFallback
                 transition={{ delay: 0.2 }}
                 className="p-6"
               >
-                <h3 className="text-lg font-semibold mb-2">{data.promo.title}</h3>
+                <h3 className="mb-2 text-lg font-semibold">{data.promo.title}</h3>
 
                 {data.promo.description && (
-                  <p className="text-sm text-muted-foreground whitespace-pre-line mb-4">
+                  <p className="text-muted-foreground mb-4 whitespace-pre-line text-sm">
                     {data.promo.description}
                   </p>
                 )}
 
                 {data.promo.link && (
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
                     <a
                       href={data.promo.link}
-                      className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors mb-4"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 mb-4 inline-block rounded-md px-4 py-2 text-sm font-medium transition-colors"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -121,7 +133,7 @@ export default function PromoPopup({ initialData }: { initialData?: HomeFallback
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="flex items-center space-x-2 pt-4 border-t"
+                  className="flex items-center space-x-2 border-t pt-4"
                 >
                   <motion.div whileTap={{ scale: 0.95 }}>
                     <input
@@ -129,7 +141,7 @@ export default function PromoPopup({ initialData }: { initialData?: HomeFallback
                       id="dontShowAgain"
                       checked={dontShowAgain}
                       onChange={() => setDontShowAgain(!dontShowAgain)}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                     />
                   </motion.div>
                   <label htmlFor="dontShowAgain" className="text-sm">

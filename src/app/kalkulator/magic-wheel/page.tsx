@@ -64,13 +64,13 @@ export default function MagicWheelCalculatorPage() {
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="mx-auto max-w-2xl text-center">
           <Badge
-            className="mb-3 border border-tertiary/30 bg-tertiary/10 text-tertiary dark:text-tertiary"
+            className="border-tertiary/30 bg-tertiary/10 text-tertiary dark:text-tertiary mb-3 border"
             variant="secondary"
           >
             Magic Wheel
           </Badge>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Cek Magic Wheel</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             Masukkan point kamu saat ini. Perhitungan memakai paket hemat 5x draw.
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function MagicWheelCalculatorPage() {
           <Card className="mx-auto max-w-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-tertiary" />
+                <Sparkles className="text-tertiary h-5 w-5" />
                 Kalkulator Magic Wheel
                 <Badge variant="secondary" className="ml-auto">
                   Nonaktif
@@ -97,10 +97,10 @@ export default function MagicWheelCalculatorPage() {
           <Card className="border-tertiary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-tertiary" />
+                <Sparkles className="text-tertiary h-5 w-5" />
                 Kalkulator Magic Wheel
                 <Badge
-                  className="ml-auto border border-tertiary/30 bg-tertiary/10 text-tertiary dark:text-tertiary"
+                  className="border-tertiary/30 bg-tertiary/10 text-tertiary dark:text-tertiary ml-auto border"
                   variant="secondary"
                 >
                   Max {formatNumber(target)} Point
@@ -119,37 +119,38 @@ export default function MagicWheelCalculatorPage() {
                   onChange={(e) => setPoints(e.target.value)}
                   placeholder={`0 - ${target}`}
                 />
-                {helper && <div className="text-sm text-destructive">{helper}</div>}
+                {helper && <div className="text-destructive text-sm">{helper}</div>}
               </div>
 
               <Separator />
 
-              <div className="rounded-lg border border-tertiary/20 p-4 space-y-3">
+              <div className="border-tertiary/20 space-y-3 rounded-lg border p-4">
                 <div className="text-sm font-medium">Hasil</div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="rounded-md bg-secondary p-3">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <div className="bg-secondary rounded-md p-3">
                     <div className="text-xs opacity-70">Point Kamu</div>
                     <div className="text-2xl font-semibold">{formatNumber(currentPoint)}</div>
                   </div>
-                  <div className="rounded-md bg-secondary p-3">
+                  <div className="bg-secondary rounded-md p-3">
                     <div className="text-xs opacity-70">Sisa Point</div>
                     <div className="text-2xl font-semibold">{formatNumber(calc.remaining)}</div>
                   </div>
-                  <div className="rounded-md bg-tertiary/10 p-3 border border-tertiary/20">
-                    <div className="text-xs text-tertiary">Membutuhkan Maksimal</div>
-                    <div className="text-2xl font-semibold text-tertiary">
+                  <div className="bg-tertiary/10 border-tertiary/20 rounded-md border p-3">
+                    <div className="text-tertiary text-xs">Membutuhkan Maksimal</div>
+                    <div className="text-tertiary text-2xl font-semibold">
                       {formatNumber(calc.totalDiamonds)} Diamonds
                     </div>
                   </div>
                 </div>
 
-                <div className="text-sm text-muted-foreground">
-                  Paket hemat: {formatNumber(calc.bundles)}x bundle (5 point = 270 DM) + {formatNumber(calc.singles)}x single (1 point = 60 DM)
+                <div className="text-muted-foreground text-sm">
+                  Paket hemat: {formatNumber(calc.bundles)}x bundle (5 point = 270 DM) +{" "}
+                  {formatNumber(calc.singles)}x single (1 point = 60 DM)
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Button variant="secondary" onClick={() => setPoints("0")}>
                   Reset
                 </Button>

@@ -13,7 +13,7 @@ export function SWRProvider({ children }: { children: React.ReactNode }) {
         revalidateIfStale: false,
         revalidateOnReconnect: false,
         dedupingInterval: 300000, // 5 minutes cache deduping
-        keepPreviousData: true,   // Serve cached data instantly during navigation without showing loading skeletons
+        keepPreviousData: true, // Serve cached data instantly during navigation without showing loading skeletons
       }}
     >
       {children}

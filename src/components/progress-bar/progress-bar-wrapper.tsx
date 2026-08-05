@@ -3,11 +3,8 @@
 import dynamic from "next/dynamic";
 
 const ProgressBar = dynamic(
-  () =>
-    import("@/components/progress-bar/progress-bar").then(
-      (mod) => mod.ProgressBar
-    ),
-  { ssr: false }
+  () => import("@/components/progress-bar/progress-bar").then((mod) => mod.ProgressBar),
+  { ssr: false },
 );
 
 export function ProgressBarWrapper({
@@ -17,9 +14,5 @@ export function ProgressBarWrapper({
   className: string;
   children: React.ReactNode;
 }) {
-  return (
-    <ProgressBar className={className}>
-      {children}
-    </ProgressBar>
-  );
+  return <ProgressBar className={className}>{children}</ProgressBar>;
 }

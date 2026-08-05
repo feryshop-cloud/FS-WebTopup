@@ -23,8 +23,22 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CollapseMenuButton } from "@/components/panel/collapse-menu-button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useSettings } from "@/context/settings-context";
 import {
@@ -55,7 +69,12 @@ export function Menu({ isOpen }: MenuProps) {
 
   const kalkulatorItems = [
     { href: "/kalkulator/winrate", label: "Cek Winrate", icon: Percent, enabled: enableWinrate },
-    { href: "/kalkulator/magic-wheel", label: "Cek Magic Wheel", icon: Sparkles, enabled: enableMagicWheel },
+    {
+      href: "/kalkulator/magic-wheel",
+      label: "Cek Magic Wheel",
+      icon: Sparkles,
+      enabled: enableMagicWheel,
+    },
     { href: "/kalkulator/zodiac", label: "Cek Zodiac", icon: Star, enabled: enableZodiac },
   ].filter((x) => x.enabled);
 
@@ -67,18 +86,18 @@ export function Menu({ isOpen }: MenuProps) {
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
       <nav className="mt-8 h-full w-full">
-        <ul className="flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-2">
+        <ul className="flex min-h-[calc(100vh-48px-36px-16px-32px)] flex-col items-start space-y-1 px-2 lg:min-h-[calc(100vh-32px-40px-32px)]">
           {menuList.map(({ groupLabel, menus }, groupIndex) => (
             <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={groupIndex}>
               {(isOpen && groupLabel) || isOpen === undefined ? (
-                <p className="text-sm font-medium text-muted-foreground px-4 pb-2 max-w-[248px] truncate">
+                <p className="text-muted-foreground max-w-[248px] truncate px-4 pb-2 text-sm font-medium">
                   {groupLabel}
                 </p>
               ) : !isOpen && isOpen !== undefined && groupLabel ? (
                 <TooltipProvider>
                   <Tooltip delayDuration={100}>
                     <TooltipTrigger className="w-full">
-                      <div className="w-full flex justify-center items-center">
+                      <div className="flex w-full items-center justify-center">
                         <Ellipsis className="h-5 w-5" />
                       </div>
                     </TooltipTrigger>
@@ -103,10 +122,12 @@ export function Menu({ isOpen }: MenuProps) {
                             <Button
                               variant="ghost"
                               className={cn(
-                                "w-full justify-start h-10 mb-1 hover:bg-white/5 transition-colors",
-                                ((active === undefined && (pathname === href || pathname.startsWith(`${href}/`))) || active)
-                                  ? "text-primary font-bold bg-transparent hover:bg-transparent"
-                                  : "text-muted-foreground hover:text-primary"
+                                "mb-1 h-10 w-full justify-start transition-colors hover:bg-white/5",
+                                (active === undefined &&
+                                  (pathname === href || pathname.startsWith(`${href}/`))) ||
+                                  active
+                                  ? "text-primary bg-transparent font-bold hover:bg-transparent"
+                                  : "text-muted-foreground hover:text-primary",
                               )}
                               asChild
                             >
@@ -117,7 +138,9 @@ export function Menu({ isOpen }: MenuProps) {
                                 <p
                                   className={cn(
                                     "max-w-[200px] truncate",
-                                    isOpen === false ? "-translate-x-96 opacity-0" : "translate-x-0 opacity-100"
+                                    isOpen === false
+                                      ? "-translate-x-96 opacity-0"
+                                      : "translate-x-0 opacity-100",
                                   )}
                                 >
                                   {label}
@@ -125,10 +148,12 @@ export function Menu({ isOpen }: MenuProps) {
                               </Link>
                             </Button>
                           </TooltipTrigger>
-                          {isOpen === false && <TooltipContent side="right">{label}</TooltipContent>}
+                          {isOpen === false && (
+                            <TooltipContent side="right">{label}</TooltipContent>
+                          )}
                         </Tooltip>
                       </TooltipProvider>
-                    </div>
+                    </div>,
                   );
 
                   if (href === "/price-list" && kalkulatorItems.length > 0) {
@@ -139,8 +164,10 @@ export function Menu({ isOpen }: MenuProps) {
                             <Button
                               variant="ghost"
                               className={cn(
-                                "w-full justify-start h-10 mb-1 gap-2 hover:bg-white/5 transition-colors",
-                                kalkulatorActive ? "text-primary font-bold bg-transparent hover:bg-transparent" : "text-muted-foreground hover:text-primary"
+                                "mb-1 h-10 w-full justify-start gap-2 transition-colors hover:bg-white/5",
+                                kalkulatorActive
+                                  ? "text-primary bg-transparent font-bold hover:bg-transparent"
+                                  : "text-muted-foreground hover:text-primary",
                               )}
                             >
                               <span className={cn(isOpen === false ? "" : "mr-2")}>
@@ -149,12 +176,16 @@ export function Menu({ isOpen }: MenuProps) {
                               <p
                                 className={cn(
                                   "max-w-[200px] truncate",
-                                  isOpen === false ? "-translate-x-96 opacity-0" : "translate-x-0 opacity-100"
+                                  isOpen === false
+                                    ? "-translate-x-96 opacity-0"
+                                    : "translate-x-0 opacity-100",
                                 )}
                               >
                                 Kalkulator
                               </p>
-                              <span className={cn("ml-auto", isOpen === false ? "hidden" : "block")}>
+                              <span
+                                className={cn("ml-auto", isOpen === false ? "hidden" : "block")}
+                              >
                                 <ChevronDown size={16} className="opacity-70" />
                               </span>
                             </Button>
@@ -162,7 +193,10 @@ export function Menu({ isOpen }: MenuProps) {
                           <DropdownMenuContent align="start" className="w-56">
                             {kalkulatorItems.map((item) => (
                               <DropdownMenuItem key={item.href} asChild>
-                                <Link href={item.href} className="w-full px-2 py-1.5 text-sm flex items-center gap-2">
+                                <Link
+                                  href={item.href}
+                                  className="flex w-full items-center gap-2 px-2 py-1.5 text-sm"
+                                >
                                   <item.icon className="h-4 w-4" />
                                   {item.label}
                                 </Link>
@@ -170,7 +204,7 @@ export function Menu({ isOpen }: MenuProps) {
                             ))}
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </div>
+                      </div>,
                     );
                   }
                 } else {
@@ -183,7 +217,7 @@ export function Menu({ isOpen }: MenuProps) {
                         submenus={submenus}
                         isOpen={isOpen}
                       />
-                    </div>
+                    </div>,
                   );
                 }
 
@@ -193,14 +227,27 @@ export function Menu({ isOpen }: MenuProps) {
           ))}
 
           {!isLoggedIn && (
-            <li className={cn("w-full pt-4", isOpen === false ? "flex flex-col gap-2" : "grid grid-cols-[1fr_1fr_44px] gap-2.5")}>
+            <li
+              className={cn(
+                "w-full pt-4",
+                isOpen === false ? "flex flex-col gap-2" : "grid grid-cols-[1fr_1fr_44px] gap-2.5",
+              )}
+            >
               <TooltipProvider disableHoverableContent>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" className="w-full justify-center h-10 px-2" asChild>
-                      <Link href="/signin" className="flex items-center justify-center gap-1.5 w-full">
+                    <Button variant="outline" className="h-10 w-full justify-center px-2" asChild>
+                      <Link
+                        href="/signin"
+                        className="flex w-full items-center justify-center gap-1.5"
+                      >
                         <LogIn size={18} className="shrink-0" />
-                        <span className={cn("font-medium text-sm truncate", isOpen === false ? "hidden" : "inline")}>
+                        <span
+                          className={cn(
+                            "truncate text-sm font-medium",
+                            isOpen === false ? "hidden" : "inline",
+                          )}
+                        >
                           Masuk
                         </span>
                       </Link>
@@ -213,10 +260,18 @@ export function Menu({ isOpen }: MenuProps) {
               <TooltipProvider disableHoverableContent>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
-                    <Button className="w-full justify-center h-10 px-2" asChild>
-                      <Link href="/signup" className="flex items-center justify-center gap-1.5 w-full">
+                    <Button className="h-10 w-full justify-center px-2" asChild>
+                      <Link
+                        href="/signup"
+                        className="flex w-full items-center justify-center gap-1.5"
+                      >
                         <UserPlus size={18} className="shrink-0" />
-                        <span className={cn("font-medium text-sm truncate", isOpen === false ? "hidden" : "inline")}>
+                        <span
+                          className={cn(
+                            "truncate text-sm font-medium",
+                            isOpen === false ? "hidden" : "inline",
+                          )}
+                        >
                           Daftar
                         </span>
                       </Link>
@@ -233,7 +288,7 @@ export function Menu({ isOpen }: MenuProps) {
           )}
 
           {isLoggedIn && (
-            <li className="w-full grow flex flex-col justify-end">
+            <li className="flex w-full grow flex-col justify-end">
               <div className="mb-2 flex justify-center">
                 <ModeToggle />
               </div>
@@ -243,12 +298,17 @@ export function Menu({ isOpen }: MenuProps) {
                     <Button
                       onClick={() => setOpen(true)}
                       variant="destructive"
-                      className="w-full justify-center h-10 mt-5"
+                      className="mt-5 h-10 w-full justify-center"
                     >
                       <span className={cn(isOpen === false ? "" : "mr-4")}>
                         <LogOut size={18} />
                       </span>
-                      <p className={cn("whitespace-nowrap", isOpen === false ? "opacity-0 hidden" : "opacity-100")}>
+                      <p
+                        className={cn(
+                          "whitespace-nowrap",
+                          isOpen === false ? "hidden opacity-0" : "opacity-100",
+                        )}
+                      >
                         Keluar
                       </p>
                     </Button>

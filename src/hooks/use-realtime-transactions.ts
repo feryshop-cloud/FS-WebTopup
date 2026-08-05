@@ -25,7 +25,7 @@ const useRealtimeTransactions = () => {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       keepPreviousData: true,
-    }
+    },
   );
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const useRealtimeTransactions = () => {
           return {
             ...(prev ?? { data: [] }),
             data: transactions.map((t) =>
-              t.order_id === incoming.order_id ? { ...t, ...incoming } : t
+              t.order_id === incoming.order_id ? { ...t, ...incoming } : t,
             ),
           };
         }

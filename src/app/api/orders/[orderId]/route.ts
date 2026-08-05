@@ -12,7 +12,10 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
   try {
     const { orderId } = await context.params;
     if (!orderId) {
-      return NextResponse.json({ success: false, message: "Order ID tidak ditemukan" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Order ID tidak ditemukan" },
+        { status: 400 },
+      );
     }
 
     let orderData: any = null;
@@ -50,7 +53,11 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
           const dbGame = await db.select().from(games).where(eq(games.slug, o.gameSlug)).limit(1);
           if (dbGame && dbGame[0]) gameData = dbGame[0];
 
-          const dbProduct = await db.select().from(products).where(eq(products.id, o.productId)).limit(1);
+          const dbProduct = await db
+            .select()
+            .from(products)
+            .where(eq(products.id, o.productId))
+            .limit(1);
           if (dbProduct && dbProduct[0]) productData = dbProduct[0];
         }
       } catch (e) {
@@ -80,21 +87,31 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
       };
 
       gameData = seedGames[0];
-      productData = seedProducts['mobile-legends'][0];
+      productData = seedProducts["mobile-legends"][0];
     }
 
-    return NextResponse.json({
-      success: true,
-      order: orderData,
-      game: gameData || { title: orderData.game_slug, slug: orderData.game_slug, image: "/images/ml.png" },
-      product: productData || { title: orderData.product_title, price: orderData.total_price },
-      message: "Data invoice berhasil dimuat",
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        order: orderData,
+        game: gameData || {
+          title: orderData.game_slug,
+          slug: orderData.game_slug,
+          image: "/images/ml.png",
+        },
+        product: productData || { title: orderData.product_title, price: orderData.total_price },
+        message: "Data invoice berhasil dimuat",
+      },
+      { status: 200 },
+    );
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Terjadi kesalahan saat mengambil invoice",
-      error: error?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Terjadi kesalahan saat mengambil invoice",
+        error: error?.message,
+      },
+      { status: 500 },
+    );
   }
 }

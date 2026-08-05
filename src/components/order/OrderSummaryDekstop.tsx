@@ -11,34 +11,48 @@ export default function OrderSummaryDekstop({
   isLoading,
   stepNumber,
 }: OrderSummaryDekstopProps) {
-  const step = Number.isFinite(Number(stepNumber)) && Number(stepNumber) > 0 ? Math.floor(Number(stepNumber)) : 6;
+  const step =
+    Number.isFinite(Number(stepNumber)) && Number(stepNumber) > 0
+      ? Math.floor(Number(stepNumber))
+      : 6;
 
   return (
-    <section className="relative mt-6 hidden lg:block rounded-xl bg-background shadow-sm ring-1 ring-border">
-      <div className="flex items-center rounded-t-xl bg-muted px-4 py-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-my-color font-semibold text-white">
+    <section className="bg-background ring-border relative mt-6 hidden rounded-xl shadow-sm ring-1 lg:block">
+      <div className="bg-muted flex items-center rounded-t-xl px-4 py-2">
+        <div className="bg-my-color flex h-8 w-8 items-center justify-center rounded-md font-semibold text-white">
           {step}
         </div>
-        <h2 className="ml-3 text-sm font-semibold text-card-foreground">Detail Pesanan</h2>
+        <h2 className="text-card-foreground ml-3 text-sm font-semibold">Detail Pesanan</h2>
       </div>
 
       <div className="p-4">
         {selectedProductDetails ? (
-          <div className="flex flex-col gap-4 rounded-xl border border-border bg-muted/40 p-4 shadow-sm">
-            <div className="text-sm text-card-foreground">
+          <div className="border-border bg-muted/40 flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
+            <div className="text-card-foreground text-sm">
               <p className="font-medium">{selectedProductDetails.title}</p>
-              <span className="font-semibold text-lg">Rp {totalPrice.toLocaleString("id-ID")}</span>
+              <span className="text-lg font-semibold">Rp {totalPrice.toLocaleString("id-ID")}</span>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="inline-flex items-center justify-center rounded-md bg-my-color px-6 py-2 text-sm font-medium text-white shadow transition-all duration-300 hover:bg-my-hoverColor disabled:cursor-not-allowed disabled:opacity-60"
+              className="bg-my-color hover:bg-my-hoverColor inline-flex items-center justify-center rounded-md px-6 py-2 text-sm font-medium text-white shadow transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isLoading ? (
                 <>
-                  <svg className="animate-spin mr-2 h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"></circle>
+                  <svg
+                    className="mr-2 h-5 w-5 animate-spin text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      className="opacity-25"
+                    ></circle>
                     <path
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
@@ -89,7 +103,7 @@ export default function OrderSummaryDekstop({
             </button>
           </div>
         ) : (
-          <div className="flex h-24 items-center justify-center rounded-xl border border-dashed bg-muted/40 text-sm text-muted-foreground">
+          <div className="bg-muted/40 text-muted-foreground flex h-24 items-center justify-center rounded-xl border border-dashed text-sm">
             Belum ada item produk yang dipilih.
           </div>
         )}

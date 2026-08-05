@@ -16,12 +16,15 @@ export async function GET(req: Request) {
     let results: any[] = [];
 
     results = (await getLivePublicGames()).filter(
-      (game) => game.title.toLowerCase().includes(search) || game.slug.toLowerCase().includes(search),
+      (game) =>
+        game.title.toLowerCase().includes(search) || game.slug.toLowerCase().includes(search),
     );
 
     if (results.length === 0) {
       results = seedGames
-        .filter((g) => g.title.toLowerCase().includes(search) || g.slug.toLowerCase().includes(search))
+        .filter(
+          (g) => g.title.toLowerCase().includes(search) || g.slug.toLowerCase().includes(search),
+        )
         .map((g) => ({
           id: g.id,
           title: g.title,

@@ -129,7 +129,7 @@ export const SettingsProvider = ({
       initialData && typeof initialData === "object"
         ? { success: Boolean(initialData.success), data: initialData.data ?? {} }
         : { success: false, data: {} },
-    [initialData]
+    [initialData],
   );
 
   useEffect(() => {

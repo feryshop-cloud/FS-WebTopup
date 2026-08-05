@@ -18,7 +18,10 @@ function hash(data: string) {
 }
 
 function encodeRfc3986(value: string) {
-  return encodeURIComponent(value).replace(/[!'()*]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
+  return encodeURIComponent(value).replace(
+    /[!'()*]/g,
+    (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
 }
 
 function getStorageConfig() {
@@ -44,10 +47,15 @@ function getStorageConfig() {
 async function fetchObject(key: string) {
   const config = getStorageConfig();
   if (!config) {
-    return NextResponse.json({ success: false, message: "Storage belum dikonfigurasi" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Storage belum dikonfigurasi" },
+      { status: 500 },
+    );
   }
 
-  const url = new URL(`${config.endpoint}/${encodeRfc3986(config.bucket)}/${key.split("/").map(encodeRfc3986).join("/")}`);
+  const url = new URL(
+    `${config.endpoint}/${encodeRfc3986(config.bucket)}/${key.split("/").map(encodeRfc3986).join("/")}`,
+  );
   const now = new Date();
   const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
   const dateStamp = amzDate.slice(0, 8);
@@ -63,7 +71,9 @@ async function fetchObject(key: string) {
     "UNSIGNED-PAYLOAD",
   ].join("\n");
   const credentialScope = `${dateStamp}/${config.region}/s3/aws4_request`;
-  const stringToSign = ["AWS4-HMAC-SHA256", amzDate, credentialScope, hash(canonicalRequest)].join("\n");
+  const stringToSign = ["AWS4-HMAC-SHA256", amzDate, credentialScope, hash(canonicalRequest)].join(
+    "\n",
+  );
   const kDate = hmacBuffer(`AWS4${config.secretAccessKey}`, dateStamp);
   const kRegion = hmacBuffer(kDate, config.region);
   const kService = hmacBuffer(kRegion, "s3");
@@ -80,7 +90,10 @@ async function fetchObject(key: string) {
   });
 
   if (!response.ok || !response.body) {
-    return NextResponse.json({ success: false, message: "Object tidak ditemukan" }, { status: response.status });
+    return NextResponse.json(
+      { success: false, message: "Object tidak ditemukan" },
+      { status: response.status },
+    );
   }
 
   return new NextResponse(response.body, {
@@ -97,7 +110,10 @@ export async function GET(_request: Request, context: { params: Promise<{ key?: 
   const key = params.key?.join("/") ?? "";
 
   if (!ALLOWED_KEY_PATTERN.test(key) || key.includes("..")) {
-    return NextResponse.json({ success: false, message: "Path storage tidak valid" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: "Path storage tidak valid" },
+      { status: 400 },
+    );
   }
 
   return fetchObject(key);

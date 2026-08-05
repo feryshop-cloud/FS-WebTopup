@@ -90,7 +90,10 @@ export default function TurnstileWidget({
 
   return (
     <div className={className}>
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        strategy="afterInteractive"
+      />
       <div ref={containerRef} />
     </div>
   );

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  AnimatePresence,
-  motion,
-  useMotionTemplate,
-  useSpring,
-} from "framer-motion";
+import { AnimatePresence, motion, useMotionTemplate, useSpring } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -19,9 +14,7 @@ import {
   useState,
 } from "react";
 
-const ProgressBarContext = createContext<ReturnType<typeof useProgress> | null>(
-  null
-);
+const ProgressBarContext = createContext<ReturnType<typeof useProgress> | null>(null);
 
 export function useProgressBar() {
   let progress = useContext(ProgressBarContext);
@@ -33,19 +26,15 @@ export function useProgressBar() {
   return progress;
 }
 
-export function ProgressBar({ className, children }: { className: string, children: ReactNode }) {
-  let progress = useProgress(); 
-  let width = useMotionTemplate`${progress.value}%`; 
+export function ProgressBar({ className, children }: { className: string; children: ReactNode }) {
+  let progress = useProgress();
+  let width = useMotionTemplate`${progress.value}%`;
 
   return (
     <ProgressBarContext.Provider value={progress}>
       <AnimatePresence onExitComplete={progress.reset}>
         {progress.state !== "complete" && (
-          <motion.div
-            style={{ width }}
-            exit={{ opacity: 0 }}
-            className={className}
-          />
+          <motion.div style={{ width }} exit={{ opacity: 0 }} className={className} />
         )}
       </AnimatePresence>
 
@@ -54,12 +43,8 @@ export function ProgressBar({ className, children }: { className: string, childr
   );
 }
 
-export function ProgressBarLink({
-  href,
-  children,
-  ...rest
-}: ComponentProps<typeof Link>) {
-  let progress = useProgressBar(); 
+export function ProgressBarLink({ href, children, ...rest }: ComponentProps<typeof Link>) {
+  let progress = useProgressBar();
   let router = useRouter();
 
   return (
@@ -67,11 +52,11 @@ export function ProgressBarLink({
       href={href}
       onClick={(e) => {
         e.preventDefault();
-        progress.start(); 
+        progress.start();
 
         startTransition(() => {
           router.push(href.toString());
-          progress.done(); 
+          progress.done();
         });
       }}
       {...rest}
@@ -82,9 +67,9 @@ export function ProgressBarLink({
 }
 
 function useProgress() {
-  const [state, setState] = useState<
-    "initial" | "in-progress" | "completing" | "complete"
-  >("initial");
+  const [state, setState] = useState<"initial" | "in-progress" | "completing" | "complete">(
+    "initial",
+  );
 
   let value = useSpring(0, {
     damping: 25,
@@ -113,7 +98,7 @@ function useProgress() {
 
       value.set(Math.min(current + diff, 99));
     },
-    state === "in-progress" ? 750 : null
+    state === "in-progress" ? 750 : null,
   );
 
   useEffect(() => {
@@ -139,9 +124,7 @@ function useProgress() {
   }
 
   function done() {
-    setState((state) =>
-      state === "initial" || state === "in-progress" ? "completing" : state
-    );
+    setState((state) => (state === "initial" || state === "in-progress" ? "completing" : state));
   }
 
   return { state, value, start, done, reset };

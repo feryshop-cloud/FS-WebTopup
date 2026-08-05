@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import fs from "fs";
+import path from "path";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +16,22 @@ const s3 = new S3Client({
 });
 
 const BUCKET = process.env.BUCKET || "";
+
+function getPlaceholderResponse() {
+  try {
+    const placeholderPath = path.join(process.cwd(), "public", "placeholder.png");
+    if (fs.existsSync(placeholderPath)) {
+      const fileBuffer = fs.readFileSync(placeholderPath);
+      return new NextResponse(fileBuffer, {
+        headers: {
+          "Content-Type": "image/png",
+          "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
+        },
+      });
+    }
+  } catch {}
+  return NextResponse.json({ error: "Image not found" }, { status: 404 });
+}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -38,7 +56,7 @@ export async function GET(req: Request) {
     });
 
     if (!res.ok) {
-      return NextResponse.redirect(new URL("/placeholder.png", req.url));
+      return getPlaceholderResponse();
     }
 
     const contentType = res.headers.get("content-type") ?? "image/webp";
@@ -51,6 +69,6 @@ export async function GET(req: Request) {
       },
     });
   } catch (err: any) {
-    return NextResponse.redirect(new URL("/placeholder.png", req.url));
+    return getPlaceholderResponse();
   }
 }

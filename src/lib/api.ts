@@ -1,8 +1,8 @@
 export const fetcher = async (url: string) => {
   const res = await fetch(url, {
     headers: {
-      'X-API-KEY': process.env.API_ACCESS_KEY ?? '',
-      'Accept': 'application/json',
+      "X-API-KEY": process.env.API_ACCESS_KEY ?? "",
+      Accept: "application/json",
     },
   });
 

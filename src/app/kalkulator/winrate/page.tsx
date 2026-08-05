@@ -47,7 +47,8 @@ export default function WinrateCalculatorPage() {
   }, [totalMatch, currentWR, targetWR]);
 
   const validation = useMemo(() => {
-    if (!Number.isFinite(parsed.totalMatch) || parsed.totalMatch <= 0) return "Total match harus lebih dari 0.";
+    if (!Number.isFinite(parsed.totalMatch) || parsed.totalMatch <= 0)
+      return "Total match harus lebih dari 0.";
     if (!Number.isFinite(parsed.currentWR)) return "Winrate saat ini harus angka.";
     if (parsed.currentWR < 0 || parsed.currentWR > 100) return "Winrate saat ini harus 0 - 100.";
     if (!Number.isFinite(parsed.targetWR)) return "Target winrate harus angka.";
@@ -93,7 +94,7 @@ export default function WinrateCalculatorPage() {
             Kalkulator
           </Badge>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Cek Winrate</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             Hitung minimal kemenangan beruntun untuk mencapai target winrate.
           </p>
         </div>
@@ -123,10 +124,12 @@ export default function WinrateCalculatorPage() {
                 <Percent className="h-5 w-5" />
                 Kalkulator Winrate
               </CardTitle>
-              <CardDescription>Masukkan total match, winrate saat ini, dan target winrate.</CardDescription>
+              <CardDescription>
+                Masukkan total match, winrate saat ini, dan target winrate.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="totalMatch">Total Match</Label>
                   <Input
@@ -159,43 +162,51 @@ export default function WinrateCalculatorPage() {
                 </div>
               </div>
 
-              {validation ? <div className="text-sm text-destructive">{validation}</div> : null}
+              {validation ? <div className="text-destructive text-sm">{validation}</div> : null}
 
               <Separator />
 
-              <div className="rounded-lg border p-4 space-y-3">
+              <div className="space-y-3 rounded-lg border p-4">
                 <div className="text-sm font-medium">Hasil</div>
 
                 {!computed ? (
-                  <div className="text-sm text-muted-foreground">Isi data di atas untuk melihat hasil.</div>
+                  <div className="text-muted-foreground text-sm">
+                    Isi data di atas untuk melihat hasil.
+                  </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <div className="rounded-md bg-secondary p-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                      <div className="bg-secondary rounded-md p-3">
                         <div className="text-xs opacity-70">WR Saat Ini</div>
-                        <div className="text-2xl font-semibold">{computed.currentWR.toFixed(2)}%</div>
+                        <div className="text-2xl font-semibold">
+                          {computed.currentWR.toFixed(2)}%
+                        </div>
                       </div>
-                      <div className="rounded-md bg-secondary p-3">
+                      <div className="bg-secondary rounded-md p-3">
                         <div className="text-xs opacity-70">Target WR</div>
-                        <div className="text-2xl font-semibold">{computed.targetWR.toFixed(2)}%</div>
+                        <div className="text-2xl font-semibold">
+                          {computed.targetWR.toFixed(2)}%
+                        </div>
                       </div>
-                      <div className="rounded-md bg-secondary p-3">
+                      <div className="bg-secondary rounded-md p-3">
                         <div className="text-xs opacity-70">Minimal Win Beruntun</div>
                         <div className="text-2xl font-semibold">{computed.needed}</div>
                       </div>
                     </div>
 
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-muted-foreground text-sm">
                       Estimasi WR setelah {computed.needed} win beruntun:{" "}
                       <span className="font-medium">{computed.afterWr.toFixed(2)}%</span>
                     </div>
 
-                    {computed.note ? <div className="text-sm text-muted-foreground">{computed.note}</div> : null}
+                    {computed.note ? (
+                      <div className="text-muted-foreground text-sm">{computed.note}</div>
+                    ) : null}
                   </>
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Button
                   variant="secondary"
                   onClick={() => {

@@ -48,8 +48,13 @@ export function UserNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={session?.user?.image || ""} alt={session?.user?.name || "User"} />
-                  <AvatarFallback className="bg-transparent">{session?.user?.name?.charAt(0) || "U"}</AvatarFallback>
+                  <AvatarImage
+                    src={session?.user?.image || ""}
+                    alt={session?.user?.name || "User"}
+                  />
+                  <AvatarFallback className="bg-transparent">
+                    {session?.user?.name?.charAt(0) || "U"}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -59,10 +64,10 @@ export function UserNav() {
       </TooltipProvider>
 
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal space-y-3">
+        <DropdownMenuLabel className="space-y-3 font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{session?.user?.name || "User"}</p>
-            <p className="text-xs leading-none text-muted-foreground">{subtitle}</p>
+            <p className="text-muted-foreground text-xs leading-none">{subtitle}</p>
           </div>
           <Badge className={`w-fit ${getBadgeClass(role)}`}>{role}</Badge>
         </DropdownMenuLabel>
@@ -72,14 +77,14 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href="/dashboard" className="flex items-center">
-              <LayoutDashboard className="w-4 h-4 mr-3 text-muted-foreground" />
+              <LayoutDashboard className="text-muted-foreground mr-3 h-4 w-4" />
               Dashboard
             </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
             <Link href="/account-settings" className="flex items-center">
-              <Settings2 className="w-4 h-4 mr-3 text-muted-foreground" />
+              <Settings2 className="text-muted-foreground mr-3 h-4 w-4" />
               Pengaturan Akun
             </Link>
           </DropdownMenuItem>
@@ -87,7 +92,7 @@ export function UserNav() {
           {enableApiSettings && (
             <DropdownMenuItem asChild>
               <Link href="/account-settings/api" className="flex items-center">
-                <KeyRound className="w-4 h-4 mr-3 text-muted-foreground" />
+                <KeyRound className="text-muted-foreground mr-3 h-4 w-4" />
                 Pengaturan API
               </Link>
             </DropdownMenuItem>
@@ -95,7 +100,7 @@ export function UserNav() {
 
           <DropdownMenuItem asChild>
             <Link href="/marketplace" className="flex items-center">
-              <Store className="w-4 h-4 mr-3 text-muted-foreground" />
+              <Store className="text-muted-foreground mr-3 h-4 w-4" />
               Daftar Akun
             </Link>
           </DropdownMenuItem>
@@ -103,8 +108,11 @@ export function UserNav() {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="hover:cursor-pointer" onClick={() => signOut({ callbackUrl: "/" })}>
-          <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
+        <DropdownMenuItem
+          className="hover:cursor-pointer"
+          onClick={() => signOut({ callbackUrl: "/" })}
+        >
+          <LogOut className="text-muted-foreground mr-3 h-4 w-4" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

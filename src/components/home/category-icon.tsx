@@ -103,13 +103,7 @@ function lucideIconName(logo?: string | null): string | null {
   return name in ICON_MAP ? name : null;
 }
 
-export function CategoryLogo({
-  logo,
-  className,
-}: {
-  logo?: string | null;
-  className?: string;
-}) {
+export function CategoryLogo({ logo, className }: { logo?: string | null; className?: string }) {
   const iconName = lucideIconName(logo);
 
   if (iconName) {

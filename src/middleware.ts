@@ -14,10 +14,15 @@ export function middleware(request: NextRequest) {
   response.headers.set("x-request-id", requestId);
 
   console.log(
-    formatLog("info", "request start", {
-      method: request.method,
-      path: request.nextUrl.pathname,
-    }, { service: "FS-Public", requestId }),
+    formatLog(
+      "info",
+      "request start",
+      {
+        method: request.method,
+        path: request.nextUrl.pathname,
+      },
+      { service: "FS-Public", requestId },
+    ),
   );
 
   return response;

@@ -4,20 +4,24 @@ interface OrderSummaryMobileProps {
   isLoading: boolean;
 }
 
-export default function OrderSummaryMobile({ selectedProductDetails, totalPrice, isLoading }: OrderSummaryMobileProps) {
+export default function OrderSummaryMobile({
+  selectedProductDetails,
+  totalPrice,
+  isLoading,
+}: OrderSummaryMobileProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 block w-full space-y-4 rounded-t-2xl p-4 lg:hidden bg-muted shadow dark:shadow-secondary">
+    <div className="bg-muted dark:shadow-secondary fixed inset-x-0 bottom-0 z-40 block w-full space-y-4 rounded-t-2xl p-4 shadow lg:hidden">
       {selectedProductDetails ? (
-        <div className="flex justify-between items-center rounded-2xl border border-dashed border-gray-500 p-3 text-sm text-card-foreground shadow-sm">
+        <div className="text-card-foreground flex items-center justify-between rounded-2xl border border-dashed border-gray-500 p-3 text-sm shadow-sm">
           <div>
             <p className="font-medium">{selectedProductDetails.title}</p>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               Rp {totalPrice.toLocaleString("id-ID")}
             </span>
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-gray-500 text-sm text-secondary-foreground">
+        <div className="text-secondary-foreground rounded-2xl border border-dashed border-gray-500 text-sm">
           <div className="flex h-[4em] items-center justify-center text-center text-xs">
             Belum ada item produk yang dipilih.
           </div>
@@ -25,13 +29,20 @@ export default function OrderSummaryMobile({ selectedProductDetails, totalPrice,
       )}
       <button
         type="submit"
-        className="inline-flex items-center justify-center whitespace-nowrap transition-all rounded-lg shadow-sm text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-my-color text-white text-foreground hover:bg-my-hoverColor h-8 rounded-lg px-4 bg-size-200 bg-pos-0 duration-500 before:animate-rainbow hover:bg-pos-100 w-full gap-2"
+        className="ring-offset-background focus-visible:ring-ring bg-my-color text-foreground hover:bg-my-hoverColor bg-size-200 bg-pos-0 before:animate-rainbow hover:bg-pos-100 inline-flex h-8 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium text-white shadow-sm transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
         disabled={isLoading}
       >
         {isLoading ? (
           <>
-            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"></circle>
+            <svg className="h-5 w-5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                className="opacity-25"
+              ></circle>
               <path
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"

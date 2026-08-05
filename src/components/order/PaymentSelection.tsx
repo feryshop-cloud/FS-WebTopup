@@ -33,10 +33,7 @@ const isDisabledByLimit = (method: PaymentMethod) => {
 
 const PAYMENT_IMAGE_FALLBACK = "/placeholder.png";
 
-const resolvePaymentImage = (
-  images: unknown,
-  method: PaymentMethod,
-): string => {
+const resolvePaymentImage = (images: unknown, method: PaymentMethod): string => {
   const isQris =
     String(method.id).toLowerCase() === "qris" ||
     String(method.payment_id ?? "").toLowerCase() === "qris";
@@ -53,8 +50,7 @@ const resolvePaymentImage = (
 
   const trimmed = images.trim();
   if (!trimmed) return fallback;
-  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}")
-    return fallback;
+  if (trimmed === "noimage.png" || trimmed === "[]" || trimmed === "{}") return fallback;
   return trimmed;
 };
 
@@ -86,16 +82,14 @@ export default function PaymentSelection({
   return (
     <section
       ref={paymentRef}
-      className="relative scroll-mt-20 rounded-xl bg-background shadow-sm ring-1 ring-border md:scroll-mt-[7.5rem]"
+      className="bg-background ring-border relative scroll-mt-20 rounded-xl shadow-sm ring-1 md:scroll-mt-[7.5rem]"
       id={resolvedSectionId}
     >
-      <div className="flex items-center rounded-t-xl bg-muted px-4 py-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-my-color font-semibold text-white">
+      <div className="bg-muted flex items-center rounded-t-xl px-4 py-2">
+        <div className="bg-my-color flex h-8 w-8 items-center justify-center rounded-md font-semibold text-white">
           {step}
         </div>
-        <h2 className="ml-3 text-sm font-semibold text-card-foreground">
-          Pilih Pembayaran
-        </h2>
+        <h2 className="text-card-foreground ml-3 text-sm font-semibold">Pilih Pembayaran</h2>
       </div>
 
       <div className="space-y-4 p-4">
@@ -110,11 +104,11 @@ export default function PaymentSelection({
                 <label
                   key={method.id}
                   className={cn(
-                    "relative flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/30 px-4 py-4 ring-1 ring-border",
+                    "bg-muted/30 ring-border relative flex w-full cursor-pointer items-center justify-between rounded-xl px-4 py-4 ring-1",
                     !isDisabled &&
-                      "hover:ring-2 hover:ring-my-color hover:ring-offset-2 hover:ring-offset-background",
+                      "hover:ring-my-color hover:ring-offset-background hover:ring-2 hover:ring-offset-2",
                     isDisabled && "cursor-not-allowed opacity-50",
-                    isSelected && "ring-2 ring-my-color",
+                    isSelected && "ring-my-color ring-2",
                   )}
                 >
                   <input
@@ -148,13 +142,13 @@ export default function PaymentSelection({
                       )}
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[13px] font-semibold text-foreground">
+                      <span className="text-foreground text-[13px] font-semibold">
                         {method.name}
                       </span>
                     </div>
                   </div>
 
-                  <div className="text-sm font-semibold text-primary">
+                  <div className="text-primary text-sm font-semibold">
                     Rp {(method.totalPrice ?? 0).toLocaleString("id-ID")}
                   </div>
                 </label>
@@ -167,10 +161,10 @@ export default function PaymentSelection({
           const isOpen = openAccordion === group;
 
           return (
-            <div key={group} className="rounded-xl border bg-muted/40">
+            <div key={group} className="bg-muted/40 rounded-xl border">
               <button
                 type="button"
-                className="flex w-full items-center justify-between rounded-t-xl bg-muted px-4 py-3 font-medium"
+                className="bg-muted flex w-full items-center justify-between rounded-t-xl px-4 py-3 font-medium"
                 onClick={() => setOpenAccordion(isOpen ? null : group)}
               >
                 <span>{group}</span>
@@ -210,11 +204,11 @@ export default function PaymentSelection({
                       <label
                         key={method.id}
                         className={cn(
-                          "group/variant relative flex min-h-[85px] cursor-pointer gap-4 rounded-xl border border-transparent bg-muted text-muted-foreground shadow-sm",
+                          "group/variant bg-muted text-muted-foreground relative flex min-h-[85px] cursor-pointer gap-4 rounded-xl border border-transparent shadow-sm",
                           !isDisabled &&
-                            "hover:ring-2 hover:ring-my-color hover:ring-offset-2 hover:ring-offset-background",
+                            "hover:ring-my-color hover:ring-offset-background hover:ring-2 hover:ring-offset-2",
                           isDisabled && "cursor-not-allowed opacity-50",
-                          isSelected && "ring-2 ring-my-color",
+                          isSelected && "ring-my-color ring-2",
                         )}
                       >
                         <input
@@ -228,11 +222,9 @@ export default function PaymentSelection({
                         />
 
                         <span className="w-full">
-                          <span className="flex h-full flex-col justify-between divide-y divide-muted-foreground/10">
+                          <span className="divide-muted-foreground/10 flex h-full flex-col justify-between divide-y">
                             <div className="flex flex-col justify-start gap-1 p-3">
-                              <span className="block text-[11px] font-semibold">
-                                {method.name}
-                              </span>
+                              <span className="block text-[11px] font-semibold">{method.name}</span>
 
                               <div className="flex w-full flex-col">
                                 <div className="flex h-12 w-16 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm">
@@ -250,11 +242,8 @@ export default function PaymentSelection({
                                 </div>
 
                                 <div>
-                                  <span className="flex items-center text-[14px] font-semibold text-primary md:text-[16px]">
-                                    Rp{" "}
-                                    {(method.totalPrice ?? 0).toLocaleString(
-                                      "id-ID",
-                                    )}
+                                  <span className="text-primary flex items-center text-[14px] font-semibold md:text-[16px]">
+                                    Rp {(method.totalPrice ?? 0).toLocaleString("id-ID")}
                                   </span>
                                 </div>
                               </div>
@@ -271,7 +260,7 @@ export default function PaymentSelection({
                 <button
                   type="button"
                   onClick={() => setOpenAccordion(group)}
-                  className="hide-scrollbar flex w-full items-center gap-2 overflow-x-auto rounded-b-xl bg-muted/10 px-3 py-2"
+                  className="hide-scrollbar bg-muted/10 flex w-full items-center gap-2 overflow-x-auto rounded-b-xl px-3 py-2"
                 >
                   {methods.map((method) => {
                     const imgSrc = resolvePaymentImage(method.images, method);
@@ -287,7 +276,7 @@ export default function PaymentSelection({
                             src={imgSrc}
                             width={36}
                             height={36}
-                            className="h-6 w-16 rounded-md bg-white p-1 object-contain"
+                            className="h-6 w-16 rounded-md bg-white object-contain p-1"
                           />
                         </div>
                       )

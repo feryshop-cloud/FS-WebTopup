@@ -11,10 +11,13 @@ export async function GET(request: Request) {
 
     return NextResponse.json(await getBlogLitePayload(page, perPage), { status: 200 });
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memuat artikel",
-      error: err?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat artikel",
+        error: err?.message,
+      },
+      { status: 500 },
+    );
   }
 }

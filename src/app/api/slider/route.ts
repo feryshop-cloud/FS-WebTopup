@@ -7,10 +7,13 @@ export async function GET() {
   try {
     return NextResponse.json(await getSliderPayload(), { status: 200 });
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memuat slider",
-      error: err?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat slider",
+        error: err?.message,
+      },
+      { status: 500 },
+    );
   }
 }

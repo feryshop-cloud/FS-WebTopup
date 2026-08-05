@@ -8,9 +8,12 @@ export async function GET() {
     const payload = await getSiteSettings();
     return NextResponse.json(payload, { status: 200 });
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memuat pengaturan",
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat pengaturan",
+      },
+      { status: 500 },
+    );
   }
 }

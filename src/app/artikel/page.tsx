@@ -52,7 +52,7 @@ const safeDate = (v: any) => {
 export default function ArtikelPage() {
   const { data, error, isLoading, mutate } = useSWR<BlogLiteResponse>(
     `/api/blog-lite?page=1&per_page=${PER_PAGE}`,
-    fetcher
+    fetcher,
   );
 
   const [items, setItems] = useState<BlogLite[]>([]);
@@ -112,9 +112,11 @@ export default function ArtikelPage() {
   if (error) {
     return (
       <ContentLayout title="Artikel">
-        <div className="rounded-xl border border-border bg-muted/30 p-6">
+        <div className="border-border bg-muted/30 rounded-xl border p-6">
           <div className="text-sm font-medium">Gagal memuat artikel</div>
-          <div className="mt-1 text-xs text-muted-foreground">{String((error as any)?.message || error)}</div>
+          <div className="text-muted-foreground mt-1 text-xs">
+            {String((error as any)?.message || error)}
+          </div>
           <div className="mt-4 flex gap-2">
             <Button type="button" onClick={() => mutate()}>
               Coba Lagi
@@ -130,12 +132,14 @@ export default function ArtikelPage() {
 
   return (
     <ContentLayout title="Artikel">
-      <section className="pb-16 max-w-7xl mx-auto px-4">
+      <section className="mx-auto max-w-7xl px-4 pb-16">
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <Badge variant="secondary" className="mb-4">
             Artikel & Berita
           </Badge>
-          <h1 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">Update Terbaru & Insight</h1>
+          <h1 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
+            Update Terbaru & Insight
+          </h1>
           <p className="text-muted-foreground text-sm md:text-base">
             Berita, promo, dan panduan terbaru seputar game dan top up digital.
           </p>
@@ -152,8 +156,14 @@ export default function ArtikelPage() {
               const label = post.category?.title?.trim() ? post.category.title : null;
 
               return (
-                <Card key={post.id} className="flex flex-col overflow-hidden transition-all hover:ring-2 hover:ring-primary/20">
-                  <Link href={`/artikel/${post.slug}`} className="relative aspect-video w-full overflow-hidden bg-muted">
+                <Card
+                  key={post.id}
+                  className="hover:ring-primary/20 flex flex-col overflow-hidden transition-all hover:ring-2"
+                >
+                  <Link
+                    href={`/artikel/${post.slug}`}
+                    className="bg-muted relative aspect-video w-full overflow-hidden"
+                  >
                     {post.image ? (
                       <Image
                         src={post.image}
@@ -178,27 +188,34 @@ export default function ArtikelPage() {
                     )}
 
                     <h3 className="line-clamp-2 text-lg font-bold leading-tight">
-                      <Link href={`/artikel/${post.slug}`} className="hover:text-primary transition-colors">
+                      <Link
+                        href={`/artikel/${post.slug}`}
+                        className="hover:text-primary transition-colors"
+                      >
                         {post.title}
                       </Link>
                     </h3>
                   </CardHeader>
 
                   <CardContent className="flex-1">
-                    <p className="line-clamp-3 text-sm text-muted-foreground">
-                      {post.excerpt || "Klik untuk membaca detail informasi selengkapnya mengenai berita ini."}
+                    <p className="text-muted-foreground line-clamp-3 text-sm">
+                      {post.excerpt ||
+                        "Klik untuk membaca detail informasi selengkapnya mengenai berita ini."}
                     </p>
                   </CardContent>
 
                   <CardFooter className="flex items-center justify-between border-t pt-4 text-xs font-medium">
-                    <div className="flex items-center gap-4 text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center gap-4">
                       <span>{d ? format(d, "dd MMM yyyy") : "-"}</span>
                       <span className="flex items-center gap-1">
                         <Eye className="h-3 w-3" />
                         {post.views ?? 0}
                       </span>
                     </div>
-                    <Link href={`/artikel/${post.slug}`} className="text-primary flex items-center gap-1">
+                    <Link
+                      href={`/artikel/${post.slug}`}
+                      className="text-primary flex items-center gap-1"
+                    >
                       Baca Selengkapnya <ArrowRight className="h-3 w-3" />
                     </Link>
                   </CardFooter>
@@ -209,14 +226,20 @@ export default function ArtikelPage() {
         )}
 
         {loadMoreError && (
-          <div className="mt-6 rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm text-destructive">
+          <div className="border-destructive/20 bg-destructive/5 text-destructive mt-6 rounded-xl border p-4 text-sm">
             {loadMoreError}
           </div>
         )}
 
         {canLoadMore && (
           <div className="mt-12 flex justify-center">
-            <Button variant="outline" size="lg" onClick={loadMore} disabled={loadingMore} className="rounded-full px-8">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="rounded-full px-8"
+            >
               {loadingMore ? "Menghubungkan..." : "Tampilkan Lebih Banyak"}
             </Button>
           </div>

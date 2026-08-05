@@ -6,10 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 
-const targets = [
-  path.join(rootDir, ".next"),
-  path.join(rootDir, "node_modules", ".cache"),
-];
+const targets = [path.join(rootDir, ".next"), path.join(rootDir, "node_modules", ".cache")];
 
 console.log("🧹 Cleaning build artifacts cross-platform...");
 

@@ -112,7 +112,9 @@ export default function OrderPage() {
         }
 
         if (!isJson) {
-          throw new Error("Response tidak valid (bukan JSON). Pastikan route /api/order-config berjalan.");
+          throw new Error(
+            "Response tidak valid (bukan JSON). Pastikan route /api/order-config berjalan.",
+          );
         }
 
         return data;
@@ -223,7 +225,9 @@ export default function OrderPage() {
 
     for (const method of paymentMethods as any[]) {
       const fixedFee = money(method.fee);
-      const percentageFee = method.fee_percent ? Math.floor((num(method.fee_percent) / 100) * subtotalPrice) : 0;
+      const percentageFee = method.fee_percent
+        ? Math.floor((num(method.fee_percent) / 100) * subtotalPrice)
+        : 0;
       const totalPrice = money(subtotalPrice + fixedFee + percentageFee);
       const enriched = { ...method, totalPrice };
 
@@ -238,14 +242,16 @@ export default function OrderPage() {
     }
 
     outside.sort((a, b) => num(a.outside_sort) - num(b.outside_sort));
-    for (const k of Object.keys(grouped)) grouped[k].sort((a, b) => num(a.outside_sort) - num(b.outside_sort));
+    for (const k of Object.keys(grouped))
+      grouped[k].sort((a, b) => num(a.outside_sort) - num(b.outside_sort));
 
     return { groupedPaymentMethods: grouped, outsidePaymentMethods: outside };
   }, [paymentMethods, subtotalPrice]);
 
   useEffect(() => {
     if (selectedPayment) {
-      const p = (paymentMethods as any[]).find((x) => String(x.id) === String(selectedPayment)) || null;
+      const p =
+        (paymentMethods as any[]).find((x) => String(x.id) === String(selectedPayment)) || null;
       setSelectedPaymentDetails(p);
     } else {
       setSelectedPaymentDetails(null);
@@ -258,7 +264,9 @@ export default function OrderPage() {
     if (!method) return;
 
     const fixedFee = money(method.fee);
-    const percentageFee = method.fee_percent ? Math.floor((num(method.fee_percent) / 100) * subtotalPrice) : 0;
+    const percentageFee = method.fee_percent
+      ? Math.floor((num(method.fee_percent) / 100) * subtotalPrice)
+      : 0;
     const computedTotal = money(subtotalPrice + fixedFee + percentageFee);
 
     const min = num(method.minimum_amount);
@@ -290,7 +298,9 @@ export default function OrderPage() {
       const server = inputs.server || "";
 
       const res = await fetch(
-        apiPath(`/api/check-nickname?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&game=${encodeURIComponent(game || "")}`)
+        apiPath(
+          `/api/check-nickname?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}&game=${encodeURIComponent(game || "")}`,
+        ),
       );
       const data = await res.json().catch(() => ({}));
 
@@ -315,7 +325,9 @@ export default function OrderPage() {
     setNicknameError(null);
 
     const currentInputs = inputRef.current as Record<string, string>;
-    const requiredInputsFilled = (gameConfig.required_inputs || []).every((input: string) => currentInputs[input]?.trim() !== "");
+    const requiredInputsFilled = (gameConfig.required_inputs || []).every(
+      (input: string) => currentInputs[input]?.trim() !== "",
+    );
 
     if (requiredInputsFilled) checkNickname();
   }, [gameConfig, checkNickname]);
@@ -342,7 +354,13 @@ export default function OrderPage() {
       for (const inputName of gameConfig.required_inputs || []) {
         if (!inputs[inputName] || inputs[inputName].trim() === "") {
           toast.error("Silahkan isi data akun terlebih dahulu.");
-          const targetEl = inputRefs.current[inputName] || (inputName === "id" ? idRef.current : inputName === "server" ? serverRef.current : null);
+          const targetEl =
+            inputRefs.current[inputName] ||
+            (inputName === "id"
+              ? idRef.current
+              : inputName === "server"
+                ? serverRef.current
+                : null);
           targetEl?.scrollIntoView({ behavior: "smooth", block: "center" });
           return;
         }
@@ -381,12 +399,27 @@ export default function OrderPage() {
 
     setIsLoading(true);
 
+    const fixedFee = money(selectedPaymentMethod?.fee);
+    const percentageFee = selectedPaymentMethod?.fee_percent
+      ? Math.floor((num(selectedPaymentMethod.fee_percent) / 100) * subtotalPrice)
+      : 0;
+    const feeTotal = fixedFee + percentageFee;
+
     const jsonData: Record<string, any> = {
       game: slug,
+      game_slug: slug,
       product_id: selectedProduct,
+      product_title: selectedProductDetails?.title || "",
       payment_method_id: selectedPayment,
+      payment_name: selectedPaymentMethod?.name || "",
+      payment_code: selectedPaymentMethod?.payment_id || selectedPaymentMethod?.name || "",
       whatsapp,
       promo_code: promoCode || null,
+      price: productPrice,
+      total_price: totalPrice,
+      fee: feeTotal,
+      discount_price: promoDiscount || 0,
+      promo_price: selectedProductDetails?.promo_price || 0,
       inputs,
     };
 
@@ -416,7 +449,8 @@ export default function OrderPage() {
 
       const result = await response.json().catch(() => ({}));
 
-      const orderId = result?.orderId || result?.data?.orderId || result?.data?.order_id || result?.data?.orderID;
+      const orderId =
+        result?.orderId || result?.data?.orderId || result?.data?.order_id || result?.data?.orderID;
 
       if (response.ok && orderId) {
         toast.success("Pembelian berhasil, silakan lakukan pembayaran.");
@@ -436,12 +470,12 @@ export default function OrderPage() {
     return (
       <ContentLayout title="Order">
         <main className="relative pb-28 sm:pb-0">
-          <div className="rounded-xl border border-border bg-muted/50 p-4 text-sm">
+          <div className="border-border bg-muted/50 rounded-xl border p-4 text-sm">
             <div className="font-semibold text-red-600">Gagal memuat data game</div>
-            <div className="mt-1 text-muted-foreground">{cfgError}</div>
+            <div className="text-muted-foreground mt-1">{cfgError}</div>
             <div className="mt-3">
               <button
-                className="rounded-lg bg-my-color px-3 py-2 text-xs font-semibold text-white"
+                className="bg-my-color rounded-lg px-3 py-2 text-xs font-semibold text-white"
                 onClick={() => location.reload()}
               >
                 Coba Lagi
@@ -462,8 +496,8 @@ export default function OrderPage() {
 
         <div dir="ltr" data-orientation="horizontal" className="mt-4 lg:mt-8">
           <form onSubmit={handleSubmit} className="relative mt-4 lg:mt-8">
-            <div className="sm:flex sm:flex-col sm:space-y-6 lg:grid lg:grid-cols-3 gap-8 lg:items-start">
-              <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <div className="gap-8 sm:flex sm:flex-col sm:space-y-6 lg:grid lg:grid-cols-3 lg:items-start">
+              <div className="space-y-6 sm:space-y-8 lg:col-span-2">
                 <GameDescription isLoading={cfgLoading} description={games?.description} />
 
                 <InputSelection
@@ -485,7 +519,14 @@ export default function OrderPage() {
                   productRef={productRef}
                 />
 
-                {isAdmin && <QuantitySelection quantity={quantity} setQuantity={setQuantity} min={1} max={50} />}
+                {isAdmin && (
+                  <QuantitySelection
+                    quantity={quantity}
+                    setQuantity={setQuantity}
+                    min={1}
+                    max={50}
+                  />
+                )}
 
                 <PaymentSelection
                   paymentRef={paymentRef}
@@ -524,11 +565,15 @@ export default function OrderPage() {
                 />
 
                 <div className="lg:hidden">
-                  <OrderSummaryMobile selectedProductDetails={selectedProductDetails} totalPrice={totalPrice} isLoading={isLoading} />
+                  <OrderSummaryMobile
+                    selectedProductDetails={selectedProductDetails}
+                    totalPrice={totalPrice}
+                    isLoading={isLoading}
+                  />
                 </div>
               </div>
 
-              <div className="hidden lg:block sticky top-28">
+              <div className="sticky top-28 hidden lg:block">
                 <OrderSummaryDekstop
                   selectedProductDetails={selectedProductDetails}
                   totalPrice={totalPrice}
@@ -546,7 +591,12 @@ export default function OrderPage() {
         onOpenChange={setIsGuideOpen}
         guideImage={guideImagePath}
         guideText={gameConfig?.guide_text}
-        steps={gameConfig?.steps || (Array.isArray(gameConfig?.instructions?.steps) ? gameConfig.instructions.steps : undefined)}
+        steps={
+          gameConfig?.steps ||
+          (Array.isArray(gameConfig?.instructions?.steps)
+            ? gameConfig.instructions.steps
+            : undefined)
+        }
         title={gameConfig?.title || "Panduan Menemukan ID"}
       />
 

@@ -83,18 +83,20 @@ export default function PriceListPage() {
   return (
     <ContentLayout title="Daftar Produk">
       <div className="space-y-6">
-        <div className="text-center space-y-2">
+        <div className="space-y-2 text-center">
           <h2 className="text-2xl font-semibold">Daftar Harga Produk</h2>
-          <p className="text-sm text-muted-foreground">Pilih game, lalu order produk yang kamu inginkan.</p>
+          <p className="text-muted-foreground text-sm">
+            Pilih game, lalu order produk yang kamu inginkan.
+          </p>
         </div>
 
         {err ? (
-          <div className="w-full max-w-4xl mx-auto rounded-md border bg-background p-4 text-sm">
+          <div className="bg-background mx-auto w-full max-w-4xl rounded-md border p-4 text-sm">
             <div className="font-semibold text-red-600">Gagal memuat daftar harga</div>
-            <div className="mt-1 text-muted-foreground">{err}</div>
+            <div className="text-muted-foreground mt-1">{err}</div>
             <div className="mt-3">
               <button
-                className="rounded-lg bg-my-color px-3 py-2 text-xs font-semibold text-white"
+                className="bg-my-color rounded-lg px-3 py-2 text-xs font-semibold text-white"
                 onClick={() => location.reload()}
               >
                 Coba Lagi
@@ -103,7 +105,7 @@ export default function PriceListPage() {
           </div>
         ) : null}
 
-        <div className="w-full max-w-md mx-auto">
+        <div className="mx-auto w-full max-w-md">
           {loading ? (
             <Skeleton className="h-10 w-full" />
           ) : (
@@ -123,7 +125,7 @@ export default function PriceListPage() {
         </div>
 
         {loading ? (
-          <div className="w-full max-w-4xl mx-auto rounded-md border bg-background p-4">
+          <div className="bg-background mx-auto w-full max-w-4xl rounded-md border p-4">
             <Skeleton className="h-10 w-full" />
             <div className="mt-3 space-y-2">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -133,17 +135,17 @@ export default function PriceListPage() {
           </div>
         ) : selectedGame ? (
           <div className="space-y-4">
-            <div className="w-full max-w-4xl mx-auto rounded-md border bg-background">
+            <div className="bg-background mx-auto w-full max-w-4xl rounded-md border">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead className="min-w-[260px]">Produk</TableHead>
-                      <TableHead className="text-left whitespace-nowrap">Basic</TableHead>
-                      <TableHead className="text-left whitespace-nowrap">Gold</TableHead>
-                      <TableHead className="text-left whitespace-nowrap">Platinum</TableHead>
-                      <TableHead className="text-left whitespace-nowrap">Status</TableHead>
-                      <TableHead className="text-center whitespace-nowrap">Aksi</TableHead>
+                      <TableHead className="whitespace-nowrap text-left">Basic</TableHead>
+                      <TableHead className="whitespace-nowrap text-left">Gold</TableHead>
+                      <TableHead className="whitespace-nowrap text-left">Platinum</TableHead>
+                      <TableHead className="whitespace-nowrap text-left">Status</TableHead>
+                      <TableHead className="whitespace-nowrap text-center">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
 
@@ -155,13 +157,14 @@ export default function PriceListPage() {
                         ? `/order/${selectedGame.slug}?product_id=${encodeURIComponent(String(product.id))}`
                         : "#";
 
-                      const imageUrl = product.logo || selectedGame?.logo || selectedGame?.image || null;
+                      const imageUrl =
+                        product.logo || selectedGame?.logo || selectedGame?.image || null;
 
                       return (
                         <TableRow key={product.id}>
                           <TableCell className="min-w-[260px]">
                             <div className="flex items-center gap-3">
-                              <div className="relative h-10 w-10 overflow-hidden rounded-md border bg-muted">
+                              <div className="bg-muted relative h-10 w-10 overflow-hidden rounded-md border">
                                 {imageUrl ? (
                                   <Image
                                     src={imageUrl}
@@ -175,15 +178,23 @@ export default function PriceListPage() {
                               </div>
 
                               <div className="min-w-0">
-                                <div className="font-medium leading-tight line-clamp-2">{product.title}</div>
-                                <div className="text-xs text-muted-foreground">{product.brand}</div>
+                                <div className="line-clamp-2 font-medium leading-tight">
+                                  {product.title}
+                                </div>
+                                <div className="text-muted-foreground text-xs">{product.brand}</div>
                               </div>
                             </div>
                           </TableCell>
 
-                          <TableCell className="whitespace-nowrap">{fmtRupiah(product.selling_price)}</TableCell>
-                          <TableCell className="whitespace-nowrap">{fmtRupiah(product.selling_price_gold)}</TableCell>
-                          <TableCell className="whitespace-nowrap">{fmtRupiah(product.selling_price_platinum)}</TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {fmtRupiah(product.selling_price)}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {fmtRupiah(product.selling_price_gold)}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {fmtRupiah(product.selling_price_platinum)}
+                          </TableCell>
 
                           <TableCell className="whitespace-nowrap">
                             <div className="inline-flex items-center gap-2">
@@ -198,7 +209,7 @@ export default function PriceListPage() {
                             </div>
                           </TableCell>
 
-                          <TableCell className="text-center whitespace-nowrap">
+                          <TableCell className="whitespace-nowrap text-center">
                             <Button asChild size="sm" disabled={!selectedGame?.slug || !isActive}>
                               <Link href={href} className="inline-flex items-center gap-2">
                                 Order <ExternalLink className="h-4 w-4" />
@@ -223,7 +234,7 @@ export default function PriceListPage() {
                   Sebelumnya
                 </Button>
 
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                   Halaman {currentPage} / {totalPages}
                 </div>
 
@@ -238,7 +249,7 @@ export default function PriceListPage() {
             ) : null}
           </div>
         ) : (
-          <div className="w-full max-w-4xl mx-auto rounded-md border bg-background p-4 text-sm text-muted-foreground">
+          <div className="bg-background text-muted-foreground mx-auto w-full max-w-4xl rounded-md border p-4 text-sm">
             Tidak ada produk.
           </div>
         )}

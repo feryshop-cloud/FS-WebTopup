@@ -1,47 +1,47 @@
-'use client'
+"use client";
 
-import { useParams } from 'next/navigation'
+import { useParams } from "next/navigation";
 import Image from "next/image";
-import useSWR from 'swr'
-import { fetcher } from '@/lib/fetcher'
-import { ContentLayout } from '@/components/panel/content-layout'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { format } from 'date-fns'
-import { Eye } from 'lucide-react'
-import Link from 'next/link'
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
+import { ContentLayout } from "@/components/panel/content-layout";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { format } from "date-fns";
+import { Eye } from "lucide-react";
+import Link from "next/link";
 
 export default function BlogDetailPage() {
-  const { slug } = useParams()
-  const { data, isLoading } = useSWR(`/api/blog/${slug}`, fetcher)
+  const { slug } = useParams();
+  const { data, isLoading } = useSWR(`/api/blog/${slug}`, fetcher);
 
   if (isLoading) {
     return (
       <ContentLayout title="Blog">
-        <div className="h-[80vh] flex justify-center items-center">
+        <div className="flex h-[80vh] items-center justify-center">
           <LoadingSpinner size={40} />
         </div>
       </ContentLayout>
-    )
+    );
   }
 
-  const blog = data?.blog
+  const blog = data?.blog;
 
   if (!blog) {
     return (
       <ContentLayout title="Blog">
-        <div className="text-center py-20">Blog tidak ditemukan</div>
+        <div className="py-20 text-center">Blog tidak ditemukan</div>
       </ContentLayout>
-    )
+    );
   }
 
   return (
     <ContentLayout title={blog.title}>
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6">
         {/* Breadcrumb */}
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           <Link href="/artikel" className="hover:underline">
             Artikel
-          </Link>{' '}
+          </Link>{" "}
           / {blog.title}
         </div>
 
@@ -54,14 +54,14 @@ export default function BlogDetailPage() {
           alt={blog.title}
           width={640}
           height={360}
-          className="rounded-lg w-full h-auto object-cover"
+          className="h-auto w-full rounded-lg object-cover"
         />
 
         {/* Meta Info */}
-        <div className="text-sm text-muted-foreground flex items-center justify-between">
-          <span>{format(new Date(blog.published_at), 'dd MMM yyyy')}</span>
+        <div className="text-muted-foreground flex items-center justify-between text-sm">
+          <span>{format(new Date(blog.published_at), "dd MMM yyyy")}</span>
           <span className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
+            <Eye className="h-4 w-4" />
             {blog.views}
           </span>
         </div>
@@ -73,5 +73,5 @@ export default function BlogDetailPage() {
         />
       </div>
     </ContentLayout>
-  )
+  );
 }

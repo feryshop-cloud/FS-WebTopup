@@ -6,14 +6,18 @@ import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 import { logger } from "@/lib/logger";
 
 if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error("NEXTAUTH_SECRET is not set. Set it before starting the app (see .env.local or Railway Variables).");
+  throw new Error(
+    "NEXTAUTH_SECRET is not set. Set it before starting the app (see .env.local or Railway Variables).",
+  );
 }
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
 if (!!googleClientId !== !!googleClientSecret) {
-  throw new Error("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must both be set to enable Google sign-in.");
+  throw new Error(
+    "GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must both be set to enable Google sign-in.",
+  );
 }
 
 export const authOptions: NextAuthOptions = {
@@ -43,7 +47,9 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const authUser = await signInSupabaseWithPassword(email, password);
-          const profiles = await sqlClient<{ id: string; full_name: string; email: string; status: string }[]>`
+          const profiles = await sqlClient<
+            { id: string; full_name: string; email: string; status: string }[]
+          >`
             select id, full_name, email, status
             from public.users
             where id = ${authUser.id}
@@ -89,7 +95,8 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).token = typeof (token as any).jwtToken === "string" ? (token as any).jwtToken : undefined;
+        (session.user as any).token =
+          typeof (token as any).jwtToken === "string" ? (token as any).jwtToken : undefined;
         (session.user as any).role = (token as any).role ?? null;
         (session.user as any).saldo = (token as any).saldo ?? null;
       }
@@ -98,4 +105,3 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-

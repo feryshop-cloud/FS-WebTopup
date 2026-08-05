@@ -26,7 +26,7 @@ export default function SignInPage() {
     <ContentLayout title="Masuk">
       <Suspense
         fallback={
-          <div className="w-full h-[80vh] flex justify-center items-center">
+          <div className="flex h-[80vh] w-full items-center justify-center">
             <LoadingSpinner size={40} />
           </div>
         }
@@ -69,7 +69,10 @@ function SignInForm() {
     return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
   }, [settings]);
 
-  const turnstileSiteKey = useMemo(() => String(settings?.["turnstile.site_key"] || ""), [settings]);
+  const turnstileSiteKey = useMemo(
+    () => String(settings?.["turnstile.site_key"] || ""),
+    [settings],
+  );
 
   useEffect(() => {
     if (session) redirect("/dashboard");
@@ -81,9 +84,11 @@ function SignInForm() {
 
   const [turnstileTokenEmail, setTurnstileTokenEmail] = useState("");
 
-  const captchaReadyEmail = !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
+  const captchaReadyEmail =
+    !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
 
-  const canEmailLogin = captchaReadyEmail && !loadingEmail && isValidEmail(email) && password.length >= 6;
+  const canEmailLogin =
+    captchaReadyEmail && !loadingEmail && isValidEmail(email) && password.length >= 6;
 
   const handleEmailLogin = async () => {
     if (!canEmailLogin) return;
@@ -116,7 +121,7 @@ function SignInForm() {
       title="Masuk"
       description="Masuk dengan email dan password, atau lanjutkan dengan Google."
       footer={
-        <div className="text-sm text-muted-foreground text-center">
+        <div className="text-muted-foreground text-center text-sm">
           Belum punya akun?{" "}
           <Link href="/signup" className="text-primary underline underline-offset-4">
             Daftar sekarang
@@ -142,7 +147,7 @@ function SignInForm() {
             <Label htmlFor="password">Password</Label>
             <Link
               href="/forgot-password"
-              className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-4"
             >
               Forgot your password?
             </Link>
@@ -167,18 +172,18 @@ function SignInForm() {
               className="flex justify-center"
             />
             {settingsLoaded && !turnstileTokenEmail ? (
-              <div className="text-xs text-muted-foreground text-center mt-2">
+              <div className="text-muted-foreground mt-2 text-center text-xs">
                 Selesaikan captcha dulu untuk melanjutkan.
               </div>
             ) : null}
           </div>
         ) : null}
 
-        <Button onClick={handleEmailLogin} disabled={!canEmailLogin} className="w-full h-10">
+        <Button onClick={handleEmailLogin} disabled={!canEmailLogin} className="h-10 w-full">
           {loadingEmail ? "Memproses..." : "Login"}
         </Button>
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           Kesulitan masuk?{" "}
           <Link href="/forgot-password" className="underline underline-offset-4">
             Coba pemulihan akun
@@ -192,7 +197,7 @@ function SignInForm() {
         type="button"
         variant="outline"
         onClick={() => signIn("google", { callbackUrl })}
-        className="w-full h-10 flex items-center justify-center gap-2"
+        className="flex h-10 w-full items-center justify-center gap-2"
       >
         <FcGoogle className="text-xl" />
         Masuk dengan Google

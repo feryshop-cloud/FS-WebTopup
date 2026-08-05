@@ -19,10 +19,10 @@ export default function GameDescription({ isLoading, description }: GameDescript
   return (
     <section className="scroll-mt-20 md:scroll-mt-[7.5rem]" id="5">
       <Accordion type="single" collapsible>
-        <AccordionItem value="desc" className="rounded-xl border bg-muted/50 shadow-sm">
-          <AccordionTrigger className="px-4 py-2 text-left text-sm font-semibold text-card-foreground hover:no-underline">
+        <AccordionItem value="desc" className="bg-muted/50 rounded-xl border shadow-sm">
+          <AccordionTrigger className="text-card-foreground px-4 py-2 text-left text-sm font-semibold hover:no-underline">
             <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-primary" />
+              <FileText className="text-primary h-4 w-4" />
               Deskripsi
             </div>
           </AccordionTrigger>
@@ -38,7 +38,7 @@ export default function GameDescription({ isLoading, description }: GameDescript
                 {parse(description)}
               </div>
             ) : (
-              <div className="italic text-muted-foreground">Tidak ada deskripsi.</div>
+              <div className="text-muted-foreground italic">Tidak ada deskripsi.</div>
             )}
           </AccordionContent>
         </AccordionItem>

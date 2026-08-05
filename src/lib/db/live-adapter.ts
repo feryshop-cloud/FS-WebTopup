@@ -81,18 +81,14 @@ export interface RemoteSetting {
 }
 
 function getSupabaseRestUrl() {
-  const configuredUrl =
-    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const configuredUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (configuredUrl) return configuredUrl.replace(/\/+$/, "");
 
-  const connectionString =
-    process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
+  const connectionString = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
   if (!connectionString) return "";
 
   // Match standard host: db.{ref}.supabase.co
-  const refFromHost = connectionString.match(
-    /@(?:db\.)?([a-z0-9]+)\.supabase\.co/i,
-  )?.[1];
+  const refFromHost = connectionString.match(/@(?:db\.)?([a-z0-9]+)\.supabase\.co/i)?.[1];
   if (refFromHost) return `https://${refFromHost}.supabase.co`;
 
   // Match Supabase pooler host: *.pooler.supabase.com - project ref is embedded in the username (postgres.{ref})
@@ -165,24 +161,19 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
   }
 }
 
-export async function getRemoteSettingsFromRest(): Promise<
-  Record<string, unknown>
-> {
+export async function getRemoteSettingsFromRest(): Promise<Record<string, unknown>> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) return {};
 
   try {
-    const response = await fetch(
-      `${restUrl}/rest/v1/settings?select=key,value&order=key.asc`,
-      {
-        headers: {
-          apikey: publishableKey,
-          Authorization: `Bearer ${publishableKey}`,
-        },
-        cache: "no-store",
+    const response = await fetch(`${restUrl}/rest/v1/settings?select=key,value&order=key.asc`, {
+      headers: {
+        apikey: publishableKey,
+        Authorization: `Bearer ${publishableKey}`,
       },
-    );
+      cache: "no-store",
+    });
 
     if (!response.ok) return {};
 
@@ -315,9 +306,7 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
   }
 }
 
-export async function getLivePublicPaymentMethods(): Promise<
-  PublicPaymentMethod[]
-> {
+export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {

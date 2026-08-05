@@ -33,7 +33,10 @@ export async function GET(request: Request) {
   });
 
   const rows = urls
-    .map((u) => `  <url>\n    <loc>${escapeXml(u)}</loc>\n    <lastmod>${escapeXml(now)}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`)
+    .map(
+      (u) =>
+        `  <url>\n    <loc>${escapeXml(u)}</loc>\n    <lastmod>${escapeXml(now)}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`,
+    )
     .join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows}\n</urlset>\n`;

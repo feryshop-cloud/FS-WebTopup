@@ -11,7 +11,13 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 type ReviewItem = {
@@ -42,7 +48,8 @@ export default function UlasanProdukPage() {
   const [minRating, setMinRating] = useState<string>("0");
 
   const getKey = (pageIndex: number, previousPageData: ReviewsResponse | null) => {
-    if (previousPageData && previousPageData.meta.current_page >= previousPageData.meta.last_page) return null;
+    if (previousPageData && previousPageData.meta.current_page >= previousPageData.meta.last_page)
+      return null;
     return `/api/reviews?page=${pageIndex + 1}&per_page=${PAGE_SIZE}`;
   };
 
@@ -77,14 +84,18 @@ export default function UlasanProdukPage() {
             Testimoni Pembeli
           </Badge>
           <h1 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">Ulasan Produk</h1>
-          <p className="text-muted-foreground">Lihat pengalaman pembeli lain sebelum kamu top up.</p>
+          <p className="text-muted-foreground">
+            Lihat pengalaman pembeli lain sebelum kamu top up.
+          </p>
         </div>
 
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {lastMeta && <div className="text-sm text-muted-foreground">Total {lastMeta.total} ulasan</div>}
+          {lastMeta && (
+            <div className="text-muted-foreground text-sm">Total {lastMeta.total} ulasan</div>
+          )}
 
           <div className="flex items-center gap-2">
-            <div className="text-sm text-muted-foreground">Filter rating</div>
+            <div className="text-muted-foreground text-sm">Filter rating</div>
             <Select value={minRating} onValueChange={setMinRating}>
               <SelectTrigger className="w-[160px]">
                 <SelectValue placeholder="Semua" />
@@ -102,7 +113,9 @@ export default function UlasanProdukPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="rounded-lg border p-8 text-center text-muted-foreground">Belum ada ulasan.</div>
+          <div className="text-muted-foreground rounded-lg border p-8 text-center">
+            Belum ada ulasan.
+          </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((r) => (
@@ -111,7 +124,7 @@ export default function UlasanProdukPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="space-y-1">
                       <div className="line-clamp-2 font-semibold">{r.product ?? "Produk"}</div>
-                      <div className="text-xs text-muted-foreground">{r.game ?? ""}</div>
+                      <div className="text-muted-foreground text-xs">{r.game ?? ""}</div>
                     </div>
                     <Badge variant="secondary" className="shrink-0">
                       {r.reviewer_display}
@@ -126,7 +139,9 @@ export default function UlasanProdukPage() {
                           key={v}
                           className={cn(
                             "h-4 w-4",
-                            v <= Number(r.rating) ? "fill-current text-my-color" : "text-muted-foreground"
+                            v <= Number(r.rating)
+                              ? "text-my-color fill-current"
+                              : "text-muted-foreground",
                           )}
                         />
                       );
@@ -136,7 +151,7 @@ export default function UlasanProdukPage() {
 
                 <CardContent className="flex-1">
                   <div className="whitespace-pre-wrap text-sm">{r.review_text}</div>
-                  <div className="mt-4 text-xs text-muted-foreground">
+                  <div className="text-muted-foreground mt-4 text-xs">
                     {r.created_at ? format(new Date(r.created_at), "dd MMM yyyy, HH:mm") : ""}
                   </div>
                 </CardContent>

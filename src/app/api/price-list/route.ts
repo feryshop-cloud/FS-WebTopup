@@ -35,21 +35,26 @@ async function getHandler() {
             title: product.title,
             brand: product.brand || game.title,
             selling_price: Number(product.selling_price),
-            selling_price_gold: product.selling_price_gold ? Number(product.selling_price_gold) : Number(product.selling_price),
-            selling_price_platinum: product.selling_price_platinum ? Number(product.selling_price_platinum) : Number(product.selling_price),
-            status: product.is_gangguan ? 0 : (product.is_active ? 1 : 0),
+            selling_price_gold: product.selling_price_gold
+              ? Number(product.selling_price_gold)
+              : Number(product.selling_price),
+            selling_price_platinum: product.selling_price_platinum
+              ? Number(product.selling_price_platinum)
+              : Number(product.selling_price),
+            status: product.is_gangguan ? 0 : product.is_active ? 1 : 0,
             is_active: product.is_active,
             logo: product.logo || product.images || game.logo || game.image || null,
           }));
 
-        const finalProducts = gameProductsFromDb.length > 0
-          ? gameProductsFromDb
-          : (seedProducts[game.slug] || []).map((product) => ({
-              ...product,
-              brand: game.title,
-              status: product.is_active ? 1 : 0,
-              logo: product.logo || product.images || game.logo || game.image || null,
-            }));
+        const finalProducts =
+          gameProductsFromDb.length > 0
+            ? gameProductsFromDb
+            : (seedProducts[game.slug] || []).map((product) => ({
+                ...product,
+                brand: game.title,
+                status: product.is_active ? 1 : 0,
+                logo: product.logo || product.images || game.logo || game.image || null,
+              }));
 
         return {
           id: game.id,
@@ -88,18 +93,24 @@ async function getHandler() {
       games: resultGames.length,
     });
 
-    return NextResponse.json({
-      success: true,
-      source: isLive ? "live_supabase" : "seed_fallback",
-      data: resultGames,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        source: isLive ? "live_supabase" : "seed_fallback",
+        data: resultGames,
+      },
+      { status: 200 },
+    );
   } catch (err: unknown) {
     logger.error("price-list failed", { error: err });
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memuat daftar harga",
-      error: err instanceof Error ? err.message : String(err),
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat daftar harga",
+        error: err instanceof Error ? err.message : String(err),
+      },
+      { status: 500 },
+    );
   }
 }
 

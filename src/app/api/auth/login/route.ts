@@ -13,19 +13,30 @@ async function postHandler(req: Request) {
     const password = body.password || "";
 
     if (!email || !password) {
-      return NextResponse.json({ success: false, message: "Email dan password wajib diisi" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Email dan password wajib diisi" },
+        { status: 400 },
+      );
     }
 
     if (!hasDatabaseConnection) {
-      return NextResponse.json({ success: false, message: "Database belum dikonfigurasi" }, { status: 503 });
+      return NextResponse.json(
+        { success: false, message: "Database belum dikonfigurasi" },
+        { status: 503 },
+      );
     }
 
     const authUser = await signInSupabaseWithPassword(email, password).catch(() => null);
     if (!authUser) {
-      return NextResponse.json({ success: false, message: "Email atau password salah" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, message: "Email atau password salah" },
+        { status: 401 },
+      );
     }
 
-    const profiles = await sqlClient<{ id: string; full_name: string; email: string; status: string }[]>`
+    const profiles = await sqlClient<
+      { id: string; full_name: string; email: string; status: string }[]
+    >`
       select id, full_name, email, status
       from public.users
       where id = ${authUser.id}
@@ -34,25 +45,34 @@ async function postHandler(req: Request) {
     const user = profiles[0];
 
     if (!user) {
-      return NextResponse.json({ success: false, message: "Profil akun tidak ditemukan" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, message: "Profil akun tidak ditemukan" },
+        { status: 401 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Login berhasil",
-      token: `TSON-JWT-${Date.now()}`,
-      user: {
-        id: user.id,
-        name: user.full_name,
-        email: user.email,
-        role: "member",
-        saldo: 0,
-        whatsapp: null,
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Login berhasil",
+        token: `TSON-JWT-${Date.now()}`,
+        user: {
+          id: user.id,
+          name: user.full_name,
+          email: user.email,
+          role: "member",
+          saldo: 0,
+          whatsapp: null,
+        },
       },
-    }, { status: 200 });
+      { status: 200 },
+    );
   } catch (err) {
     logger.error("login failed", { error: err });
-    return NextResponse.json({ success: false, message: "Terjadi kesalahan sistem saat login" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Terjadi kesalahan sistem saat login" },
+      { status: 500 },
+    );
   }
 }
 

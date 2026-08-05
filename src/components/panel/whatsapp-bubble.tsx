@@ -63,22 +63,22 @@ export function WhatsAppBubble() {
   if (!usable || dismissed) return null;
 
   return (
-    <div className="fixed right-4 bottom-20 md:bottom-6 z-50">
+    <div className="fixed bottom-20 right-4 z-50 md:bottom-6">
       {open ? (
         <div className="w-[320px]">
-          <Card className="overflow-hidden shadow-xl border-border/60">
-            <CardHeader className="p-4 pb-3 bg-muted/30">
+          <Card className="border-border/60 overflow-hidden shadow-xl">
+            <CardHeader className="bg-muted/30 p-4 pb-3">
               <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
                   <FaWhatsapp className="h-5 w-5" />
                 </div>
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="font-semibold leading-tight truncate">{brand}</div>
+                      <div className="truncate font-semibold leading-tight">{brand}</div>
                       <div className="mt-1">
-                        <Badge className="text-[11px] font-semibold bg-emerald-600/10 text-emerald-700 border border-emerald-600/20 dark:text-emerald-400">
+                        <Badge className="border border-emerald-600/20 bg-emerald-600/10 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
                           {status}
                         </Badge>
                       </div>
@@ -88,13 +88,13 @@ export function WhatsAppBubble() {
                       type="button"
                       onClick={dismissForever}
                       className={cn(
-                        "h-8 w-8 rounded-full flex items-center justify-center",
-                        "text-muted-foreground hover:text-foreground hover:bg-accent transition"
+                        "flex h-8 w-8 items-center justify-center rounded-full",
+                        "text-muted-foreground hover:text-foreground hover:bg-accent transition",
                       )}
                       aria-label="Tutup"
                       title="Tutup"
                     >
-                      <span className="text-xl leading-none select-none">×</span>
+                      <span className="select-none text-xl leading-none">×</span>
                     </button>
                   </div>
                 </div>
@@ -102,14 +102,14 @@ export function WhatsAppBubble() {
             </CardHeader>
 
             <CardContent className="p-4 pt-3">
-              <p className="text-sm text-muted-foreground leading-relaxed">{message}</p>
+              <p className="text-muted-foreground text-sm leading-relaxed">{message}</p>
             </CardContent>
 
             <CardFooter className="p-4 pt-0">
               <Button
                 type="button"
                 onClick={() => window.open(waUrl, "_blank", "noopener,noreferrer")}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                className="w-full bg-emerald-600 font-semibold text-white hover:bg-emerald-700"
               >
                 <FaWhatsapp className="mr-2 h-4 w-4" />
                 {buttonText}
@@ -118,7 +118,13 @@ export function WhatsAppBubble() {
           </Card>
 
           <div className="mt-2 flex justify-end">
-            <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)} className="h-8 px-3">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setOpen(false)}
+              className="h-8 px-3"
+            >
               Minimalkan
             </Button>
           </div>
@@ -130,8 +136,8 @@ export function WhatsAppBubble() {
           aria-label="Chat WhatsApp"
           className={cn(
             "h-14 w-14 rounded-full shadow-xl",
-            "bg-emerald-600 hover:bg-emerald-700 text-white",
-            "flex items-center justify-center transition"
+            "bg-emerald-600 text-white hover:bg-emerald-700",
+            "flex items-center justify-center transition",
           )}
         >
           <FaWhatsapp className="h-7 w-7" />

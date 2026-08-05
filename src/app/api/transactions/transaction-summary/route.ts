@@ -45,11 +45,17 @@ export async function GET() {
       };
     }
 
-    return NextResponse.json({
-      success: true,
-      data: summary,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: summary,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: "Gagal memuat ringkasan transaksi" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal memuat ringkasan transaksi" },
+      { status: 500 },
+    );
   }
 }

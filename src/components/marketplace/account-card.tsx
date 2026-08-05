@@ -29,10 +29,10 @@ export function AccountCard({ account }: { account: GameAccount }) {
   return (
     <Link
       href={`/marketplace/${account.gameSlug}/${account.id}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="border-border/70 bg-card hover:border-primary/50 focus-visible:ring-primary group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2"
     >
       {/* Thumbnail Section */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted/60">
+      <div className="bg-muted/60 relative aspect-[16/10] w-full overflow-hidden">
         <Image
           src={resolveStorageUrl(account.images[0])}
           alt={account.title}
@@ -40,15 +40,15 @@ export function AccountCard({ account }: { account: GameAccount }) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
         {/* Top Badges */}
-        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2">
+        <div className="absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
           {account.badge ? (
             <span
               className={cn(
                 "inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[10px] tracking-wide shadow-md backdrop-blur-sm",
-                getBadgeStyle(account.badge)
+                getBadgeStyle(account.badge),
               )}
             >
               {account.badge === "Sultan" && <Award className="h-3 w-3" />}
@@ -69,54 +69,54 @@ export function AccountCard({ account }: { account: GameAccount }) {
 
         {/* Bottom Image Overlay: Rank & Login Via */}
         <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[11px] font-semibold text-white/90">
-          <span className="truncate bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1">
-            <ShieldCheck className="h-3 w-3 text-emerald-400 inline" /> {account.specs.rank}
+          <span className="flex items-center gap-1 truncate rounded-md border border-white/10 bg-black/60 px-2 py-0.5 backdrop-blur-md">
+            <ShieldCheck className="inline h-3 w-3 text-emerald-400" /> {account.specs.rank}
           </span>
-          <span className="truncate bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 text-muted-foreground">
+          <span className="text-muted-foreground truncate rounded-md border border-white/10 bg-black/60 px-2 py-0.5 backdrop-blur-md">
             {account.specs.loginVia}
           </span>
         </div>
       </div>
 
       {/* Body Content */}
-      <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-4 space-y-3">
+      <div className="flex flex-1 flex-col justify-between space-y-3 p-3.5 sm:p-4">
         <div>
           {/* Game Category Label */}
-          <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground mb-1">
+          <div className="text-muted-foreground mb-1 flex items-center justify-between text-xs font-semibold">
             <span className="text-primary font-bold">{account.gameName}</span>
-            <span className="text-[10px] text-muted-foreground">{account.specs.deliveryType}</span>
+            <span className="text-muted-foreground text-[10px]">{account.specs.deliveryType}</span>
           </div>
 
           {/* Account Title */}
-          <h3 className="line-clamp-2 text-xs sm:text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
+          <h3 className="text-foreground group-hover:text-primary line-clamp-2 text-xs font-bold leading-snug transition-colors sm:text-sm">
             {account.title}
           </h3>
         </div>
 
         {/* Specifications Pills */}
         <div className="flex flex-wrap gap-1.5 text-[11px]">
-          <span className="rounded-md bg-muted/80 px-2 py-0.5 text-muted-foreground border border-border/50">
+          <span className="bg-muted/80 text-muted-foreground border-border/50 rounded-md border px-2 py-0.5">
             Skin: {account.specs.skinsCount}
           </span>
-          <span className="rounded-md bg-muted/80 px-2 py-0.5 text-muted-foreground border border-border/50">
+          <span className="bg-muted/80 text-muted-foreground border-border/50 rounded-md border px-2 py-0.5">
             CN: {account.specs.changeName}
           </span>
         </div>
 
         {/* Price & Action Section */}
-        <div className="pt-2 border-t border-border/50 flex items-end justify-between">
+        <div className="border-border/50 flex items-end justify-between border-t pt-2">
           <div>
             {account.originalPrice && (
-              <span className="text-[10px] text-muted-foreground line-through block font-medium">
+              <span className="text-muted-foreground block text-[10px] font-medium line-through">
                 Rp {account.originalPrice.toLocaleString("id-ID")}
               </span>
             )}
-            <span className="text-sm sm:text-base font-extrabold text-emerald-500">
+            <span className="text-sm font-extrabold text-emerald-500 sm:text-base">
               Rp {account.price.toLocaleString("id-ID")}
             </span>
           </div>
 
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
+          <span className="text-primary inline-flex items-center gap-1 text-xs font-bold transition-transform group-hover:translate-x-0.5">
             Beli <ChevronRight className="h-3.5 w-3.5" />
           </span>
         </div>

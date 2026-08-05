@@ -31,22 +31,24 @@ export default function QuantitySelection({
   return (
     <section
       id="3"
-      className="relative scroll-mt-20 rounded-xl bg-background shadow-sm ring-1 ring-border md:scroll-mt-[7.5rem]"
+      className="bg-background ring-border relative scroll-mt-20 rounded-xl shadow-sm ring-1 md:scroll-mt-[7.5rem]"
     >
-      <div className="flex items-center rounded-t-xl bg-muted px-4 py-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-my-color font-semibold text-white">
+      <div className="bg-muted flex items-center rounded-t-xl px-4 py-2">
+        <div className="bg-my-color flex h-8 w-8 items-center justify-center rounded-md font-semibold text-white">
           3
         </div>
-        <h2 className="ml-3 text-sm font-semibold text-card-foreground">Masukkan Jumlah Pembelian</h2>
+        <h2 className="text-card-foreground ml-3 text-sm font-semibold">
+          Masukkan Jumlah Pembelian
+        </h2>
       </div>
 
       <div className="p-4">
-        <div className="flex w-full items-center justify-between gap-3 rounded-xl border border-border bg-muted/40 p-3">
+        <div className="border-border bg-muted/40 flex w-full items-center justify-between gap-3 rounded-xl border p-3">
           <button
             type="button"
             onClick={() => apply(clamped - 1)}
             disabled={!canDecrement}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-sm font-semibold text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-border bg-background text-foreground hover:bg-muted inline-flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Kurangi jumlah"
           >
             -
@@ -68,14 +70,14 @@ export default function QuantitySelection({
               const next = parseInt(raw, 10);
               apply(Number.isFinite(next) ? next : min);
             }}
-            className="h-10 w-full max-w-[140px] rounded-lg border border-border bg-background px-3 text-center text-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-my-color"
+            className="border-border bg-background text-foreground focus:ring-my-color h-10 w-full max-w-[140px] rounded-lg border px-3 text-center text-sm font-semibold focus:outline-none focus:ring-2"
           />
 
           <button
             type="button"
             onClick={() => apply(clamped + 1)}
             disabled={!canIncrement}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-sm font-semibold text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-border bg-background text-foreground hover:bg-muted inline-flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Tambah jumlah"
           >
             +

@@ -9,7 +9,10 @@ export async function GET(_request: Request, context: any) {
     const params = await context?.params;
     const slug = params?.slug;
     if (!slug || typeof slug !== "string") {
-      return NextResponse.json({ success: false, message: "Slug tidak ditemukan" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Slug tidak ditemukan" },
+        { status: 400 },
+      );
     }
 
     let gameData: any = null;
@@ -48,22 +51,31 @@ export async function GET(_request: Request, context: any) {
     }
 
     if (!gameData) {
-      return NextResponse.json({ success: false, message: "Game tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Game tidak ditemukan" },
+        { status: 404 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      game: {
-        ...gameData,
+    return NextResponse.json(
+      {
+        success: true,
+        game: {
+          ...gameData,
+          products: productsData,
+        },
         products: productsData,
       },
-      products: productsData,
-    }, { status: 200 });
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Terjadi kesalahan sistem",
-      error: err?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Terjadi kesalahan sistem",
+        error: err?.message,
+      },
+      { status: 500 },
+    );
   }
 }

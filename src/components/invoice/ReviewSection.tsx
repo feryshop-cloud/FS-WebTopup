@@ -45,7 +45,8 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
     setText(String(initialReview.review_text ?? ""));
   }, [initialReview]);
 
-  const canSubmit = canReview && rating >= 1 && rating <= 5 && text.trim().length >= 3 && !submitting;
+  const canSubmit =
+    canReview && rating >= 1 && rating <= 5 && text.trim().length >= 3 && !submitting;
 
   const submit = async () => {
     if (!canSubmit) return;
@@ -72,7 +73,9 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
 
       const review: InvoiceReviewPayload | null = json?.review ?? null;
       if (review) {
-        toast.success(mode === "update" ? "Ulasan berhasil diperbarui." : "Ulasan berhasil dikirim.");
+        toast.success(
+          mode === "update" ? "Ulasan berhasil diperbarui." : "Ulasan berhasil dikirim.",
+        );
         onSaved?.(review);
       } else {
         toast.success("Ulasan berhasil disimpan.");
@@ -90,12 +93,12 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold">Ulasan Produk</h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Beri rating dan ulasan agar calon pembeli lain lebih yakin.
             </p>
           </div>
           {initialReview?.created_at && (
-            <div className="text-right text-xs text-muted-foreground">
+            <div className="text-muted-foreground text-right text-xs">
               {new Date(initialReview.created_at).toLocaleString()}
             </div>
           )}
@@ -103,7 +106,7 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
       </CardHeader>
       <CardContent className="space-y-4">
         {initialReview && (
-          <div className="rounded-lg border bg-muted/30 p-3 text-sm">
+          <div className="bg-muted/30 rounded-lg border p-3 text-sm">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, idx) => {
@@ -111,12 +114,17 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
                   return (
                     <Star
                       key={v}
-                      className={cn("h-4 w-4", v <= initialReview.rating ? "fill-current text-primary" : "text-muted-foreground")}
+                      className={cn(
+                        "h-4 w-4",
+                        v <= initialReview.rating
+                          ? "text-primary fill-current"
+                          : "text-muted-foreground",
+                      )}
                     />
                   );
                 })}
               </div>
-              <div className="text-xs text-muted-foreground">{initialReview.reviewer_display}</div>
+              <div className="text-muted-foreground text-xs">{initialReview.reviewer_display}</div>
             </div>
             <div className="mt-2 whitespace-pre-wrap">{initialReview.review_text}</div>
           </div>
@@ -135,12 +143,17 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
                   onClick={() => setRating(v)}
                   className={cn(
                     "rounded-md p-1 transition",
-                    canReview ? "hover:bg-muted" : "cursor-not-allowed opacity-50"
+                    canReview ? "hover:bg-muted" : "cursor-not-allowed opacity-50",
                   )}
                   disabled={!canReview}
                   aria-label={`Rating ${v}`}
                 >
-                  <Star className={cn("h-6 w-6", active ? "fill-current text-primary" : "text-muted-foreground")} />
+                  <Star
+                    className={cn(
+                      "h-6 w-6",
+                      active ? "text-primary fill-current" : "text-muted-foreground",
+                    )}
+                  />
                 </button>
               );
             })}
@@ -156,7 +169,7 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
             disabled={!canReview}
             className="min-h-[120px]"
           />
-          <div className="text-xs text-muted-foreground">Minimal 3 karakter.</div>
+          <div className="text-muted-foreground text-xs">Minimal 3 karakter.</div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">

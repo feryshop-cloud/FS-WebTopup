@@ -43,7 +43,13 @@ const CATEGORY_META: Record<
     iconName: "ff",
     bannerUrl: "/ff-icon.webp",
     colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
-    popularRanks: ["Heroic / Master", "Grandmaster", "Akun Vault Penuh", "SG 2 Ungu", "Evo Gun Max"],
+    popularRanks: [
+      "Heroic / Master",
+      "Grandmaster",
+      "Akun Vault Penuh",
+      "SG 2 Ungu",
+      "Evo Gun Max",
+    ],
   },
   Valorant: {
     slug: "valorant",
@@ -75,7 +81,13 @@ const CATEGORY_META: Record<
     iconName: "genshin",
     bannerUrl: "/genshin-icon.webp",
     colorTheme: "from-sky-500/20 via-cyan-500/10 to-transparent border-sky-400/30",
-    popularRanks: ["AR 55+", "Archon Ready", "Limited 5-Star", "Signature Weapon", "Spiral Abyss Ready"],
+    popularRanks: [
+      "AR 55+",
+      "Archon Ready",
+      "Limited 5-Star",
+      "Signature Weapon",
+      "Spiral Abyss Ready",
+    ],
   },
 };
 
@@ -88,7 +100,9 @@ function getSupabaseRestConfig() {
     "";
   const restUrl = configuredUrl.startsWith("http") ? configuredUrl.replace(/\/+$/, "") : "";
   const publishableKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    "";
 
   return { restUrl, publishableKey };
 }
@@ -114,14 +128,16 @@ function formatDate(value: string | null) {
 }
 
 function categoryMeta(categoryName: string) {
-  return CATEGORY_META[categoryName] ?? {
-    slug: slugify(categoryName),
-    subtitle: "Akun game terverifikasi siap Rekber",
-    iconName: "mlbb" as const,
-    bannerUrl: "/placeholder.png",
-    colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
-    popularRanks: ["Sultan", "Ready", "Verified", "Hot Deal"],
-  };
+  return (
+    CATEGORY_META[categoryName] ?? {
+      slug: slugify(categoryName),
+      subtitle: "Akun game terverifikasi siap Rekber",
+      iconName: "mlbb" as const,
+      bannerUrl: "/placeholder.png",
+      colorTheme: "from-primary/20 via-primary/10 to-transparent border-primary/30",
+      popularRanks: ["Sultan", "Ready", "Verified", "Hot Deal"],
+    }
+  );
 }
 
 function normalizeEmbeddedGame(game: PublicStockRow["games"]) {
@@ -203,7 +219,8 @@ export async function getLiveMarketplaceAccounts(): Promise<GameAccount[]> {
   if (!restUrl || !publishableKey) return [];
 
   const params = new URLSearchParams({
-    select: "id,title_reference,account_specs,asking_price,status,image_urls,screenshot_url,created_at,games(name,slug,image_url)",
+    select:
+      "id,title_reference,account_specs,asking_price,status,image_urls,screenshot_url,created_at,games(name,slug,image_url)",
     status: "eq.AVAILABLE",
     order: "created_at.desc",
   });
@@ -236,7 +253,10 @@ export async function getMarketplaceCategories() {
   const accounts = await getMarketplaceAccounts();
   if (accounts === MOCK_ACCOUNTS) return MARKETPLACE_CATEGORIES;
 
-  const grouped = new Map<string, { name: string; slug: string; count: number; firstImage: string }>();
+  const grouped = new Map<
+    string,
+    { name: string; slug: string; count: number; firstImage: string }
+  >();
   accounts.forEach((account) => {
     const existing = grouped.get(account.gameSlug);
     if (existing) {
@@ -272,13 +292,18 @@ export async function getMarketplaceAccount(accountId: string) {
   return accounts.find((account) => account.id === accountId || account.slug === accountId) || null;
 }
 
-export async function searchLiveMarketplace(query: string, gameSlug?: string, limit: number = 20): Promise<GameAccount[]> {
+export async function searchLiveMarketplace(
+  query: string,
+  gameSlug?: string,
+  limit: number = 20,
+): Promise<GameAccount[]> {
   const { restUrl, publishableKey } = getSupabaseRestConfig();
   if (!restUrl || !publishableKey) return [];
 
   try {
     const params = new URLSearchParams({
-      select: "id,title_reference,account_specs,asking_price,status,image_urls,screenshot_url,created_at,games(name,slug,image_url)",
+      select:
+        "id,title_reference,account_specs,asking_price,status,image_urls,screenshot_url,created_at,games(name,slug,image_url)",
     });
 
     const response = await fetch(`${restUrl}/rest/v1/rpc/search_inventory?${params.toString()}`, {
@@ -297,7 +322,10 @@ export async function searchLiveMarketplace(query: string, gameSlug?: string, li
     });
 
     if (!response.ok) {
-      logger.warn("searchLiveMarketplace response not OK", { status: response.status, details: await response.text() });
+      logger.warn("searchLiveMarketplace response not OK", {
+        status: response.status,
+        details: await response.text(),
+      });
       return [];
     }
 
@@ -308,4 +336,3 @@ export async function searchLiveMarketplace(query: string, gameSlug?: string, li
     return [];
   }
 }
-

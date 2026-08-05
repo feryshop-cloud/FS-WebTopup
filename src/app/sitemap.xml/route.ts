@@ -8,7 +8,12 @@ type SitemapUrl = {
 };
 
 const escapeXml = (value: string) =>
-  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 
 export async function GET(request: Request) {
   const origin = new URL(request.url).origin;
@@ -32,7 +37,9 @@ export async function GET(request: Request) {
         const locRaw = typeof u?.loc === "string" ? u.loc.trim() : "";
         if (!locRaw) return null;
 
-        const loc = /^https?:\/\//i.test(locRaw) ? locRaw : `${siteUrl}${locRaw.startsWith("/") ? "" : "/"}${locRaw}`;
+        const loc = /^https?:\/\//i.test(locRaw)
+          ? locRaw
+          : `${siteUrl}${locRaw.startsWith("/") ? "" : "/"}${locRaw}`;
 
         const lastmodCandidate = typeof u?.lastmod === "string" ? u.lastmod : "";
         const lastmodDate = lastmodCandidate ? new Date(lastmodCandidate) : new Date(now);

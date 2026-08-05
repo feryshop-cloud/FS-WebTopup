@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
     <ContentLayout title="Lupa Password">
       <Suspense
         fallback={
-          <div className="w-full h-[80vh] flex justify-center items-center">
+          <div className="flex h-[80vh] w-full items-center justify-center">
             <LoadingSpinner size={40} />
           </div>
         }
@@ -60,14 +60,18 @@ function ForgotPasswordForm() {
     return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
   }, [settings]);
 
-  const turnstileSiteKey = useMemo(() => String(settings?.["turnstile.site_key"] || ""), [settings]);
+  const turnstileSiteKey = useMemo(
+    () => String(settings?.["turnstile.site_key"] || ""),
+    [settings],
+  );
 
   const [turnstileTokenEmail, setTurnstileTokenEmail] = useState("");
 
   const [email, setEmail] = useState("");
   const [loadingEmail, setLoadingEmail] = useState(false);
 
-  const captchaReadyEmail = !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
+  const captchaReadyEmail =
+    !turnstileEnabled || (turnstileEnabled && turnstileTokenEmail.length > 10);
   const canSendEmail = captchaReadyEmail && !loadingEmail && isValidEmail(email);
 
   const handleSendEmail = async () => {
@@ -106,7 +110,7 @@ function ForgotPasswordForm() {
       title="Lupa Password"
       description="Masukkan email kamu, lalu ikuti instruksi yang dikirimkan."
       footer={
-        <div className="text-sm text-muted-foreground text-center">
+        <div className="text-muted-foreground text-center text-sm">
           Ingat password?{" "}
           <Link href="/signin" className="text-primary underline underline-offset-4">
             Masuk
@@ -138,18 +142,18 @@ function ForgotPasswordForm() {
               className="flex justify-center"
             />
             {settingsLoaded && !turnstileTokenEmail ? (
-              <div className="text-xs text-muted-foreground text-center mt-2">
+              <div className="text-muted-foreground mt-2 text-center text-xs">
                 Selesaikan captcha dulu untuk melanjutkan.
               </div>
             ) : null}
           </div>
         ) : null}
 
-        <Button onClick={handleSendEmail} disabled={!canSendEmail} className="w-full h-10">
+        <Button onClick={handleSendEmail} disabled={!canSendEmail} className="h-10 w-full">
           {loadingEmail ? "Mengirim..." : "Kirim Link Reset"}
         </Button>
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           Jika link sudah kamu dapat, lanjutkan ke halaman{" "}
           <Link href="/reset-password" className="underline underline-offset-4">
             reset password

@@ -38,7 +38,12 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
   const { data, error, isLoading, mutate } = useSWR<{ success: boolean; products: PromoProduct[] }>(
     "/api/promo",
     fetcher,
-    { keepPreviousData: true, revalidateIfStale: false, dedupingInterval: 300_000, fallbackData: initialData as any }
+    {
+      keepPreviousData: true,
+      revalidateIfStale: false,
+      dedupingInterval: 300_000,
+      fallbackData: initialData as any,
+    },
   );
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -60,7 +65,9 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
         const base = getPriceByRole(p, role);
         const promo = Number(p.promo_price ?? 0);
         const diff = Math.max(0, base - promo);
-        const gameName = p.game_title?.trim() ? p.game_title.trim() : toTitleCaseFromSlug(p.game_slug);
+        const gameName = p.game_title?.trim()
+          ? p.game_title.trim()
+          : toTitleCaseFromSlug(p.game_slug);
 
         return {
           ...p,
@@ -129,15 +136,18 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
 
   if (isLoading) {
     return (
-      <div className="w-full bg-muted pb-4 rounded-2xl">
+      <div className="bg-muted w-full rounded-2xl pb-4">
         <div className="p-4">
-          <Skeleton className="h-5 w-28 mb-2" />
+          <Skeleton className="mb-2 h-5 w-28" />
           <Skeleton className="h-4 w-64" />
         </div>
-        <div className="flex overflow-x-auto gap-4 px-4 py-1 hide-scrollbar">
+        <div className="hide-scrollbar flex gap-4 overflow-x-auto px-4 py-1">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex flex-shrink-0 w-[240px] bg-background rounded-2xl p-3 shadow-sm">
-              <Skeleton className="w-12 h-12 rounded-xl" />
+            <div
+              key={i}
+              className="bg-background flex w-[240px] flex-shrink-0 rounded-2xl p-3 shadow-sm"
+            >
+              <Skeleton className="h-12 w-12 rounded-xl" />
               <div className="ml-3 flex-1 space-y-2">
                 <Skeleton className="h-4 w-36" />
                 <Skeleton className="h-3 w-28" />
@@ -152,18 +162,18 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
 
   if (error) {
     return (
-      <div className="w-full bg-muted pb-4 rounded-2xl">
+      <div className="bg-muted w-full rounded-2xl pb-4">
         <div className="p-4">
-          <div className="rounded-xl border border-border bg-background p-4">
+          <div className="border-border bg-background rounded-xl border p-4">
             <div className="text-sm font-semibold">Promo gagal dimuat</div>
-            <div className="mt-1 text-xs text-muted-foreground">
+            <div className="text-muted-foreground mt-1 text-xs">
               {(error as Error)?.message ?? "Terjadi kesalahan."}
             </div>
             <div className="mt-3">
               <button
                 type="button"
                 onClick={() => mutate()}
-                className="inline-flex h-9 items-center rounded-lg border border-border bg-background px-3 text-xs font-medium"
+                className="border-border bg-background inline-flex h-9 items-center rounded-lg border px-3 text-xs font-medium"
               >
                 Coba Lagi
               </button>
@@ -179,58 +189,63 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
   }
 
   return (
-    <div className="w-full bg-muted pb-4 rounded-2xl">
+    <div className="bg-muted w-full rounded-2xl pb-4">
       <div className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Image src="/voltage.gif" alt="Flash Sale" width={20} height={20} className="w-5 h-5" />
+        <div className="mb-2 flex items-center gap-2">
+          <Image src="/voltage.gif" alt="Flash Sale" width={20} height={20} className="h-5 w-5" />
           <h2 className="text-lg font-bold tracking-wide">Flash Sale!</h2>
-          <div className="flex gap-1 ml-auto text-sm font-mono">
+          <div className="ml-auto flex gap-1 font-mono text-sm">
             {(["days", "hours", "minutes", "seconds"] as const).map((unit) => (
-              <span key={unit} className="bg-background px-2 py-1 rounded">
+              <span key={unit} className="bg-background rounded px-2 py-1">
                 {countdown[unit].toString().padStart(2, "0")}
               </span>
             ))}
           </div>
         </div>
-        <p className="text-sm mb-2">Jangan sampai kehabisan, order sekarang!</p>
+        <p className="mb-2 text-sm">Jangan sampai kehabisan, order sekarang!</p>
       </div>
 
-      <div className="scroll-container flex overflow-x-auto gap-4 px-4 py-1 hide-scrollbar" ref={scrollRef}>
+      <div
+        className="scroll-container hide-scrollbar flex gap-4 overflow-x-auto px-4 py-1"
+        ref={scrollRef}
+      >
         {items.map((item) => (
           <Link
             href={{ pathname: `/order/${item.game_slug}`, query: { product_id: item.id } }}
             key={item.id}
-            className="flex flex-shrink-0 w-[240px] rounded-2xl bg-background p-3 shadow-sm hover:scale-[1.01] transition-transform"
+            className="bg-background flex w-[240px] flex-shrink-0 rounded-2xl p-3 shadow-sm transition-transform hover:scale-[1.01]"
           >
             <div className="flex w-full flex-col divide-y">
               <div className="space-y-1 pb-3">
-                <div className="text-xs font-semibold line-clamp-2">{item.title}</div>
-                <div className="text-[11px] text-muted-foreground line-clamp-1">{item.gameName}</div>
+                <div className="line-clamp-2 text-xs font-semibold">{item.title}</div>
+                <div className="text-muted-foreground line-clamp-1 text-[11px]">
+                  {item.gameName}
+                </div>
 
                 <div className="mt-2 flex items-center gap-3">
-                  <div className="h-12 w-12 flex-shrink-0 relative overflow-hidden rounded-xl bg-muted">
+                  <div className="bg-muted relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl">
                     {item.game_image ? (
                       <Image src={item.game_image} alt={item.title} fill className="object-cover" />
                     ) : (
-                      <div className="h-full w-full flex items-center justify-center text-[10px] text-muted-foreground">
+                      <div className="text-muted-foreground flex h-full w-full items-center justify-center text-[10px]">
                         No Image
                       </div>
                     )}
                   </div>
 
                   <div className="min-w-0">
-                    <div className="text-[12px] font-semibold text-my-color">
+                    <div className="text-my-color text-[12px] font-semibold">
                       Rp {item.promo_price_num.toLocaleString("id-ID")}
                     </div>
-                    <div className="text-[11px] text-my-hoverColor line-through">
+                    <div className="text-my-hoverColor text-[11px] line-through">
                       Rp {item.base_price.toLocaleString("id-ID")}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-between gap-2">
-                <span className="rounded bg-my-color px-2 py-0.5 text-[10px] font-semibold text-white">
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <span className="bg-my-color rounded px-2 py-0.5 text-[10px] font-semibold text-white">
                   - Rp {item.diff.toLocaleString("id-ID")}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded bg-white px-2 py-1">

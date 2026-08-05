@@ -27,7 +27,11 @@ export function getSupabaseUrl() {
 }
 
 function getPublishableKey() {
-  return process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    ""
+  );
 }
 
 function getServiceRoleKey() {
@@ -42,12 +46,18 @@ async function parseAuthResponse(response: Response) {
   return (await response.json().catch(() => ({}))) as SupabaseAuthResponse;
 }
 
-export async function createSupabaseAuthUser(input: { email: string; password: string; name: string }) {
+export async function createSupabaseAuthUser(input: {
+  email: string;
+  password: string;
+  name: string;
+}) {
   const supabaseUrl = getSupabaseUrl();
   const serviceRoleKey = getServiceRoleKey();
 
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error("SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY wajib diset untuk membuat auth.users");
+    throw new Error(
+      "SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY wajib diset untuk membuat auth.users",
+    );
   }
 
   const response = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
@@ -96,7 +106,9 @@ export async function signInSupabaseWithPassword(email: string, password: string
   const publishableKey = getPublishableKey();
 
   if (!supabaseUrl || !publishableKey) {
-    throw new Error("SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY wajib diset untuk login");
+    throw new Error(
+      "SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY wajib diset untuk login",
+    );
   }
 
   const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
@@ -121,7 +133,9 @@ export async function updateSupabaseAuthPassword(userId: string, password: strin
   const serviceRoleKey = getServiceRoleKey();
 
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error("SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY wajib diset untuk mengubah password");
+    throw new Error(
+      "SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY wajib diset untuk mengubah password",
+    );
   }
 
   const response = await fetch(`${supabaseUrl}/auth/v1/admin/users/${userId}`, {

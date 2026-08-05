@@ -12,7 +12,11 @@ export async function GET() {
 
     if (hasArticleDatabaseEnabled()) {
       try {
-        const dbArticles = await db.select().from(articles).where(eq(articles.isPublished, true)).orderBy(desc(articles.createdAt));
+        const dbArticles = await db
+          .select()
+          .from(articles)
+          .where(eq(articles.isPublished, true))
+          .orderBy(desc(articles.createdAt));
         if (dbArticles && dbArticles.length > 0) {
           allArticles = dbArticles.map(normalizeArticle);
         }
@@ -21,15 +25,21 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: allArticles,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: allArticles,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Gagal memuat blog",
-      error: err?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat blog",
+        error: err?.message,
+      },
+      { status: 500 },
+    );
   }
 }

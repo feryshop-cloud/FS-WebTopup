@@ -17,24 +17,38 @@ export async function PUT(req: Request) {
     }
 
     if (!hasDatabaseConnection) {
-      return NextResponse.json({ success: false, message: "Database belum dikonfigurasi" }, { status: 503 });
+      return NextResponse.json(
+        { success: false, message: "Database belum dikonfigurasi" },
+        { status: 503 },
+      );
     }
 
     const body = await req.json().catch(() => ({}));
     const currentPassword = String(body.current_password || body.old_password || "");
     const newPassword = String(body.new_password || body.password || "");
-    const confirmation = String(body.password_confirmation || body.new_password_confirmation || newPassword);
+    const confirmation = String(
+      body.password_confirmation || body.new_password_confirmation || newPassword,
+    );
 
     if (!currentPassword || !newPassword) {
-      return NextResponse.json({ success: false, message: "Password lama dan password baru harus diisi" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Password lama dan password baru harus diisi" },
+        { status: 400 },
+      );
     }
 
     if (newPassword.length < 6) {
-      return NextResponse.json({ success: false, message: "Password baru minimal 6 karakter" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Password baru minimal 6 karakter" },
+        { status: 400 },
+      );
     }
 
     if (newPassword !== confirmation) {
-      return NextResponse.json({ success: false, message: "Konfirmasi password tidak sama" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Konfirmasi password tidak sama" },
+        { status: 400 },
+      );
     }
 
     const authUser = await signInSupabaseWithPassword(email, currentPassword).catch(() => null);
@@ -53,12 +67,18 @@ export async function PUT(req: Request) {
 
     await updateSupabaseAuthPassword(user.id, newPassword);
 
-    return NextResponse.json({
-      success: true,
-      message: "Password berhasil diubah",
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Password berhasil diubah",
+      },
+      { status: 200 },
+    );
   } catch (err) {
     logger.error("Change password API error", { error: err });
-    return NextResponse.json({ success: false, message: "Gagal mengubah password" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal mengubah password" },
+      { status: 500 },
+    );
   }
 }

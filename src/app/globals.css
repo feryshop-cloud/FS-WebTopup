@@ -170,7 +170,7 @@
   }
 
   body {
-    @apply bg-background font-sans text-foreground antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
 
@@ -204,7 +204,8 @@
 }
 
 @keyframes gradient-x {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -216,7 +217,8 @@
   0% {
     transform: translateX(-200%);
   }
-  35%, 100% {
+  35%,
+  100% {
     transform: translateX(400%);
   }
 }

@@ -21,7 +21,7 @@ export default function ForgotPasswordPage() {
     <ContentLayout title="Lupa Password">
       <Suspense
         fallback={
-          <div className="w-full h-[80vh] flex justify-center items-center">
+          <div className="flex h-[80vh] w-full items-center justify-center">
             <LoadingSpinner size={40} />
           </div>
         }
@@ -67,7 +67,7 @@ function ForgotPasswordForm() {
       title="Lupa Password"
       description="Masukkan email kamu, lalu ikuti instruksi yang dikirimkan."
       footer={
-        <div className="text-sm text-muted-foreground text-center">
+        <div className="text-muted-foreground text-center text-sm">
           Ingat password?{" "}
           <Link href="/signin" className="text-primary underline underline-offset-4">
             Masuk
@@ -88,11 +88,11 @@ function ForgotPasswordForm() {
           />
         </div>
 
-        <Button onClick={handleSendEmail} disabled={!canSendEmail} className="w-full h-10">
+        <Button onClick={handleSendEmail} disabled={!canSendEmail} className="h-10 w-full">
           {loadingEmail ? "Mengirim..." : "Kirim Link Reset"}
         </Button>
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           Jika link sudah kamu dapat, lanjutkan ke halaman{" "}
           <Link href="/reset-password" className="underline underline-offset-4">
             reset password

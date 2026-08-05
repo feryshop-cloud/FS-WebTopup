@@ -55,8 +55,10 @@ export default function InvoicePage() {
       }
 
       try {
-        const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}`), { cache: "no-store" });
-        const data = await res.json().catch(() => ({} as any));
+        const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}`), {
+          cache: "no-store",
+        });
+        const data = await res.json().catch(() => ({}) as any);
 
         if (!res.ok || !data?.success) {
           const msg = data?.message || `Gagal memuat invoice (HTTP ${res.status}).`;
@@ -81,15 +83,17 @@ export default function InvoicePage() {
         }
       }
     },
-    [safeOrderId]
+    [safeOrderId],
   );
 
   const loadReview = useCallback(async () => {
     if (!safeOrderId) return;
 
     try {
-      const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}/review`), { cache: "no-store" });
-      const json = await res.json().catch(() => ({} as any));
+      const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}/review`), {
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => ({}) as any);
 
       if (!res.ok || !json?.success) {
         setReview(null);
@@ -181,7 +185,10 @@ export default function InvoicePage() {
       if (cancelled) return;
 
       try {
-        const res = await fetch(apiPath(`/api/order/${encodeURIComponent(safeOrderId)}/payment-status`), { cache: "no-store" });
+        const res = await fetch(
+          apiPath(`/api/order/${encodeURIComponent(safeOrderId)}/payment-status`),
+          { cache: "no-store" },
+        );
         const json = await res.json().catch(() => null);
 
         if (!res.ok || !json?.success) {
@@ -203,7 +210,10 @@ export default function InvoicePage() {
           });
         }
 
-        if (nextPaymentStatus !== "UNPAID" && lastNotifiedPaymentStatusRef.current !== nextPaymentStatus) {
+        if (
+          nextPaymentStatus !== "UNPAID" &&
+          lastNotifiedPaymentStatusRef.current !== nextPaymentStatus
+        ) {
           lastNotifiedPaymentStatusRef.current = nextPaymentStatus;
 
           if (nextPaymentStatus === "PAID") {
@@ -349,7 +359,7 @@ export default function InvoicePage() {
   if (loading) {
     return (
       <ContentLayout title="Invoices">
-        <div className="w-full h-[80vh] flex justify-center items-center">
+        <div className="flex h-[80vh] w-full items-center justify-center">
           <LoadingSpinner size={40} />
         </div>
       </ContentLayout>
@@ -359,7 +369,7 @@ export default function InvoicePage() {
   if (!order) {
     return (
       <ContentLayout title="Invoices">
-        <p className="text-red-500 text-lg font-semibold">Invoice tidak ditemukan.</p>
+        <p className="text-lg font-semibold text-red-500">Invoice tidak ditemukan.</p>
       </ContentLayout>
     );
   }
@@ -394,7 +404,7 @@ export default function InvoicePage() {
             )}
 
             <div className="grid grid-cols-12 gap-y-8 md:gap-8">
-              <div className="col-span-12 sm:col-span-8 md:col-span-6 space-y-4">
+              <div className="col-span-12 space-y-4 sm:col-span-8 md:col-span-6">
                 <InvoiceGameInfo order={order} game={game} product={product} />
                 <InvoicePaymentDetails order={order} />
               </div>

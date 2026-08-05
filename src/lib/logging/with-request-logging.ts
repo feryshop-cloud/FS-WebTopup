@@ -2,10 +2,7 @@ import { randomUUID } from "node:crypto";
 import { logger } from "@/lib/logger";
 import { runWithRequestId } from "@/lib/logging/request-context";
 
-export type RouteHandler<C = unknown> = (
-  req: Request,
-  ctx: C,
-) => Promise<Response> | Response;
+export type RouteHandler<C = unknown> = (req: Request, ctx: C) => Promise<Response> | Response;
 
 /**
  * Wraps a Next.js App Router route handler with structured request logging:

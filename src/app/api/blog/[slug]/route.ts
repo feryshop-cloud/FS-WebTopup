@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { db, articles } from "@/lib/db";
 import { eq } from "drizzle-orm";
-import { hasArticleDatabaseEnabled, getSeedArticles, normalizeArticle, type ArticleRecord } from "@/lib/data/articles";
+import {
+  hasArticleDatabaseEnabled,
+  getSeedArticles,
+  normalizeArticle,
+  type ArticleRecord,
+} from "@/lib/data/articles";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +16,10 @@ export async function GET(_request: Request, context: any) {
     const params = await context?.params;
     const slug = params?.slug;
     if (!slug || typeof slug !== "string") {
-      return NextResponse.json({ success: false, message: "Slug tidak ditemukan" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Slug tidak ditemukan" },
+        { status: 400 },
+      );
     }
 
     const seed = getSeedArticles();
@@ -33,19 +41,28 @@ export async function GET(_request: Request, context: any) {
     }
 
     if (!foundArticle) {
-      return NextResponse.json({ success: false, message: "Artikel tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Artikel tidak ditemukan" },
+        { status: 404 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: foundArticle,
-      blog: foundArticle,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: foundArticle,
+        blog: foundArticle,
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({
-      success: false,
-      message: "Terjadi kesalahan",
-      error: err?.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Terjadi kesalahan",
+        error: err?.message,
+      },
+      { status: 500 },
+    );
   }
 }

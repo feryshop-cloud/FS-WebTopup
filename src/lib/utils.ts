@@ -17,13 +17,10 @@ export function resolveStorageUrl(path: string | null | undefined): string {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
 
   if (
-    cleanPath === "/placeholder.png" ||
-    cleanPath === "/logo-2.png" ||
-    cleanPath === "/qris.webp" ||
-    cleanPath.startsWith("/images/") ||
-    cleanPath.startsWith("/icons/") ||
-    cleanPath.startsWith("/svg/") ||
-    cleanPath.startsWith("/banners/")
+    !cleanPath.startsWith("/uploads/") &&
+    !cleanPath.startsWith("/s3/") &&
+    !cleanPath.startsWith("/buckets/") &&
+    !cleanPath.startsWith("/storage/")
   ) {
     return cleanPath;
   }

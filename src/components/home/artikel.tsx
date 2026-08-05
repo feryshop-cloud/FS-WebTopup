@@ -43,32 +43,35 @@ export default function Artikel({ initialData }: { initialData?: HomeFallbackDat
   const { data, error, isLoading, mutate } = useSWR<BlogLiteResponse>(
     "/api/blog-lite?page=1&per_page=6",
     fetcher,
-    { fallbackData: initialData as any }
+    { fallbackData: initialData as any },
   );
 
   const blogs: BlogLite[] = Array.isArray(data?.data) ? data!.data! : [];
 
   return (
     <section className="pb-10">
-      <div className="flex items-end justify-between gap-4 mb-5">
+      <div className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <h2 className="text-lg sm:text-2xl font-bold tracking-tight">Artikel Terbaru</h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+          <h2 className="text-lg font-bold tracking-tight sm:text-2xl">Artikel Terbaru</h2>
+          <p className="text-muted-foreground mt-1 max-w-2xl text-sm">
             Dapatkan info terbaru seputar dunia game, promo, update top-up, dan tips komunitas.
           </p>
         </div>
 
-        <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex rounded-full">
+        <Button asChild variant="outline" size="sm" className="hidden rounded-full sm:inline-flex">
           <Link href="/artikel">Lihat Semua</Link>
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
+        <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="min-w-[85%] sm:min-w-0 overflow-hidden rounded-xl border-none shadow-sm">
-              <Skeleton className="w-full aspect-[16/9]" />
-              <CardContent className="p-4 space-y-3 bg-card">
+            <Card
+              key={i}
+              className="min-w-[85%] overflow-hidden rounded-xl border-none shadow-sm sm:min-w-0"
+            >
+              <Skeleton className="aspect-[16/9] w-full" />
+              <CardContent className="bg-card space-y-3 p-4">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-8 w-32 rounded-full" />
@@ -77,9 +80,15 @@ export default function Artikel({ initialData }: { initialData?: HomeFallbackDat
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">Gagal memuat artikel</p>
-          <Button type="button" size="sm" variant="outline" className="mt-4" onClick={() => mutate()}>
+        <div className="border-destructive/20 bg-destructive/5 rounded-xl border p-6 text-center">
+          <p className="text-destructive text-sm font-medium">Gagal memuat artikel</p>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="mt-4"
+            onClick={() => mutate()}
+          >
             Coba Lagi
           </Button>
         </div>
@@ -87,21 +96,21 @@ export default function Artikel({ initialData }: { initialData?: HomeFallbackDat
         <>
           {blogs.length === 0 ? (
             <div className="rounded-xl border border-dashed p-10 text-center">
-              <p className="text-sm text-muted-foreground">Belum ada artikel terbaru.</p>
+              <p className="text-muted-foreground text-sm">Belum ada artikel terbaru.</p>
             </div>
           ) : (
-            <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
+            <div className="hide-scrollbar flex gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
               {blogs.map((post) => {
                 const label = post.category?.title?.trim() ? post.category.title : "Berita";
                 return (
                   <Card
                     key={post.id}
                     className={cn(
-                      "min-w-[85%] sm:min-w-0 overflow-hidden transition-all hover:ring-2 hover:ring-primary/20 rounded-xl border-none shadow-sm group"
+                      "hover:ring-primary/20 group min-w-[85%] overflow-hidden rounded-xl border-none shadow-sm transition-all hover:ring-2 sm:min-w-0",
                     )}
                   >
                     <Link href={`/artikel/${post.slug}`} className="block">
-                      <div className="relative aspect-[16/9] w-full bg-muted overflow-hidden">
+                      <div className="bg-muted relative aspect-[16/9] w-full overflow-hidden">
                         {post.image ? (
                           <Image
                             src={post.image}
@@ -111,34 +120,34 @@ export default function Artikel({ initialData }: { initialData?: HomeFallbackDat
                             sizes="(max-width: 640px) 85vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         ) : (
-                          <div className="flex flex-col items-center justify-center h-full text-muted-foreground/40">
-                            <ImageOff className="h-8 w-8 mb-1" />
+                          <div className="text-muted-foreground/40 flex h-full flex-col items-center justify-center">
+                            <ImageOff className="mb-1 h-8 w-8" />
                           </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-                        <div className="absolute left-3 bottom-3">
-                          <Badge className="bg-primary/90 hover:bg-primary border-none text-[10px] uppercase font-bold tracking-wider">
+                        <div className="absolute bottom-3 left-3">
+                          <Badge className="bg-primary/90 hover:bg-primary border-none text-[10px] font-bold uppercase tracking-wider">
                             {label}
                           </Badge>
                         </div>
                       </div>
                     </Link>
 
-                    <CardContent className="p-4 space-y-3 bg-card">
+                    <CardContent className="bg-card space-y-3 p-4">
                       <Link href={`/artikel/${post.slug}`} className="block">
-                        <h3 className="font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                        <h3 className="group-hover:text-primary line-clamp-2 font-bold leading-tight transition-colors">
                           {post.title}
                         </h3>
                       </Link>
 
-                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
                         {post.excerpt || "Klik untuk membaca detail artikel selengkapnya."}
                       </p>
 
                       <div className="pt-1">
                         <Link
                           href={`/artikel/${post.slug}`}
-                          className="text-xs font-bold text-primary inline-flex items-center gap-1.5 hover:gap-3 transition-all"
+                          className="text-primary inline-flex items-center gap-1.5 text-xs font-bold transition-all hover:gap-3"
                         >
                           Baca Selengkapnya <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
@@ -151,7 +160,11 @@ export default function Artikel({ initialData }: { initialData?: HomeFallbackDat
           )}
 
           <div className="mt-4 sm:hidden">
-            <Button asChild variant="outline" className="w-full rounded-full border-primary/20 text-primary">
+            <Button
+              asChild
+              variant="outline"
+              className="border-primary/20 text-primary w-full rounded-full"
+            >
               <Link href="/artikel">Lihat Semua Artikel</Link>
             </Button>
           </div>

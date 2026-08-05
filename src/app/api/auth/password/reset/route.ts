@@ -10,14 +10,23 @@ export async function POST(req: Request) {
     const password = (body.password || "").trim();
 
     if (!email || !token || !password) {
-      return NextResponse.json({ success: false, message: "Data reset password tidak lengkap" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Data reset password tidak lengkap" },
+        { status: 400 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Password berhasil diubah. Silakan login kembali.",
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Password berhasil diubah. Silakan login kembali.",
+      },
+      { status: 200 },
+    );
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: "Gagal mereset password" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Gagal mereset password" },
+      { status: 500 },
+    );
   }
 }

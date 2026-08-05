@@ -55,7 +55,7 @@ export default function Contact() {
       `*Nomor WhatsApp:* ${whatsapp}\n` +
       `*Deskripsi:* ${description}`;
     const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
-      message
+      message,
     )}`;
     window.open(url, "_blank");
   };
@@ -63,26 +63,24 @@ export default function Contact() {
   return (
     <ContentLayout title="Contact">
       <div className="min-h-screen py-5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-10">
-            <div className="md:w-1/2 space-y-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex flex-col gap-10 md:flex-row">
+            <div className="space-y-6 md:w-1/2">
               <div className="space-y-4">
                 <h1 className="text-3xl font-bold">Hubungi Kami!</h1>
                 <p>
-                  Mengalami masalah dengan waktu transaksi?
-                  Silakan hubungi kami di bawah ini sesuai dengan kebutuhan Kamu!
+                  Mengalami masalah dengan waktu transaksi? Silakan hubungi kami di bawah ini sesuai
+                  dengan kebutuhan Kamu!
                 </p>
               </div>
             </div>
 
-            <div className="md:w-1/2 bg-muted p-8 rounded-2xl shadow-md space-y-6 border">
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-semibold">
-                  Formulir Laporan / Permintaan
-                </h2>
+            <div className="bg-muted space-y-6 rounded-2xl border p-8 shadow-md md:w-1/2">
+              <div className="space-y-2 text-center">
+                <h2 className="text-2xl font-semibold">Formulir Laporan / Permintaan</h2>
                 <p className="text-sm">
-                  Silahkan isi formulir di bawah ini untuk melaporkan masalah
-                  yang Kamu alami. Tim kami akan segera menindaklanjuti laporan Kamu.
+                  Silahkan isi formulir di bawah ini untuk melaporkan masalah yang Kamu alami. Tim
+                  kami akan segera menindaklanjuti laporan Kamu.
                 </p>
               </div>
 
@@ -94,13 +92,13 @@ export default function Contact() {
                     </SelectTrigger>
                     <SelectContent className="bg-background text-foreground border-muted">
                       <SelectItem value="Masalah Transaksi">Masalah Transaksi</SelectItem>
-                      <SelectItem value="Jasa Website TopUp Game">Jasa Website TopUp Game</SelectItem>
+                      <SelectItem value="Jasa Website TopUp Game">
+                        Jasa Website TopUp Game
+                      </SelectItem>
                       <SelectItem value="Permintaan Lain">Permintaan Lain</SelectItem>
                     </SelectContent>
                   </Select>
-                  {errors.type && (
-                    <p className="text-sm text-red-600 mt-1">{errors.type}</p>
-                  )}
+                  {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type}</p>}
                 </div>
 
                 <div>
@@ -109,9 +107,7 @@ export default function Contact() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  {errors.name && (
-                    <p className="text-sm text-red-600 mt-1">{errors.name}</p>
-                  )}
+                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                 </div>
 
                 <div>
@@ -122,7 +118,7 @@ export default function Contact() {
                     onChange={(e) => setWhatsapp(e.target.value)}
                   />
                   {errors.whatsapp && (
-                    <p className="text-sm text-red-600 mt-1">{errors.whatsapp}</p>
+                    <p className="mt-1 text-sm text-red-600">{errors.whatsapp}</p>
                   )}
                 </div>
 
@@ -134,18 +130,18 @@ export default function Contact() {
                     className="bg-background min-h-[120px]"
                   />
                   {errors.description && (
-                    <p className="text-sm text-red-600 mt-1">{errors.description}</p>
+                    <p className="mt-1 text-sm text-red-600">{errors.description}</p>
                   )}
                 </div>
 
                 <Button
                   onClick={handleSubmit}
-                  className="w-full bg-gradient-to-r from-my-color to-my-color font-bold hover:opacity-90 text-white"
+                  className="from-my-color to-my-color w-full bg-gradient-to-r font-bold text-white hover:opacity-90"
                 >
                   Kirim Pesan
                 </Button>
 
-                <p className="text-center text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-center text-sm">
                   Klik tombol di atas untuk menghubungi kami via WhatsApp.
                 </p>
               </div>
