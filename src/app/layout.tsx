@@ -69,16 +69,27 @@ export async function generateMetadata(): Promise<Metadata> {
   const data = settings?.data ?? {};
 
   // SEO Basics
-  const metaTitle = safeString(data["seo.title"] || data["general.title"] || "Feryshop | Pusat Jual Beli & Top Up Akun Game Sultan #1 Terpercaya");
-  const metaDescription = safeString(data["seo.description"] || "Feryshop | Marketplace jual beli akun game Sultan (MLBB, Free Fire, Valorant, eFootball, PUBG Mobile) & layanan top up game murah, cepat, teraman dengan Rekber resmi 24/7 dan garansi anti-hack 100%.");
-  const metaKeywords = safeString(data["seo.keywords"] || "feryshop, jual beli akun game, marketplace akun game sultan, top up game murah, rekber akun game terpercaya, akun mlbb sultan, beli akun free fire, top up mobile legends murah, feryshop rekber");
+  const metaTitle = safeString(
+    data["seo.title"] ||
+      data["general.title"] ||
+      "Feryshop | Pusat Jual Beli & Top Up Akun Game Sultan #1 Terpercaya",
+  );
+  const metaDescription = safeString(
+    data["seo.description"] ||
+      "Feryshop | Marketplace jual beli akun game Sultan (MLBB, Free Fire, Valorant, eFootball, PUBG Mobile) & layanan top up game murah, cepat, teraman dengan Rekber resmi 24/7 dan garansi anti-hack 100%.",
+  );
+  const metaKeywords = safeString(
+    data["seo.keywords"] ||
+      "feryshop, jual beli akun game, marketplace akun game sultan, top up game murah, rekber akun game terpercaya, akun mlbb sultan, beli akun free fire, top up mobile legends murah, feryshop rekber",
+  );
 
   // OG & Twitter
   const ogTitle = safeString(data["seo.og_title"] || metaTitle);
   const ogDescription = safeString(data["seo.og_description"] || metaDescription);
 
   const favicon = resolveSingle(data["general.favicon"]);
-  const ogImage = resolveSingle(data["seo.og_image"]) || resolveSingle(data["general.logo"]) || "/logo-2.png";
+  const ogImage =
+    resolveSingle(data["seo.og_image"]) || resolveSingle(data["general.logo"]) || "/logo-2.png";
 
   return {
     metadataBase,
@@ -157,6 +168,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <head>
         {schemas.map((schema, index) => (
           <script
+            id={`schema-${index}`}
             key={`schema-${index}`}
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -164,13 +176,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
         ))}
       </head>
       <body className={GeistSans.className}>
-        <ProgressBarWrapper className="fixed top-0 h-0.5 bg-brand-blue z-30">
+        <ProgressBarWrapper className="bg-brand-blue fixed top-0 z-30 h-0.5">
           <Toaster position="top-center" theme="dark" />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-          >
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <SWRProvider>
               <SettingsProvider initialData={safeSettingsPayload}>
                 <PanelLayout session={session}>{children}</PanelLayout>
