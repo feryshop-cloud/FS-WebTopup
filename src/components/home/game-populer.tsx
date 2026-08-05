@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp } from "lucide-react";
 
 interface Game {

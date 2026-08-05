@@ -6,7 +6,6 @@ import { registryItemFileSchema } from "../registry/schema";
 
 const REGISTRY_BASE_PATH = "src";
 const PUBLIC_FOLDER_BASE_PATH = "public/registry";
-const COMPONENT_FOLDER_PATH = "components";
 
 type File = z.infer<typeof registryItemFileSchema>;
 const FolderToComponentTypeMap = {

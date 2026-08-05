@@ -5,7 +5,7 @@ import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+export async function GET(_req: Request) {
   try {
     let userData: any = null;
 
@@ -63,7 +63,8 @@ export async function GET(req: Request) {
       },
       { status: 200 },
     );
-  } catch (err: any) {
+  } catch (err) {
+    logger.error("Gagal memuat data profil", { error: err });
     return NextResponse.json({ error: "Gagal memuat data profil" }, { status: 500 });
   }
 }

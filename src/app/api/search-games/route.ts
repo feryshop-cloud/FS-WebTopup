@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { seedGames } from "@/lib/db/seed-data";
 import { getLivePublicGames } from "@/lib/db/live-adapter";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +40,8 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json({ games: results }, { status: 200 });
-  } catch (err: any) {
+  } catch (err) {
+    logger.error("Gagal mencari game", { error: err });
     return NextResponse.json({ games: [] }, { status: 500 });
   }
 }

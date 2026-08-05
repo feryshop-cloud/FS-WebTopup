@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getCountryDisplay } from "@/lib/get-country-display";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { apiPath } from "@/lib/routes";
@@ -23,14 +23,15 @@ interface InputFieldsProps {
   inputRefs?: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
   idRef?: React.RefObject<HTMLDivElement | null>;
   serverRef?: React.RefObject<HTMLDivElement | null>;
+  onNicknameChange?: (nickname: string | null) => void;
 }
 
-const normalizeNickname = (value: unknown) => {
+const _normalizeNickname = (value: unknown) => {
   if (typeof value !== "string") return "";
   return value.replace(/\+/g, "").trim();
 };
 
-const normalizeRegion = (value: unknown) => {
+const _normalizeRegion = (value: unknown) => {
   if (typeof value !== "string") return "";
   return value.replace(/\+/g, "").replace(/\s+/g, " ").trim();
 };
@@ -42,11 +43,44 @@ const InputFields: React.FC<InputFieldsProps> = ({
   inputRefs,
   idRef,
   serverRef,
+  onNicknameChange,
 }) => {
   const [nickname, setNickname] = useState<string | null>(null);
   const [country, setCountry] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const validateNickname = useCallback(
+    async (id: string, server: string) => {
+      setLoading(true);
+      setError(null);
+      setNickname(null);
+      setCountry(null);
+
+      try {
+        const response = await fetch(
+          apiPath(
+            `/api/validate-mlbb?id=${encodeURIComponent(id)}&server=${encodeURIComponent(server)}`,
+          ),
+        );
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          setNickname(data.data.username);
+          setCountry(data.data.country || null);
+          onNicknameChange?.(data.data.username);
+        } else {
+          setError(data.error || "ID / Server tidak valid.");
+          onNicknameChange?.(null);
+        }
+      } catch {
+        setError("Gagal memvalidasi ID.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [onNicknameChange],
+  );
 
   useEffect(() => {
     const id = inputs["id"];
@@ -59,41 +93,7 @@ const InputFields: React.FC<InputFieldsProps> = ({
 
       return () => clearTimeout(debounce);
     }
-  }, [inputs, gameConfig?.code_validation_nickname]);
-
-  const validateNickname = async (id: string, server: string) => {
-    setLoading(true);
-    setError(null);
-    setNickname(null);
-    setCountry(null);
-
-    try {
-      const res = await fetch(apiPath("/api/validate-mlbb"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, server }),
-      });
-
-      const data = await res.json();
-      const cleanedNickname = normalizeNickname(data?.nickname);
-      const cleanedCountry = normalizeRegion(data?.country);
-
-      if (res.ok && cleanedNickname) {
-        setNickname(cleanedNickname);
-        setCountry(cleanedCountry || null);
-      } else {
-        setNickname(null);
-        setCountry(null);
-        setError(data?.error || "Nickname tidak ditemukan.");
-      }
-    } catch {
-      setNickname(null);
-      setCountry(null);
-      setError("Gagal memvalidasi ID. Silakan coba lagi.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [inputs, gameConfig?.code_validation_nickname, validateNickname]);
 
   // Extract dynamic inputs or fallback to instructions / fields array or default ID & Server
   const rawFields =

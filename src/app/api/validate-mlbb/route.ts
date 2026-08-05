@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   const { id, server } = await req.json();
@@ -43,7 +44,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ nickname: parsed["In-Game Nickname"], country: parsed["Country"] });
-  } catch (error) {
+  } catch (err) {
+    logger.error("Gagal validasi nickname MLBB", { error: err });
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }

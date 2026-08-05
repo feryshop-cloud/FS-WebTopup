@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
@@ -80,7 +80,9 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
       .filter((p) => p.promo_price_num > 0 && p.base_price > 0 && p.promo_price_num < p.base_price);
   }, [data, role]);
 
-  const isPromoExpired = (endTime: string) => new Date(endTime).getTime() <= Date.now();
+  const isPromoExpired = useCallback((endTime: string) => {
+    return new Date(endTime).getTime() <= new Date().getTime();
+  }, []);
 
   useEffect(() => {
     if (!promoEndAt) return;

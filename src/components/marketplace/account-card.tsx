@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ShieldCheck, Zap, Flame, Award, CheckCircle2, ChevronRight } from "lucide-react";
+import { ShieldCheck, Zap, Flame, Award, ChevronRight } from "lucide-react";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
 import { cn, resolveStorageUrl } from "@/lib/utils";
 

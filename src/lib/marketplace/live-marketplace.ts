@@ -172,7 +172,6 @@ function mapInventoryToAccount(row: PublicStockRow): GameAccount {
   const game = normalizeEmbeddedGame(row.games);
   const categoryName = game?.name || "Akun Game";
   const gameSlug = game?.slug || categoryMeta(categoryName).slug;
-  const meta = categoryMeta(categoryName);
   const price = toPrice(row.asking_price);
   const images = Array.isArray(row.image_urls) ? row.image_urls.filter(Boolean) : [];
   const screenshot = row.screenshot_url ? [row.screenshot_url] : [];

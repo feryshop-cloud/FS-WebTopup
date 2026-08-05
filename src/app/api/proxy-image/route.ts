@@ -68,7 +68,7 @@ export async function GET(req: Request) {
         "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
       },
     });
-  } catch (err: any) {
+  } catch {
     return getPlaceholderResponse();
   }
 }

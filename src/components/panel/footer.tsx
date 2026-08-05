@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useSettings } from "@/context/settings-context";
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
 import { FaFacebook as Facebook, FaInstagram as Instagram } from "react-icons/fa";
 
 export function Footer() {
@@ -19,9 +18,6 @@ export function Footer() {
   }
 
   const settings = useSettings() as unknown as Settings | null;
-
-  const logoUrl = settings?.data?.["general.logo"];
-  const logoTitle = settings?.data?.["general.title"];
 
   const extraTitle = settings?.data?.["footer.extra_section.title"] || "";
   const rawLinks = settings?.data?.["footer.extra_section.links"];

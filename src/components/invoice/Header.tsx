@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Lottie from "react-lottie-player";
 import { Transaction } from "@/types";
 import LottiePlayerClient from "@/components/LottiePlayerClient";
 
@@ -14,7 +13,7 @@ interface InvoiceHeaderProps {
 }
 
 export function InvoiceHeader({
-  order,
+  order: _order,
   getLottieAnimation,
   getPayStatusMessage,
   getBuyStatusMessage,

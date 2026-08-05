@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 async function hitCoda(body: string) {
   const response = await fetch("https://order-sg.codashop.com/initPayment.action", {
@@ -78,7 +79,8 @@ export async function GET(req: NextRequest) {
         );
     }
     return NextResponse.json(result);
-  } catch (error) {
+  } catch (err) {
+    logger.error("Gagal mengecek nickname", { error: err });
     return NextResponse.json({ success: false, message: "Not found" }, { status: 404 });
   }
 }
@@ -270,7 +272,6 @@ async function la(id: number, zone: string) {
   const zoneLC = zone.toLowerCase();
   let sn = "";
   let sv = 0;
-  const idStr = String(id);
 
   switch (true) {
     case zoneLC.includes("miskatown"):

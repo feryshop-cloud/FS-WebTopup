@@ -21,7 +21,7 @@ import {
   type GameAccount,
   type GameCategory,
 } from "@/lib/data/mock-marketplace";
-import { cn, resolveStorageUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export function MarketplaceCategoryView({
   categorySlug,

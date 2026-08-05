@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { apiPath } from "@/lib/routes";
+import { normalizeBuyStatus, BuyStatusLegacyBadgeClass } from "@/types/status";
 
 export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
   const [orders, setOrders] = useState<any[]>([]);
@@ -114,21 +114,17 @@ export function OrdersListClient({ whatsapp }: { whatsapp: string }) {
                       {format(new Date(order.created_at), "dd MMM yyyy HH:mm")}
                     </td>
                     <td className="p-3">
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                          order.buy_status === "Pending"
-                            ? "bg-yellow-500 text-black"
-                            : order.buy_status === "Proses"
-                              ? "bg-info text-info-foreground"
-                              : order.buy_status === "Batal" || order.buy_status === "Gagal"
-                                ? "bg-red-500 text-white"
-                                : order.buy_status === "Sukses"
-                                  ? "bg-green-500 text-white"
-                                  : "bg-gray-500 text-white"
-                        } `}
-                      >
-                        {order.buy_status}
-                      </span>
+                      {(() => {
+                        const normStatus = normalizeBuyStatus(order.buy_status);
+                        const badgeClass = BuyStatusLegacyBadgeClass[normStatus];
+                        return (
+                          <span
+                            className={`rounded-full px-2 py-1 text-xs font-semibold ${badgeClass}`}
+                          >
+                            {order.buy_status}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="p-3">
                       <Link

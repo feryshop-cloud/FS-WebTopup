@@ -2,13 +2,12 @@
 
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
-import { Loader2, Shield, User2, Mail, Phone, KeyRound } from "lucide-react";
+import { Loader2, Shield, User2 } from "lucide-react";
 
 import { ContentLayout } from "@/components/panel/content-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -61,8 +60,6 @@ export default function AccountSettingsPage() {
 
   const role = me?.data?.role ?? "Member";
   const nameValue = me?.data?.name ?? "";
-  const emailValue = me?.data?.email ?? "";
-  const whatsappValue = me?.data?.whatsapp ?? "";
 
   const [name, setName] = useState("");
   const [savingName, setSavingName] = useState(false);

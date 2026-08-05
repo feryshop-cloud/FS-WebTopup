@@ -1,14 +1,4 @@
-import {
-  Home,
-  ReceiptText,
-  User,
-  UserCog,
-  Headset,
-  LucideIcon,
-  BadgeDollarSign,
-  Star,
-  Store,
-} from "lucide-react";
+import { Home, ReceiptText, Headset, LucideIcon, BadgeDollarSign, Star, Store } from "lucide-react";
 
 type Submenu = {
   href: string;
@@ -29,7 +19,7 @@ type Group = {
   menus: Menu[];
 };
 
-export function getMenuList(pathname: string, isLoggedIn: boolean): Group[] {
+export function getMenuList(_pathname: string, _isLoggedIn: boolean): Group[] {
   const menu: Group[] = [
     {
       groupLabel: "Menu",

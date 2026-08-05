@@ -10,7 +10,7 @@ export const useStore = <T, F>(
   const [data, setData] = useState<F>();
 
   useEffect(() => {
-    setData(result);
+    setData((prev) => (prev !== result ? result : prev));
   }, [result]);
 
   return data;

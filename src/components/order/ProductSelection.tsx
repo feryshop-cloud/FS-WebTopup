@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import LogoInstan from "@/components/logo/instan";
 import { Product } from "@/types";
@@ -64,14 +64,12 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
     });
   }, [grouped]);
 
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const current = activeCategory || categories[0];
-
-  useEffect(() => {
-    if (!activeCategory && categories.length) {
-      setActiveCategory(categories[0]);
-    }
-  }, [categories, activeCategory]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const activeCategory =
+    selectedCategory && categories.includes(selectedCategory)
+      ? selectedCategory
+      : categories[0] || null;
+  const current = activeCategory;
 
   const renderProductCard = (product: Product) => {
     const isSelected = String(selectedProduct) === String(product.id);
@@ -165,7 +163,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
                   type="button"
                   onClick={(e) => {
                     e.preventDefault();
-                    setActiveCategory(cat);
+                    setSelectedCategory(cat);
                   }}
                   className={`flex h-[90px] w-[120px] flex-none flex-col items-center justify-center gap-2 rounded-lg border transition ${
                     active ? "border-my-color bg-my-color/10" : "bg-muted border-transparent"
@@ -211,7 +209,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
             ? Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="bg-muted min-h-[85px] animate-pulse rounded-xl" />
               ))
-            : grouped[current]?.items.map(renderProductCard)}
+            : (current ? grouped[current]?.items : [])?.map(renderProductCard)}
         </div>
       </div>
     </section>

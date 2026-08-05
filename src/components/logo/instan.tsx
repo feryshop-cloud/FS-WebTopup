@@ -1,6 +1,6 @@
 import { SVGProps } from "react";
 
-const LogoInstan = (props: SVGProps<SVGSVGElement>) => (
+const LogoInstan = (_props: SVGProps<SVGSVGElement>) => (
   <svg
     width="52"
     height="16"

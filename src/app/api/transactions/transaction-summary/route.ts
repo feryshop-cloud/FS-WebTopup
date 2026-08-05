@@ -52,7 +52,7 @@ export async function GET() {
       },
       { status: 200 },
     );
-  } catch (err: any) {
+  } catch (_err: any) {
     return NextResponse.json(
       { success: false, message: "Gagal memuat ringkasan transaksi" },
       { status: 500 },

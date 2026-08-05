@@ -1,7 +1,6 @@
 "use client";
 import { Menu } from "@/components/panel/menu";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { useStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";
@@ -22,7 +21,7 @@ export function Sidebar() {
   const logoUrl = settingsLogo?.data?.["general.logo"];
 
   if (!sidebar) return null;
-  const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
+  const { getOpenState, setIsHover, settings } = sidebar;
 
   return (
     <aside

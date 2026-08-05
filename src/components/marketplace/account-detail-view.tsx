@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowLeft,
   ShieldCheck,
   MessageCircle,
   Star,
@@ -14,8 +13,6 @@ import {
   Lock,
   Clock,
   Sparkles,
-  Share2,
-  AlertCircle,
   ChevronRight,
   UserCheck,
 } from "lucide-react";

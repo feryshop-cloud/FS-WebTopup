@@ -8,8 +8,7 @@ if (typeof window !== "undefined") {
   console.error = (...args: unknown[]) => {
     if (
       typeof args[0] === "string" &&
-      (args[0].includes("Encountered a script tag") ||
-        args[0].includes("Script tag inside"))
+      (args[0].includes("Encountered a script tag") || args[0].includes("Script tag inside"))
     ) {
       return;
     }

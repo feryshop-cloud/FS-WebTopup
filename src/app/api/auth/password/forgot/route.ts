@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export async function POST(req: Request) {
       },
       { status: 200 },
     );
-  } catch (err: any) {
+  } catch (err) {
+    logger.error("Gagal mengirim link reset password", { error: err });
     return NextResponse.json(
       { success: false, message: "Gagal mengirim link reset password" },
       { status: 500 },

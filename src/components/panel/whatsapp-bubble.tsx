@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 
 import { useSettings } from "@/context/settings-context";
@@ -36,17 +36,15 @@ export function WhatsAppBubble() {
 
   const usable = enabled && sanitizePhone(phone).length >= 8;
 
-  const [dismissed, setDismissed] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
     try {
-      const v = localStorage.getItem(CLOSED_KEY);
-      if (v === "1") setDismissed(true);
+      return localStorage.getItem(CLOSED_KEY) === "1";
     } catch {
-      setDismissed(false);
+      return false;
     }
-  }, []);
+  });
+  const [open, setOpen] = useState(false);
 
   const waUrl = useMemo(() => buildWaUrl(phone, prefill), [phone, prefill]);
 

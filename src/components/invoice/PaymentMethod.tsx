@@ -6,6 +6,7 @@ import QRCode from "react-qr-code";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Transaction } from "@/types";
+import { normalizePaymentStatus, PaymentStatus } from "@/types/status";
 
 interface InvoicePaymentMethodProps {
   order: Transaction;
@@ -443,7 +444,7 @@ export function InvoicePaymentMethod({
         </div>
       </div>
 
-      {order.payment_status === "UNPAID" && (
+      {normalizePaymentStatus(order.payment_status) === PaymentStatus.PENDING && (
         <div className="bg-background rounded-2xl border p-5">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
@@ -570,27 +571,28 @@ export function InvoicePaymentMethod({
         </div>
       )}
 
-      {order.payment_status === "PAID" && snBlocks.length > 0 && (
-        <div className="bg-background space-y-3 rounded-2xl border p-5">
-          <div className="flex items-center justify-between">
-            <div className="text-sm font-medium">Serial Number / Data</div>
-            <Button variant="outline" size="icon" onClick={handleCopySn} aria-label="Copy SN">
-              <Clipboard className="h-4 w-4" />
-            </Button>
-          </div>
+      {normalizePaymentStatus(order.payment_status) === PaymentStatus.PAID &&
+        snBlocks.length > 0 && (
+          <div className="bg-background space-y-3 rounded-2xl border p-5">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium">Serial Number / Data</div>
+              <Button variant="outline" size="icon" onClick={handleCopySn} aria-label="Copy SN">
+                <Clipboard className="h-4 w-4" />
+              </Button>
+            </div>
 
-          <div className="space-y-3">
-            {snBlocks.map((block, index) => (
-              <pre
-                key={`${order.order_id || "sn"}-${index}`}
-                className="bg-muted whitespace-pre-wrap break-words rounded-xl border p-3 text-sm"
-              >
-                {block}
-              </pre>
-            ))}
+            <div className="space-y-3">
+              {snBlocks.map((block, index) => (
+                <pre
+                  key={`${order.order_id || "sn"}-${index}`}
+                  className="bg-muted whitespace-pre-wrap break-words rounded-xl border p-3 text-sm"
+                >
+                  {block}
+                </pre>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

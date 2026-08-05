@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { db, orders, games, products } from "@/lib/db";
 import { eq } from "drizzle-orm";
-import { seedGames, seedProducts } from "@/lib/db/seed-data";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 

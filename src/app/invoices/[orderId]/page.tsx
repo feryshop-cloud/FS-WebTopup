@@ -17,6 +17,12 @@ import { InvoiceCountdown } from "@/components/invoice/Countdown";
 import { InvoicePaymentInstructions } from "@/components/invoice/PaymentInstructions";
 import { InvoiceReviewPayload, ReviewSection } from "@/components/invoice/ReviewSection";
 import { apiPath } from "@/lib/routes";
+import {
+  BuyStatus,
+  PaymentStatus,
+  normalizeBuyStatus,
+  normalizePaymentStatus,
+} from "@/types/status";
 
 import animationWaitingPayment from "@/data/lottie/payment-waiting.json";
 import animationBuyProcess from "@/data/lottie/buy-process.json";
@@ -72,7 +78,7 @@ export default function InvoicePage() {
         setOrder(data.order || null);
         setGame(data.game || null);
         setProduct(data.product || null);
-      } catch (error) {
+      } catch (_error) {
         if (!opts?.silent) toast.error("Gagal memuat invoice.");
         setOrder(null);
         setGame(null);
@@ -216,13 +222,14 @@ export default function InvoicePage() {
         ) {
           lastNotifiedPaymentStatusRef.current = nextPaymentStatus;
 
-          if (nextPaymentStatus === "PAID") {
+          const normPayment = normalizePaymentStatus(nextPaymentStatus);
+          if (normPayment === PaymentStatus.PAID) {
             toast.success("Pembayaran berhasil diterima.");
             await loadInvoice({ silent: true });
-          } else if (nextPaymentStatus === "EXPIRED") {
+          } else if (normPayment === PaymentStatus.EXPIRED) {
             toast.error("Pembayaran kadaluarsa.");
             await loadInvoice({ silent: true });
-          } else if (nextPaymentStatus === "FAILED") {
+          } else if (normPayment === PaymentStatus.FAILED) {
             toast.error("Pembayaran gagal.");
             await loadInvoice({ silent: true });
           }
@@ -243,15 +250,16 @@ export default function InvoicePage() {
 
   const getPayStatusMessage = () => {
     if (!order) return "Pesanan tidak ditemukan.";
+    const normPayment = normalizePaymentStatus(order.payment_status);
 
-    switch (order.payment_status) {
-      case "UNPAID":
+    switch (normPayment) {
+      case PaymentStatus.PENDING:
         return "Menunggu Pembayaran";
-      case "PAID":
+      case PaymentStatus.PAID:
         return "Pembayaran Berhasil";
-      case "EXPIRED":
+      case PaymentStatus.EXPIRED:
         return "Pembayaran Kadaluarsa";
-      case "FAILED":
+      case PaymentStatus.FAILED:
         return "Pembayaran Gagal";
       default:
         return "Status Pembayaran Tidak Diketahui.";
@@ -260,20 +268,20 @@ export default function InvoicePage() {
 
   const getBuyStatusMessage = () => {
     if (!order) return "Pesanan tidak ditemukan.";
+    const normPayment = normalizePaymentStatus(order.payment_status);
+    const normBuy = normalizeBuyStatus(order.buy_status);
 
-    if (order.payment_status === "UNPAID") {
+    if (normPayment === PaymentStatus.PENDING) {
       return "Silakan lakukan pembayaran dengan metode yang kamu pilih.";
     }
 
-    switch (order.buy_status) {
-      case "Proses":
+    switch (normBuy) {
+      case BuyStatus.PROCESSING:
         return "Pembelian sedang dalam proses.";
-      case "Sukses":
+      case BuyStatus.SUCCESS:
         return "Transaksi telah berhasil dilakukan.";
-      case "Gagal":
+      case BuyStatus.FAILED:
         return "Pembelian gagal, hubungi layanan pelanggan.";
-      case "Batal":
-        return "Batas waktu pembayaran telah berakhir. Silakan lakukan pembelian ulang.";
       default:
         return "Status Pesanan Tidak Diketahui.";
     }
@@ -281,12 +289,15 @@ export default function InvoicePage() {
 
   const getLottieAnimation = () => {
     if (!order) return animationWaitingPayment;
+    const normPayment = normalizePaymentStatus(order.payment_status);
+    const normBuy = normalizeBuyStatus(order.buy_status);
 
-    if (order.payment_status === "UNPAID") return animationWaitingPayment;
-    if (["EXPIRED", "FAILED"].includes(order.payment_status)) return animationFailed;
-    if (order.buy_status === "Proses") return animationBuyProcess;
-    if (order.buy_status === "Sukses") return animationBuySuccess;
-    if (["Batal", "Gagal"].includes(order.buy_status)) return animationFailed;
+    if (normPayment === PaymentStatus.PENDING) return animationWaitingPayment;
+    if (normPayment === PaymentStatus.EXPIRED || normPayment === PaymentStatus.FAILED)
+      return animationFailed;
+    if (normBuy === BuyStatus.PROCESSING) return animationBuyProcess;
+    if (normBuy === BuyStatus.SUCCESS) return animationBuySuccess;
+    if (normBuy === BuyStatus.FAILED) return animationFailed;
 
     return animationWaitingPayment;
   };

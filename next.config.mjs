@@ -9,7 +9,7 @@ let supabaseHostname = null;
 if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
   try {
     supabaseHostname = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname;
-  } catch (e) {}
+  } catch {}
 }
 
 const isDev = process.env.NODE_ENV !== "production";

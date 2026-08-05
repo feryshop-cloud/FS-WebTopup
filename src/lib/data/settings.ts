@@ -33,6 +33,7 @@ export async function getSiteSettings(): Promise<SettingsPayload> {
       data: siteSettings,
     };
   } catch (err) {
+    logger.warn("getSiteSettings fallback to seed", { error: err });
     return {
       success: true,
       data: seedSettings,

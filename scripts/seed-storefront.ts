@@ -1,9 +1,3 @@
-import fs from "fs";
-import path from "path";
-
-// Import seed data manually to avoid ts-node compilation issues in scripts
-const SEED_DATA_PATH = path.join(process.cwd(), "src", "lib", "db", "seed-data.ts");
-
 const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL || "https://trviikqvvujcibplqwud.supabase.co";
 // We require the service role key to insert records safely

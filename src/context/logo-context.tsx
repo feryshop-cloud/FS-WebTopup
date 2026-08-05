@@ -8,17 +8,17 @@ const LogoContext = createContext<string | null>(null);
 
 export function LogoProvider({ children }: { children: React.ReactNode }) {
   const settings = useSettings();
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const settingsLogo = settings?.data?.general?.logo || "/logo.png";
+  const logo =
+    !settingsLogo.startsWith("http") && !settingsLogo.startsWith("/")
+      ? apiPath(`/api/proxy-image?path=${encodeURIComponent(settingsLogo)}`)
+      : settingsLogo;
+
+  const [logoUrl, setLogoUrl] = useState<string | null>(logo);
 
   useEffect(() => {
-    let logo = settings?.data?.general?.logo || "/logo.png";
-
-    if (!logo.startsWith("http") && !logo.startsWith("/")) {
-      logo = apiPath(`/api/proxy-image?path=${encodeURIComponent(logo)}`);
-    }
-
-    setLogoUrl(logo);
-  }, [settings]);
+    setLogoUrl((prev) => (prev !== logo ? logo : prev));
+  }, [logo]);
 
   if (logoUrl === null) return null;
 

@@ -110,7 +110,7 @@ export function Menu({ isOpen }: MenuProps) {
                 <p className="pb-2"></p>
               )}
 
-              {menus.flatMap(({ href, label, icon: Icon, active, submenus }, index) => {
+              {menus.flatMap(({ href, label, icon: Icon, active, submenus }, _index) => {
                 const nodes: React.ReactNode[] = [];
 
                 if (!submenus || submenus.length === 0) {

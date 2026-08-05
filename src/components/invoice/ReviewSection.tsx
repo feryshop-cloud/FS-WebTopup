@@ -80,7 +80,7 @@ export function ReviewSection({ orderId, canReview, identifier, initialReview, o
       } else {
         toast.success("Ulasan berhasil disimpan.");
       }
-    } catch (e: any) {
+    } catch {
       toast.error("Terjadi kesalahan saat mengirim ulasan.");
     } finally {
       setSubmitting(false);

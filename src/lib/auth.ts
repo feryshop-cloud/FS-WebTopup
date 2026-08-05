@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db, hasDatabaseConnection, sqlClient } from "@/lib/db";
+import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 import { logger } from "@/lib/logger";
 

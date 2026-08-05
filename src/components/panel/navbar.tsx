@@ -11,7 +11,6 @@ import { UserNav } from "@/components/panel/user-nav";
 import { SheetMenu } from "@/components/panel/sheet-menu";
 import { Search } from "@/components/panel/search";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,7 +31,6 @@ export function Navbar() {
 
   const settings = useSettings() as unknown as Settings | null;
   const logoUrl = settings?.data?.["general.logo"] as string | undefined;
-  const logoTitle = settings?.data?.["general.title"] as string | undefined;
 
   const enableWinrate = Boolean(settings?.data?.["enable_kalkulator_winrate"]);
   const enableMagicWheel = Boolean(settings?.data?.["enable_kalkulator_magic_wheel"]);
@@ -104,7 +102,7 @@ export function Navbar() {
       <nav className="border-border mx-4 hidden items-center overflow-x-auto border-t pb-3 pt-2 sm:mx-8 md:flex">
         <ul className="flex items-center gap-3">
           {menuList.flatMap(({ menus }) =>
-            menus.flatMap(({ href, label, icon: Icon, active }) => {
+            menus.flatMap(({ href, label, icon: Icon, active: _active }) => {
               const nodes: React.ReactNode[] = [];
 
               nodes.push(

@@ -57,7 +57,7 @@ export default function OrderPage() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const [inputs, setInputs] = useState<Record<string, string>>({});
-  const [email, setEmail] = useState("");
+  const [email] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
 
   const [quantity, setQuantity] = useState(1);

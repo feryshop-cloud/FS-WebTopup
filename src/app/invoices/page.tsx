@@ -1,14 +1,13 @@
 "use client";
 
 import { ContentLayout } from "@/components/panel/content-layout";
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useOrders } from "@/hooks/use-orders";
 import useRealtimeTransactions from "@/hooks/use-realtime-transactions";
 import { apiPath } from "@/lib/routes";
-import { BuyStatus, BuyStatusLabel, VALID_BUY_STATUSES } from "@/types/status";
+import { BuyStatusLabel, BuyStatusBadgeClass, normalizeBuyStatus } from "@/types/status";
 
 export default function InvoiceSearchPage() {
   const router = useRouter();
@@ -17,7 +16,7 @@ export default function InvoiceSearchPage() {
   const [orderId, setOrderId] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [loading, setLoading] = useState(false);
-  const { data: orders, isLoading } = useRealtimeTransactions();
+  const { data: orders } = useRealtimeTransactions();
 
   const handleSubmitOrderId = async (e: FormEvent) => {
     e.preventDefault();
@@ -339,22 +338,9 @@ export default function InvoiceSearchPage() {
                     })();
 
                     const rawStatus = order.buy_status as string;
-                    const isValidStatus = VALID_BUY_STATUSES.includes(rawStatus as BuyStatus);
-                    if (!isValidStatus && rawStatus) {
-                      console.warn(`Invalid buy_status: ${rawStatus}`);
-                    }
-                    const status = isValidStatus ? (rawStatus as BuyStatus) : BuyStatus.PENDING;
+                    const status = normalizeBuyStatus(rawStatus);
                     const statusLabel = BuyStatusLabel[status];
-                    const badgeClass =
-                      status === BuyStatus.PENDING
-                        ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"
-                        : status === BuyStatus.PROCESSING
-                          ? "bg-info/10 text-info border border-info/20"
-                          : status === BuyStatus.FAILED
-                            ? "bg-destructive/10 text-destructive border border-destructive/20"
-                            : status === BuyStatus.SUCCESS
-                              ? "bg-success/10 text-success border border-success/20"
-                              : "bg-muted text-muted-foreground border border-border";
+                    const badgeClass = BuyStatusBadgeClass[status];
 
                     return (
                       <motion.tr

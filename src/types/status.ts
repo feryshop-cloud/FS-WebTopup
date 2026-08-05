@@ -62,7 +62,8 @@ export function normalizeBuyStatus(rawStatus?: string | null): BuyStatus {
   const lower = rawStatus.toLowerCase().trim();
 
   if (lower === "pending" || lower === "menunggu") return BuyStatus.PENDING;
-  if (lower === "proses" || lower === "processing" || lower === "diproses") return BuyStatus.PROCESSING;
+  if (lower === "proses" || lower === "processing" || lower === "diproses")
+    return BuyStatus.PROCESSING;
   if (lower === "sukses" || lower === "success") return BuyStatus.SUCCESS;
   if (lower === "gagal" || lower === "batal" || lower === "failed") return BuyStatus.FAILED;
 
@@ -79,8 +80,8 @@ export function normalizePaymentStatus(rawStatus?: string | null): PaymentStatus
   if (upper === "PAID" || upper === "SUCCESS" || upper === "LUNAS") return PaymentStatus.PAID;
   if (upper === "EXPIRED" || upper === "KADALUARSA") return PaymentStatus.EXPIRED;
   if (upper === "FAILED" || upper === "GAGAL" || upper === "CANCELLED") return PaymentStatus.FAILED;
-  if (upper === "PENDING" || upper === "UNPAID" || upper === "MENUNGGU") return PaymentStatus.PENDING;
+  if (upper === "PENDING" || upper === "UNPAID" || upper === "MENUNGGU")
+    return PaymentStatus.PENDING;
 
   return PaymentStatus.PENDING;
 }
-

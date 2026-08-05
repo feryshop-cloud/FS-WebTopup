@@ -76,7 +76,7 @@ export default function PromoCodeSection({
 
   useEffect(() => {
     if (!appliedCode) return;
-    setCode(appliedCode);
+    setCode((prev) => (prev !== appliedCode ? appliedCode : prev));
   }, [appliedCode]);
 
   const canApply = useMemo(() => {
