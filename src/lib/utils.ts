@@ -1,8 +1,8 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -15,6 +15,18 @@ export function resolveStorageUrl(path: string | null | undefined): string {
     return path;
   }
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (
+    cleanPath === "/placeholder.png" ||
+    cleanPath === "/logo-2.png" ||
+    cleanPath === "/qris.webp" ||
+    cleanPath.startsWith("/images/") ||
+    cleanPath.startsWith("/icons/") ||
+    cleanPath.startsWith("/svg/") ||
+    cleanPath.startsWith("/banners/")
+  ) {
+    return cleanPath;
+  }
+
   return `/api/proxy-image?path=${encodeURIComponent(cleanPath)}`;
 }
-

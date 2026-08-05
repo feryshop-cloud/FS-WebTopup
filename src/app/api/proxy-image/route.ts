@@ -38,10 +38,7 @@ export async function GET(req: Request) {
     });
 
     if (!res.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch image", status: res.status },
-        { status: res.status }
-      );
+      return NextResponse.redirect(new URL("/placeholder.png", req.url));
     }
 
     const contentType = res.headers.get("content-type") ?? "image/webp";
@@ -54,9 +51,6 @@ export async function GET(req: Request) {
       },
     });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: "Image fetch error", details: err?.message },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL("/placeholder.png", req.url));
   }
 }
