@@ -2,9 +2,7 @@
 
 const routePrefix = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
 const basePath =
-  routePrefix && routePrefix !== "/"
-    ? `/${routePrefix.replace(/^\/+|\/+$/g, "")}`
-    : undefined;
+  routePrefix && routePrefix !== "/" ? `/${routePrefix.replace(/^\/+|\/+$/g, "")}` : undefined;
 const adminDashboardOrigin = process.env.ADMIN_DASHBOARD_ORIGIN?.replace(/\/+$/, "");
 
 let supabaseHostname = null;
@@ -23,6 +21,11 @@ const nextConfig = {
   experimental: {},
 
   images: {
+    localPatterns: [
+      {
+        pathname: "/**",
+      },
+    ],
     remotePatterns: [
       // 1. Supabase Storage (Wildcard & Dynamic URL)
       { protocol: "https", hostname: "*.supabase.co" },
@@ -58,9 +61,7 @@ const nextConfig = {
     return [
       {
         source: "/(.*)",
-        headers: [
-          { key: "X-Powered-By", value: "PT. Ferdi Ananda Store" },
-        ],
+        headers: [{ key: "X-Powered-By", value: "PT. Ferdi Ananda Store" }],
       },
     ];
   },
