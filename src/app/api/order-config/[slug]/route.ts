@@ -37,6 +37,7 @@ export async function GET(_req: Request, context: any) {
       ...p,
       brand: liveGame.title || slug,
       status: p.is_active ? 1 : 0,
+      logo: p.logo || p.images || liveGame.logo || liveGame.image || null,
     }));
 
     let instructionsObj: any = {};

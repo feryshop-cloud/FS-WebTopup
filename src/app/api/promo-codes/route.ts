@@ -1,66 +1,46 @@
 import { NextResponse } from "next/server";
-import { db, promoCodes } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { sqlClient } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    let allPromos: any[] = [];
-
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
-      try {
-        const dbPromos = await db.select().from(promoCodes).where(eq(promoCodes.isActive, true));
-        if (dbPromos && dbPromos.length > 0) {
-          allPromos = dbPromos.map((p) => ({
-            id: p.id,
-            code: p.code,
-            discount_type: p.discountType,
-            discount_value: Number(p.discountValue),
-            min_order: Number(p.minOrder),
-          }));
-        }
-      } catch (e) {
-        logger.warn("Fallback promo-codes", { error: e });
-      }
-    }
-
-    if (allPromos.length === 0) {
-      allPromos = [
-        {
-          id: 1,
-          code: "FERYSHOP10",
-          discount_type: "percent",
-          discount_value: 10,
-          min_order: 20000,
-          max_discount: 15000,
-        },
-        {
-          id: 2,
-          code: "HEMAT5RB",
-          discount_type: "fixed",
-          discount_value: 5000,
-          min_order: 30000,
-          max_discount: 5000,
-        },
-      ];
-    }
-
-    return NextResponse.json(
+    const rows = await sqlClient<
       {
-        success: true,
-        data: allPromos,
-      },
-      { status: 200 },
-    );
-  } catch (err: any) {
+        id: number;
+        code: string;
+        discount_type: string;
+        discount_value: string | number;
+        min_order: string | number;
+        max_discount: string | number;
+        is_active: boolean | null;
+      }[]
+    >`
+      select id, code, discount_type, discount_value, min_order, max_discount, is_active
+      from public.promo_codes
+      where is_active = true
+        and (start_date is null or start_date <= now())
+        and (end_date is null or end_date >= now())
+      order by code asc
+    `;
+
+    const data = rows.map((p) => ({
+      id: p.id,
+      name: `Diskon ${p.discount_type === "percent" ? `${Number(p.discount_value)}%` : "Rp " + Math.floor(Number(p.discount_value)).toLocaleString("id-ID")}`,
+      code: p.code,
+      status: p.is_active ? "ACTIVE" : "INACTIVE",
+      is_eligible: true,
+      discount_type: p.discount_type,
+      discount_value: Number(p.discount_value),
+      min_product_price: Number(p.min_order) || null,
+    }));
+
+    return NextResponse.json({ success: true, data }, { status: 200 });
+  } catch (error: any) {
+    logger.error("promo list failed", { error });
     return NextResponse.json(
-      {
-        success: false,
-        message: "Gagal memuat kode promo",
-        error: err?.message,
-      },
+      { success: false, message: "Gagal memuat kode promo", error: error?.message },
       { status: 500 },
     );
   }

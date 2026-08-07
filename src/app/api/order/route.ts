@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { db, orders } from "@/lib/db";
+import { db, orders, sqlClient } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
+import { callValidatePromo, getProductUnitPrice, computeDiscount } from "@/lib/promo";
+
+const money = (v: any) => Math.max(0, Math.floor(Number(v ?? 0)));
 
 async function postHandler(req: Request) {
   try {
@@ -32,6 +35,34 @@ async function postHandler(req: Request) {
     if (body.id && !fullAccountData.id) fullAccountData.id = body.id;
     if (body.server && !fullAccountData.server) fullAccountData.server = body.server;
 
+    // ---- Re-validasi harga & promo server-side (R1/D) — jangan percaya harga client ----
+    const quantity = Math.max(1, Math.floor(Number(body.quantity || 1)));
+    const productId = String(body.product_id || body.productId || "");
+    const promoCode = String(body.promo_code || body.promoCode || "")
+      .trim()
+      .toUpperCase();
+
+    const unitPrice = await getProductUnitPrice(productId);
+    const baseSubtotal =
+      unitPrice !== null ? unitPrice * quantity : Number(body.price || 0) * quantity;
+    let authoritativeDiscount = 0;
+    let promoQuotaUsed = false;
+
+    if (promoCode) {
+      const validated = await callValidatePromo(promoCode, baseSubtotal);
+      if (!validated.ok) {
+        return NextResponse.json({ success: false, message: validated.message }, { status: 400 });
+      }
+      authoritativeDiscount = computeDiscount(baseSubtotal, validated);
+      promoQuotaUsed = true;
+    }
+
+    // Harga final otoritatif per unit (setelah promo) & total server-side
+    const discountedSubtotal = Math.max(0, baseSubtotal - authoritativeDiscount);
+    const clientFee = money(body.fee || 0);
+    const priorityTotal = money(discountedSubtotal + clientFee);
+    const discountPrice = promoCode ? String(money(authoritativeDiscount)) : "0";
+
     const newOrderData = {
       orderId,
       gameSlug: body.game_slug || body.slug || "mobile-legends",
@@ -40,15 +71,13 @@ async function postHandler(req: Request) {
       idGames: String(primaryId),
       serverGames: String(serverVal),
       nickname: body.nickname || "Player",
-      quantity: Number(body.quantity || 1),
-      price: body.price ? String(body.price) : "0",
-      totalPrice:
-        body.total_price || body.totalPrice ? String(body.total_price || body.totalPrice) : "0",
+      quantity,
+      price: body.price
+        ? String(Number(body.price) > Number(discountedSubtotal) ? body.price : discountedSubtotal)
+        : String(discountedSubtotal),
+      totalPrice: String(priorityTotal),
       fee: body.fee ? String(body.fee) : "0",
-      discountPrice:
-        body.discount_price || body.discountPrice
-          ? String(body.discount_price || body.discountPrice)
-          : "0",
+      discountPrice,
       promoPrice:
         body.promo_price || body.promoPrice ? String(body.promo_price || body.promoPrice) : "0",
       paymentMethodId: body.payment_method_id || body.paymentMethodId || "qris",
@@ -56,19 +85,53 @@ async function postHandler(req: Request) {
       paymentCode: body.payment_code || body.paymentCode || "QRIS",
       whatsapp: body.whatsapp || "",
       email: body.email || "",
-      promoCode: body.promo_code || body.promoCode || "",
-      promoDiscount: body.promo_discount ? String(body.promo_discount) : "0",
+      promoCode,
+      promoDiscount: promoCode ? discountPrice : "0",
       paymentStatus: "pending",
       buyStatus: "pending",
       expiredTime,
       accountData: fullAccountData,
     };
 
+    const hasDb = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
+
+    // R3: reserve kuota atomik SEBELUM insert order — jika kuota penuh saat itu juga
+    // (race/oversell), tolak order tanpa menyimpan baris orfan. Rowcount 0 = quota habis.
+    let promoQuotaReserved = false;
+    if (hasDb && promoCode && promoQuotaUsed) {
+      const quotaRes = await sqlClient`
+        update public.promo_codes
+        set used_count = used_count + 1
+        where code = ${promoCode} and used_count < quota
+        returning code
+      `;
+      if (quotaRes.length === 0) {
+        logger.warn("promo quota exhausted at order time", { orderId, promoCode });
+        return NextResponse.json(
+          { success: false, message: `Kode promo ${promoCode} sudah habis digunakan` },
+          { status: 400 },
+        );
+      }
+      promoQuotaReserved = true;
+    }
+
     // Simpan ke database Supabase (Wajib sukses di produksi)
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+    if (hasDb) {
       try {
         await db.insert(orders).values(newOrderData);
       } catch (dbErr: any) {
+        // Rollback kuota yang sudah di-reserve agar order gagal tidak menghabiskan kuota.
+        if (promoQuotaReserved) {
+          try {
+            await sqlClient`
+              update public.promo_codes
+              set used_count = greatest(used_count - 1, 0)
+              where code = ${promoCode}
+            `;
+          } catch (rollbackErr: any) {
+            logger.error("rollback promo quota failed", { orderId, error: rollbackErr });
+          }
+        }
         logger.error("Gagal menyimpan pesanan ke database", {
           orderId,
           error: dbErr,

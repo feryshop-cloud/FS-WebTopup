@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
-import { db, promoCodes } from "@/lib/db";
-import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
+import { callValidatePromo, getProductUnitPrice, computeDiscount } from "@/lib/promo";
 
 export const dynamic = "force-dynamic";
+
+const money = (v: any) => Math.max(0, Math.floor(Number(v ?? 0)));
 
 async function postHandler(req: Request) {
   try {
     const body = await req.json();
-    const codeInput = (body.promo_code || body.code || "").trim().toUpperCase();
-    const subtotal = Number(body.total_price || body.subtotal || 0);
+    const codeInput = String(body.promo_code || body.code || "")
+      .trim()
+      .toUpperCase();
+    const productId = String(body.product_id || body.productId || "");
+    const quantity = Math.max(1, Math.floor(Number(body.quantity) || 1));
 
     if (!codeInput) {
       return NextResponse.json(
@@ -19,95 +23,42 @@ async function postHandler(req: Request) {
       );
     }
 
-    let promo: any = null;
-
-    if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
-      try {
-        const dbPromos = await db
-          .select()
-          .from(promoCodes)
-          .where(eq(promoCodes.code, codeInput))
-          .limit(1);
-        if (dbPromos && dbPromos[0] && dbPromos[0].isActive) {
-          const p = dbPromos[0];
-          promo = {
-            code: p.code,
-            discount_type: p.discountType,
-            discount_value: Number(p.discountValue),
-            min_order: Number(p.minOrder),
-            max_discount: Number(p.maxDiscount),
-          };
-        }
-      } catch (e) {
-        logger.warn("promo validate fell back to built-in codes", { error: e });
-      }
-    }
-
-    if (!promo) {
-      if (codeInput === "FERYSHOP10") {
-        promo = {
-          code: "FERYSHOP10",
-          discount_type: "percent",
-          discount_value: 10,
-          min_order: 20000,
-          max_discount: 15000,
-        };
-      } else if (codeInput === "HEMAT5RB") {
-        promo = {
-          code: "HEMAT5RB",
-          discount_type: "fixed",
-          discount_value: 5000,
-          min_order: 30000,
-          max_discount: 5000,
-        };
-      } else if (codeInput === "NEWUSER") {
-        promo = {
-          code: "NEWUSER",
-          discount_type: "fixed",
-          discount_value: 10000,
-          min_order: 50000,
-          max_discount: 10000,
-        };
-      }
-    }
-
-    if (!promo) {
+    // Harga unit diambil server-side (idempotent) — jangan percaya subtotal client (R1).
+    const unitPrice = productId ? await getProductUnitPrice(productId) : null;
+    if (productId && unitPrice === null) {
       return NextResponse.json(
-        { success: false, message: "Kode promo tidak valid atau sudah kadaluarsa" },
+        { success: false, message: "Produk tidak ditemukan" },
         { status: 404 },
       );
     }
 
-    if (subtotal < promo.min_order) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: `Minimal transaksi untuk kode ini adalah Rp ${promo.min_order.toLocaleString("id-ID")}`,
-        },
-        { status: 400 },
-      );
+    const subtotal = unitPrice !== null ? unitPrice * quantity : 0;
+
+    const result = await callValidatePromo(codeInput, subtotal);
+    if (!result.ok) {
+      return NextResponse.json({ success: false, message: result.message }, { status: 400 });
     }
 
-    let discountAmount = 0;
-    if (promo.discount_type === "percent") {
-      discountAmount = Math.floor((subtotal * promo.discount_value) / 100);
-      if (promo.max_discount > 0 && discountAmount > promo.max_discount) {
-        discountAmount = promo.max_discount;
-      }
-    } else {
-      discountAmount = promo.discount_value;
-    }
-
-    const finalPrice = Math.max(0, subtotal - discountAmount);
+    const discount = computeDiscount(subtotal, result);
+    const finalPrice = Math.max(0, subtotal - discount);
 
     return NextResponse.json(
       {
         success: true,
         message: "Kode promo berhasil digunakan!",
         data: {
-          promo_code: promo.code,
-          discount_amount: discountAmount,
-          final_price: finalPrice,
+          promo: {
+            code: result.code,
+            discount_type: result.discountType,
+            discount_value: result.discountValue,
+            min_order: result.minOrder,
+            max_discount: result.maxDiscount,
+          },
+          pricing: {
+            discount: money(discount),
+            final_price: money(finalPrice),
+            subtotal: money(subtotal),
+          },
         },
       },
       { status: 200 },
