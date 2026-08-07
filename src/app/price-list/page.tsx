@@ -142,7 +142,7 @@ export default function PriceListPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="min-w-[260px]">Produk</TableHead>
-                      <TableHead className="whitespace-nowrap text-left">Basic</TableHead>
+                      <TableHead className="whitespace-nowrap text-left">{MEMBER_PRICE_FLAG ? 'Basic' : 'Harga'}</TableHead>
                       {MEMBER_PRICE_FLAG && (
                         <>
                           <TableHead className="whitespace-nowrap text-left">Gold</TableHead>
