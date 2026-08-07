@@ -65,7 +65,7 @@ export const games = pgTable("games", {
 
 // 4. Products / Nominal Vouchers (Matches live DB: public.products)
 export const products = pgTable("products", {
-  id: varchar("id", { length: 100 }).primaryKey(), // SKU / Provider Product ID
+  id: uuid("id").primaryKey().defaultRandom(), // generated UUID (bukan SKU)
   gameSlug: varchar("game_slug", { length: 255 }).notNull(),
   categoryId: integer("category_id").references(() => productCategories.id, { onDelete: "set null" }),
   title: varchar("title", { length: 255 }).notNull(),
@@ -75,7 +75,7 @@ export const products = pgTable("products", {
   sellingPricePlatinum: numeric("selling_price_platinum", { precision: 15, scale: 2 }).notNull(),
   promoPrice: numeric("promo_price", { precision: 15, scale: 2 }),
   costPrice: numeric("cost_price", { precision: 15, scale: 2 }).default("0"),
-  sku: varchar("sku", { length: 100 }),
+  sku: varchar("sku", { length: 100 }).unique(),
   images: text("images"),
   logo: text("logo"),
   isActive: boolean("is_active").default(true),
@@ -130,7 +130,7 @@ export const orders = pgTable("orders", {
   orderId: varchar("order_id", { length: 100 }).notNull().unique(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
   gameSlug: varchar("game_slug", { length: 255 }).notNull(),
-  productId: varchar("product_id", { length: 100 }).notNull(),
+  productId: uuid("product_id").notNull(),
   productTitle: varchar("product_title", { length: 255 }).notNull(),
   idGames: varchar("id_games", { length: 255 }).notNull(),
   serverGames: varchar("server_games", { length: 100 }),
