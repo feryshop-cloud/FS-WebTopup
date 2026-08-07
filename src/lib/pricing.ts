@@ -9,9 +9,10 @@ export interface PriceableProduct {
 
 /** Harga efektif produk berdasar role; saat flag false selalu `selling_price`. */
 export const getPriceByRole = (
-  p: PriceableProduct,
+  p: PriceableProduct | null | undefined,
   role?: string | null,
 ): number => {
+  if (!p) return 0;
   if (!MEMBER_PRICE_FLAG) return Number(p.selling_price ?? 0);
   if (role === "gold") return Number(p.selling_price_gold ?? p.selling_price);
   if (role === "platinum") return Number(p.selling_price_platinum ?? p.selling_price);
