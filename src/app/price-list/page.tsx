@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
 import { ExternalLink, CheckCircle2, XCircle } from "lucide-react";
+import { MEMBER_PRICE_FLAG } from "@/lib/pricing";
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import {
@@ -142,8 +143,12 @@ export default function PriceListPage() {
                     <TableRow>
                       <TableHead className="min-w-[260px]">Produk</TableHead>
                       <TableHead className="whitespace-nowrap text-left">Basic</TableHead>
-                      <TableHead className="whitespace-nowrap text-left">Gold</TableHead>
-                      <TableHead className="whitespace-nowrap text-left">Platinum</TableHead>
+                      {MEMBER_PRICE_FLAG && (
+                        <>
+                          <TableHead className="whitespace-nowrap text-left">Gold</TableHead>
+                          <TableHead className="whitespace-nowrap text-left">Platinum</TableHead>
+                        </>
+                      )}
                       <TableHead className="whitespace-nowrap text-left">Status</TableHead>
                       <TableHead className="whitespace-nowrap text-center">Aksi</TableHead>
                     </TableRow>
@@ -189,12 +194,16 @@ export default function PriceListPage() {
                           <TableCell className="whitespace-nowrap">
                             {fmtRupiah(product.selling_price)}
                           </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {fmtRupiah(product.selling_price_gold)}
-                          </TableCell>
-                          <TableCell className="whitespace-nowrap">
-                            {fmtRupiah(product.selling_price_platinum)}
-                          </TableCell>
+                          {MEMBER_PRICE_FLAG && (
+                            <>
+                              <TableCell className="whitespace-nowrap">
+                                {fmtRupiah(product.selling_price_gold)}
+                              </TableCell>
+                              <TableCell className="whitespace-nowrap">
+                                {fmtRupiah(product.selling_price_platinum)}
+                              </TableCell>
+                            </>
+                          )}
 
                           <TableCell className="whitespace-nowrap">
                             <div className="inline-flex items-center gap-2">

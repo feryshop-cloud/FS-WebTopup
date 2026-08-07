@@ -47,6 +47,9 @@ export interface PublicProduct {
   brand?: string | null;
 }
 
+/** Re-exported pricing helpers (defined in @/lib/pricing to stay free of Node-only deps). */
+export { MEMBER_PRICE_FLAG, getPriceByRole } from "@/lib/pricing";
+
 export interface PublicCategory {
   id: number;
   title: string;

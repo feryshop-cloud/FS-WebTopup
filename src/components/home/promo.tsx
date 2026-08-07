@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import LogoInstan from "@/components/logo/instan";
+import { getPriceByRole } from "@/lib/pricing";
 import type { HomeFallbackData } from "@/lib/data/home";
 
 interface PromoProduct {
@@ -50,12 +51,6 @@ export default function Promo({ initialData }: { initialData?: HomeFallbackData[
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const promoEndAt = data?.products?.[0]?.end_at;
-
-  const getPriceByRole = (item: PromoProduct, r: string) => {
-    if (r === "platinum") return Number(item.selling_price_platinum ?? item.selling_price);
-    if (r === "gold") return Number(item.selling_price_gold ?? item.selling_price);
-    return Number(item.selling_price ?? 0);
-  };
 
   const items = useMemo(() => {
     const products = Array.isArray(data?.products) ? data.products : [];

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { seedGames, seedProducts } from "@/lib/db/seed-data";
-import { getLivePublicGames, getLivePublicProducts } from "@/lib/db/live-adapter";
+import { getLivePublicGames, getLivePublicProducts, MEMBER_PRICE_FLAG } from "@/lib/db/live-adapter";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
@@ -35,12 +35,16 @@ async function getHandler() {
             title: product.title,
             brand: product.brand || game.title,
             selling_price: Number(product.selling_price),
-            selling_price_gold: product.selling_price_gold
-              ? Number(product.selling_price_gold)
-              : Number(product.selling_price),
-            selling_price_platinum: product.selling_price_platinum
-              ? Number(product.selling_price_platinum)
-              : Number(product.selling_price),
+            ...(MEMBER_PRICE_FLAG
+              ? {
+                  selling_price_gold: product.selling_price_gold
+                    ? Number(product.selling_price_gold)
+                    : Number(product.selling_price),
+                  selling_price_platinum: product.selling_price_platinum
+                    ? Number(product.selling_price_platinum)
+                    : Number(product.selling_price),
+                }
+              : {}),
             status: product.is_gangguan ? 0 : product.is_active ? 1 : 0,
             is_active: product.is_active,
             logo: product.logo || product.images || game.logo || game.image || null,

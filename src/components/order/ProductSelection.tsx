@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import LogoInstan from "@/components/logo/instan";
 import { Product } from "@/types";
+import { getPriceByRole } from "@/lib/pricing";
 
 interface ProductSelectionProps {
   isLoading: boolean;
@@ -13,13 +14,6 @@ interface ProductSelectionProps {
   productRef: React.RefObject<HTMLElement | null>;
   role?: string | null;
 }
-
-const getPriceByRole = (p: Product, role?: string | null) =>
-  role === "gold"
-    ? p.selling_price_gold
-    : role === "platinum"
-      ? p.selling_price_platinum
-      : p.selling_price;
 
 const displayCategoryName = (title: string) => {
   if (title === "Top Up") return "Umum";

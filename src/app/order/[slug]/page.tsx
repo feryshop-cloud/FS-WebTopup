@@ -20,6 +20,7 @@ import ConfirmDrawer from "@/components/order/ConfirmDrawer";
 import OrderSummaryDekstop from "@/components/order/OrderSummaryDekstop";
 import OrderSummaryMobile from "@/components/order/OrderSummaryMobile";
 import { apiPath } from "@/lib/routes";
+import { getPriceByRole } from "@/lib/pricing";
 
 const num = (v: any) => {
   const n = Number(v ?? 0);
@@ -199,14 +200,12 @@ export default function OrderPage() {
   useEffect(() => clearPromo(), [selectedPayment, clearPromo]);
   useEffect(() => clearPromo(), [effectiveQuantity, clearPromo]);
 
-  const baseProductPrice = useMemo(() => {
+  const baseProductPrice = ((): number => {
     const promo = num(selectedProductDetails?.promo_price);
     if (promo > 0) return money(promo);
 
-    if (role === "gold") return money(selectedProductDetails?.selling_price_gold);
-    if (role === "platinum") return money(selectedProductDetails?.selling_price_platinum);
-    return money(selectedProductDetails?.selling_price);
-  }, [selectedProductDetails, role]);
+    return money(getPriceByRole(selectedProductDetails as any, role));
+  })();
 
   const productPrice = useMemo(() => {
     if (promoFinalPrice !== null) return money(promoFinalPrice);
