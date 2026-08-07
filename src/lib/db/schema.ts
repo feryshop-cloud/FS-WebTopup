@@ -67,8 +67,9 @@ export const games = pgTable("games", {
 export const products = pgTable("products", {
   id: varchar("id", { length: 100 }).primaryKey(), // SKU / Provider Product ID
   gameSlug: varchar("game_slug", { length: 255 }).notNull(),
-  categoryId: integer("category_id"),
+  categoryId: integer("category_id").references(() => productCategories.id, { onDelete: "set null" }),
   title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
   sellingPrice: numeric("selling_price", { precision: 15, scale: 2 }).notNull(),
   sellingPriceGold: numeric("selling_price_gold", { precision: 15, scale: 2 }).notNull(),
   sellingPricePlatinum: numeric("selling_price_platinum", { precision: 15, scale: 2 }).notNull(),
@@ -80,8 +81,23 @@ export const products = pgTable("products", {
   isActive: boolean("is_active").default(true),
   isGangguan: boolean("is_gangguan").default(false),
   sortOrder: integer("sort_order").default(0),
+  startCutOff: varchar("start_cut_off", { length: 5 }),
+  endCutOff: varchar("end_cut_off", { length: 5 }),
+  lastSyncedAt: timestamp("last_synced_at", { withTimezone: true }),
+  provider: varchar("provider", { length: 50 }).default("digiflazz"),
+  providerRef: varchar("provider_ref", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// 4b. Product Categories (Matches live DB: public.product_categories)
+export const productCategories = pgTable("product_categories", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).unique(),
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // 5. Payment Methods (Matches live DB: public.payment_methods)
@@ -206,6 +222,7 @@ export type NewUser = typeof users.$inferInsert;
 export type Category = typeof categories.$inferSelect;
 export type Game = typeof games.$inferSelect;
 export type Product = typeof products.$inferSelect;
+export type ProductCategory = typeof productCategories.$inferSelect;
 export type PaymentMethod = typeof paymentMethods.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;

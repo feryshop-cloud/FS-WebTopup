@@ -34,6 +34,7 @@ export interface PublicProduct {
   id: string;
   game_slug: string;
   title: string;
+  description?: string | null;
   selling_price: number | string;
   selling_price_gold?: number | string | null;
   selling_price_platinum?: number | string | null;
@@ -45,6 +46,18 @@ export interface PublicProduct {
   logo?: string | null;
   images?: string | null;
   brand?: string | null;
+  category_id?: number | null;
+  start_cut_off?: string | null;
+  end_cut_off?: string | null;
+  category?: PublicProductCategory | null;
+}
+
+export interface PublicProductCategory {
+  id: number;
+  title: string;
+  slug?: string | null;
+  sort_order?: number | null;
+  is_active?: boolean | null;
 }
 
 /** Re-exported pricing helpers (defined in @/lib/pricing to stay free of Node-only deps). */
@@ -241,7 +254,7 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 
   try {
     const response = await fetch(
-      `${restUrl}/rest/v1/products?select=id,game_slug,title,selling_price,selling_price_gold,selling_price_platinum,promo_price,cost_price,sku,is_active,is_gangguan,logo,images&is_active=eq.true&order=title.asc`,
+      `${restUrl}/rest/v1/products?select=id,game_slug,title,description,selling_price,selling_price_gold,selling_price_platinum,promo_price,cost_price,sku,is_active,is_gangguan,logo,images,category_id,start_cut_off,end_cut_off,product_categories(id,title,slug,sort_order,is_active)&is_active=eq.true&order=title.asc`,
       {
         headers: {
           apikey: publishableKey,
@@ -260,11 +273,64 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
       return [];
     }
 
-    const data = (await response.json()) as PublicProduct[];
-    logger.info("getLivePublicProducts success", { count: data.length });
-    return data;
+    const data = (await response.json()) as Array<
+      PublicProduct & {
+        product_categories?: PublicProductCategory | PublicProductCategory[] | null;
+      }
+    >;
+
+    const products = data.map((p) => {
+      const cat = p.product_categories;
+      const category = Array.isArray(cat) ? cat[0] ?? null : cat ?? null;
+      const { product_categories: _omit, ...rest } = p;
+      return { ...rest, category };
+    });
+
+    logger.info("getLivePublicProducts success", { count: products.length });
+    return products;
   } catch (error) {
     logger.error("getLivePublicProducts failed", { error });
+    return [];
+  }
+}
+
+export async function getLivePublicProductCategories(): Promise<PublicProductCategory[]> {
+  const restUrl = getSupabaseRestUrl();
+  const publishableKey = getSupabasePublishableKey();
+  if (!restUrl || !publishableKey) {
+    logger.warn("getLivePublicProductCategories missing credentials", {
+      restUrl,
+      hasKey: Boolean(publishableKey),
+    });
+    return [];
+  }
+
+  try {
+    const response = await fetch(
+      `${restUrl}/rest/v1/product_categories?select=id,title,slug,sort_order,is_active&is_active=eq.true&order=sort_order.asc`,
+      {
+        headers: {
+          apikey: publishableKey,
+          Authorization: `Bearer ${publishableKey}`,
+        },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      const errText = await response.text();
+      logger.error("getLivePublicProductCategories http error", {
+        status: response.status,
+        body: errText,
+      });
+      return [];
+    }
+
+    const data = (await response.json()) as PublicProductCategory[];
+    logger.info("getLivePublicProductCategories success", { count: data.length });
+    return data;
+  } catch (error) {
+    logger.error("getLivePublicProductCategories failed", { error });
     return [];
   }
 }

@@ -38,7 +38,7 @@ const ProductSelection: React.FC<ProductSelectionProps> = ({
         if (!acc[key]) {
           acc[key] = {
             items: [],
-            logo: product.category?.logo || null,
+            logo: null,
           };
         }
         acc[key].items.push(product);

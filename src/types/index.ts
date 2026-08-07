@@ -5,16 +5,27 @@ export interface CategoryObj {
   game: string;
 }
 
+export interface ProductCategory {
+  id: number;
+  title: string;
+  slug?: string | null;
+  sort_order?: number | null;
+  is_active?: boolean | null;
+}
+
 export interface Product {
   id: string;
   title: string;
   images?: string;
   logo?: string;
-  category?: CategoryObj | null;
+  category?: ProductCategory | null;
+  description?: string | null;
   selling_price: number;
   selling_price_gold: number;
   selling_price_platinum: number;
   promo_price?: number | null;
+  start_cut_off?: string | null;
+  end_cut_off?: string | null;
 }
 
 export interface InvoiceMedia {
