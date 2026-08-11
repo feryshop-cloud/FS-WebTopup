@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import useSWR from "swr";
 import { ContentLayout } from "@/components/panel/content-layout";
 import { Slider } from "@/components/home/slider";
@@ -53,12 +53,6 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const categoryRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (dataCategories?.data?.length > 0 && !selectedCategory) {
-      setSelectedCategory(String(dataCategories.data[0].id));
-    }
-  }, [dataCategories, selectedCategory]);
-
   const scrollCategories = useCallback((direction: "left" | "right") => {
     if (!categoryRef.current) return;
     categoryRef.current.scrollBy({
@@ -68,10 +62,23 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
   }, []);
 
   const filteredGames = useMemo(() => {
-    if (!dataGames || !selectedCategory) return [];
+    if (!dataGames) return [];
     const list = Array.isArray(dataGames?.games) ? dataGames.games : [];
-    return list.filter((game: any) => String(game.category_id) === String(selectedCategory));
-  }, [dataGames, selectedCategory]);
+    if (!selectedCategory || list.length === 0) return list;
+
+    const category = (dataCategories?.data ?? []).find(
+      (c: any) => String(c.id) === String(selectedCategory),
+    );
+
+    const matches = (game: any): boolean => {
+      if (String(game.category_id) === String(selectedCategory)) return true;
+      if (category?.game && game.slug === category.game) return true;
+      return false;
+    };
+
+    const filtered = list.filter(matches);
+    return filtered.length > 0 ? filtered : list;
+  }, [dataGames, dataCategories, selectedCategory]);
 
   const isLoadingGames = !dataGames && !errorGames;
   const isLoadingCategories = !dataCategories && !errorCategories;

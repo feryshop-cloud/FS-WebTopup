@@ -1,5 +1,5 @@
 const SUPABASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://trviikqvvujcibplqwud.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://xdvlygpaylnicojuvhyk.supabase.co";
 // We require the service role key to insert records safely
 const SUPABASE_KEY_ENV = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
