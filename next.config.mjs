@@ -26,6 +26,9 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
+    imageSizes: [
+      16, 20, 24, 28, 32, 36, 40, 48, 56, 64, 96, 120, 128, 192, 256, 300, 384, 640, 1280,
+    ],
     remotePatterns: [
       // 1. Supabase Storage (Wildcard & Dynamic URL)
       { protocol: "https", hostname: "*.supabase.co" },
