@@ -81,8 +81,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                           ? gamePopuler.image.trim()
                           : "/default-og-image.jpg"
                       }
-                      crossOrigin="anonymous"
-                    />
+                      />
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   </div>
 
