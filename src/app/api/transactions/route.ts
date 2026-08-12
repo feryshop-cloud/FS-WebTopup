@@ -1,18 +1,27 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { db, orders } from "@/lib/db";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
 async function getHandler() {
   try {
+    const session = await getServerSession(authOptions);
+    const userId =
+      typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
+
     let results: any[] = [];
 
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
-        const dbOrders = await db.select().from(orders).orderBy(desc(orders.createdAt)).limit(20);
+        const q = db.select().from(orders).orderBy(desc(orders.createdAt)).limit(20);
+        const dbOrders = userId
+          ? await q.where(eq(orders.userId, userId))
+          : await q;
         if (dbOrders && dbOrders.length > 0) {
           results = dbOrders.map((o) => ({
             id: o.id,
@@ -30,7 +39,7 @@ async function getHandler() {
       }
     }
 
-    if (results.length === 0) {
+    if (results.length === 0 && !userId) {
       results = [
         {
           id: 1,

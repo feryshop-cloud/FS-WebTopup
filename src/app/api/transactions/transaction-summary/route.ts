@@ -1,11 +1,18 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { db, orders } from "@/lib/db";
+import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
+import { authOptions } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    const userId =
+      typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
+
     let summary = {
       total_transaction: 0,
       total_spent: 0,
@@ -16,7 +23,8 @@ export async function GET() {
 
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
-        const dbOrders = await db.select().from(orders).limit(100);
+        const q = db.select().from(orders).limit(100);
+        const dbOrders = userId ? await q.where(eq(orders.userId, userId)) : await q;
         if (dbOrders && dbOrders.length > 0) {
           summary.total_transaction = dbOrders.length;
           dbOrders.forEach((o) => {
@@ -35,7 +43,7 @@ export async function GET() {
       }
     }
 
-    if (summary.total_transaction === 0) {
+    if (summary.total_transaction === 0 && !userId) {
       summary = {
         total_transaction: 2,
         total_spent: 63500,
@@ -45,10 +53,21 @@ export async function GET() {
       };
     }
 
+    const data = {
+      total: summary.total_transaction,
+      paid: summary.success,
+      unpaid: summary.pending,
+      failed: summary.failed,
+      expired: 0,
+      failed_expired: summary.failed,
+      total_spent: summary.total_spent,
+      total_transaction: summary.total_transaction,
+    };
+
     return NextResponse.json(
       {
         success: true,
-        data: summary,
+        data,
       },
       { status: 200 },
     );

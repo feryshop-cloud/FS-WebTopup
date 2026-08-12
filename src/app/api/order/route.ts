@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { db, orders, sqlClient } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { callValidatePromo, getProductUnitPrice, computeDiscount } from "@/lib/promo";
 
@@ -9,6 +11,9 @@ const money = (v: any) => Math.max(0, Math.floor(Number(v ?? 0)));
 async function postHandler(req: Request) {
   try {
     const body = await req.json();
+    const session = await getServerSession(authOptions);
+    const sessionUserId =
+      typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
 
     const orderId = `TSON-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
     const now = new Date();
@@ -65,6 +70,7 @@ async function postHandler(req: Request) {
 
     const newOrderData = {
       orderId,
+      userId: sessionUserId ?? undefined,
       gameSlug: body.game_slug || body.slug || "mobile-legends",
       productId: body.product_id || body.productId || "SKU-001",
       productTitle: body.product_title || body.productTitle || "Nominal Topup",

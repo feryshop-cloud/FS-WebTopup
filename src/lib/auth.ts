@@ -89,6 +89,9 @@ export const authOptions: NextAuthOptions = {
         (token as any).jwtToken = (user as any).token;
         (token as any).role = (user as any).role ?? null;
         (token as any).saldo = (user as any).saldo ?? null;
+        if (typeof (user as any).id !== "undefined") {
+          (token as any).userId = (user as any).id;
+        }
       }
       return token;
     },
@@ -99,6 +102,11 @@ export const authOptions: NextAuthOptions = {
           typeof (token as any).jwtToken === "string" ? (token as any).jwtToken : undefined;
         (session.user as any).role = (token as any).role ?? null;
         (session.user as any).saldo = (token as any).saldo ?? null;
+        if (typeof (token as any).userId !== "undefined") {
+          (session.user as any).id = (token as any).userId;
+        } else if (typeof (token as any).sub !== "undefined") {
+          (session.user as any).id = (token as any).sub;
+        }
       }
       return session;
     },
