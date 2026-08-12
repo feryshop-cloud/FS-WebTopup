@@ -83,10 +83,11 @@ async function getHandler() {
     return NextResponse.json(
       {
         success: true,
-        data: {
-          data: results,
-          total: results.length,
+        data: results,
+        meta: {
           current_page: 1,
+          per_page: 20,
+          total: results.length,
           last_page: 1,
         },
       },
