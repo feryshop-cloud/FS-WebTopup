@@ -15,6 +15,25 @@ async function postHandler(req: Request) {
     const sessionUserId =
       typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
 
+    const hasDb = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
+    const isUuid =
+      sessionUserId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionUserId);
+
+    // Hanya tautkan order ke user bila ada profile valid di public.users.
+    // Google OAuth tak otomatis membuat profile → userId null agar order tak gagal FK.
+    let safeUserId: string | undefined;
+    if (isUuid && hasDb) {
+      try {
+        const found = await sqlClient<{ id: string }[]>`
+          select id from public.users where id = ${sessionUserId} limit 1
+        `;
+        if (found[0]) safeUserId = sessionUserId;
+      } catch (e) {
+        logger.warn("userId lookup failed, order proceeds without owner", { error: e });
+      }
+    }
+
     const orderId = `TSON-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
     const now = new Date();
     const expiredTime = Math.floor(now.getTime() / 1000) + 86400; // 24 jam
@@ -70,7 +89,7 @@ async function postHandler(req: Request) {
 
     const newOrderData = {
       orderId,
-      userId: sessionUserId ?? undefined,
+      userId: safeUserId,
       gameSlug: body.game_slug || body.slug || "mobile-legends",
       productId: body.product_id || body.productId || "SKU-001",
       productTitle: body.product_title || body.productTitle || "Nominal Topup",
@@ -98,8 +117,6 @@ async function postHandler(req: Request) {
       expiredTime,
       accountData: fullAccountData,
     };
-
-    const hasDb = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
 
     // R3: reserve kuota atomik SEBELUM insert order — jika kuota penuh saat itu juga
     // (race/oversell), tolak order tanpa menyimpan baris orfan. Rowcount 0 = quota habis.
