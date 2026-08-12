@@ -11,10 +11,26 @@ export const dynamic = "force-dynamic";
 async function getHandler() {
   try {
     const session = await getServerSession(authOptions);
-    const userId =
+    const rawUserId =
       typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
+    const userId =
+      rawUserId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId)
+        ? rawUserId
+        : null;
 
     let results: any[] = [];
+
+    if (rawUserId && !userId) {
+      // Login (mis. Google) tapi tanpa profile UUID → tidak ada order miliknya.
+      return NextResponse.json(
+        {
+          success: true,
+          data: { data: [], total: 0, current_page: 1, last_page: 1 },
+        },
+        { status: 200 },
+      );
+    }
 
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
@@ -39,7 +55,7 @@ async function getHandler() {
       }
     }
 
-    if (results.length === 0 && !userId) {
+    if (results.length === 0 && !rawUserId) {
       results = [
         {
           id: 1,

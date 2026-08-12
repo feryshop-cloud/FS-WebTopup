@@ -10,8 +10,13 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    const userId =
+    const rawUserId =
       typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
+    const userId =
+      rawUserId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId)
+        ? rawUserId
+        : null;
 
     let summary = {
       total_transaction: 0,
@@ -20,6 +25,12 @@ export async function GET() {
       success: 0,
       failed: 0,
     };
+
+    if (rawUserId && !userId) {
+      // Login (mis. Google) tapi tanpa profile UUID → tidak ada order miliknya.
+      const empty = { total: 0, paid: 0, unpaid: 0, failed: 0, expired: 0, failed_expired: 0, total_spent: 0, total_transaction: 0 };
+      return NextResponse.json({ success: true, data: empty }, { status: 200 });
+    }
 
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
@@ -43,7 +54,7 @@ export async function GET() {
       }
     }
 
-    if (summary.total_transaction === 0 && !userId) {
+    if (summary.total_transaction === 0 && !rawUserId) {
       summary = {
         total_transaction: 2,
         total_spent: 63500,
