@@ -124,6 +124,10 @@ function getSupabasePublishableKey() {
   );
 }
 
+export function isSupabaseLiveConfigured(): boolean {
+  return Boolean(getSupabaseRestUrl() && getSupabasePublishableKey());
+}
+
 export async function getLivePublicGames(): Promise<PublicGame[]> {
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();

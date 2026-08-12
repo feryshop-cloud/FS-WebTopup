@@ -1,7 +1,11 @@
 import { desc, eq } from "drizzle-orm";
 
 import { db, articles } from "@/lib/db";
-import { getLivePublicGames, getLivePublicCategories } from "@/lib/db/live-adapter";
+import {
+  getLivePublicGames,
+  getLivePublicCategories,
+  isSupabaseLiveConfigured,
+} from "@/lib/db/live-adapter";
 import { seedCategories, seedGames, seedSliders } from "@/lib/db/seed-data";
 import { getSeedArticles, hasArticleDatabaseEnabled, normalizeArticle } from "@/lib/data/articles";
 import { logger } from "@/lib/logger";
@@ -25,7 +29,7 @@ export async function getSliderPayload() {
 export async function getGamesPayload() {
   let allGames: any[] = await getLivePublicGames();
 
-  if (allGames.length === 0) {
+  if (!isSupabaseLiveConfigured()) {
     allGames = seedGames.map((g) => ({
       id: g.id,
       title: g.title,
@@ -52,9 +56,9 @@ export async function getGamesPayload() {
 
 export async function getCategoriesPayload() {
   let allCategories: any[] = [];
-  const liveCategories = await getLivePublicCategories();
 
-  if (liveCategories.length > 0) {
+  if (isSupabaseLiveConfigured()) {
+    const liveCategories = await getLivePublicCategories();
     allCategories = liveCategories.map((c) => ({
       id: c.id,
       title: c.title,
@@ -63,7 +67,7 @@ export async function getCategoriesPayload() {
     }));
   }
 
-  if (allCategories.length === 0) {
+  if (!isSupabaseLiveConfigured()) {
     allCategories = seedCategories.map((c) => ({
       id: c.id,
       title: c.title,
