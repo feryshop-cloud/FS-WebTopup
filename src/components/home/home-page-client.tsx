@@ -77,7 +77,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
     };
 
     const filtered = list.filter(matches);
-    return filtered.length > 0 ? filtered : list;
+    return filtered;
   }, [dataGames, dataCategories, selectedCategory]);
 
   const isLoadingGames = !dataGames && !errorGames;
