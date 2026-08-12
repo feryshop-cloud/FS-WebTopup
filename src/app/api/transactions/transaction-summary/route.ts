@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { db, orders } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { authOptions } from "@/lib/auth";
 
@@ -17,6 +17,8 @@ export async function GET() {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId)
         ? rawUserId
         : null;
+    const sessionEmail =
+      typeof session?.user?.email === "string" ? session.user.email.toLowerCase() : null;
 
     let summary = {
       total_transaction: 0,
@@ -26,16 +28,19 @@ export async function GET() {
       failed: 0,
     };
 
-    if (rawUserId && !userId) {
-      // Login (mis. Google) tapi tanpa profile UUID → tidak ada order miliknya.
-      const empty = { total: 0, paid: 0, unpaid: 0, failed: 0, expired: 0, failed_expired: 0, total_spent: 0, total_transaction: 0 };
-      return NextResponse.json({ success: true, data: empty }, { status: 200 });
-    }
-
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
         const q = db.select().from(orders).limit(100);
-        const dbOrders = userId ? await q.where(eq(orders.userId, userId)) : await q;
+        let dbOrders;
+        if (userId) {
+          dbOrders = await q.where(
+            or(eq(orders.userId, userId), eq(orders.email, sessionEmail ?? "")),
+          );
+        } else if (sessionEmail) {
+          dbOrders = await q.where(eq(orders.email, sessionEmail));
+        } else {
+          dbOrders = await q;
+        }
         if (dbOrders && dbOrders.length > 0) {
           summary.total_transaction = dbOrders.length;
           dbOrders.forEach((o) => {

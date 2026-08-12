@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { db, orders } from "@/lib/db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, or } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
@@ -18,26 +18,26 @@ async function getHandler() {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId)
         ? rawUserId
         : null;
+    const sessionEmail =
+      typeof session?.user?.email === "string" ? session.user.email.toLowerCase() : null;
 
     let results: any[] = [];
-
-    if (rawUserId && !userId) {
-      // Login (mis. Google) tapi tanpa profile UUID → tidak ada order miliknya.
-      return NextResponse.json(
-        {
-          success: true,
-          data: { data: [], total: 0, current_page: 1, last_page: 1 },
-        },
-        { status: 200 },
-      );
-    }
 
     if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
       try {
         const q = db.select().from(orders).orderBy(desc(orders.createdAt)).limit(20);
-        const dbOrders = userId
-          ? await q.where(eq(orders.userId, userId))
-          : await q;
+        let dbOrders;
+        if (userId) {
+          // UUID user: order milik user_id + fallback email (utk order lama user Google).
+          dbOrders = await q.where(
+            or(eq(orders.userId, userId), eq(orders.email, sessionEmail ?? "")),
+          );
+        } else if (sessionEmail) {
+          // Login Google (id non-UUID): cocokkan via email order.
+          dbOrders = await q.where(eq(orders.email, sessionEmail));
+        } else {
+          dbOrders = await q;
+        }
         if (dbOrders && dbOrders.length > 0) {
           results = dbOrders.map((o) => ({
             id: o.id,
