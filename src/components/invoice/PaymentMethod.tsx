@@ -117,6 +117,8 @@ export function InvoicePaymentMethod({
 
   const paymentMethodCode = String(order.payment_method || "").toUpperCase();
   const rawPaymentCode = String(order.payment_code || "").trim();
+  const gatewayPaymentUrl = String(order.gateway_response?.payment_url || "").trim();
+  const isMockGateway = order.gateway_response?.provider === "mock" || gatewayPaymentUrl.length > 0;
   const explicitQrString = String(order.qr_string || "").trim();
   const explicitQrImageUrl = String(order.qr_image_url || "").trim();
   const qrispyImageBase64 = String(order.qrispy_image_base64 || "").trim();
@@ -472,6 +474,19 @@ export function InvoicePaymentMethod({
               </div>
             )}
           </div>
+
+          {isMockGateway && gatewayPaymentUrl && (
+            <div className="mt-4">
+              <Button asChild className="w-full" size="lg">
+                <a href={gatewayPaymentUrl} target="_blank" rel="noreferrer">
+                  Bayar Sekarang
+                </a>
+              </Button>
+              <p className="text-muted-foreground mt-2 text-xs">
+                Kamu akan diarahkan ke halaman simulasi pembayaran sandbox (mock gateway).
+              </p>
+            </div>
+          )}
 
           {isEwalletMethod && isUrlPayCode && (
             <div className="mt-4">

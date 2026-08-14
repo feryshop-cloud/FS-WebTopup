@@ -48,6 +48,7 @@ export async function GET(req: Request, context: { params: Promise<Params> }) {
             email: o.email,
             created_at: o.createdAt,
             expired_time: o.expiredTime,
+            gateway_response: o.gatewayResponse,
           };
 
           const dbGame = await db.select().from(games).where(eq(games.slug, o.gameSlug)).limit(1);

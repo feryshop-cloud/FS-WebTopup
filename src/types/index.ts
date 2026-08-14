@@ -119,6 +119,16 @@ export interface Transaction {
   dompetx_transaction_id?: string | null;
   dompetx_expires_at?: string | null;
   dompetx_paid_at?: string | null;
+
+  gateway_response?: {
+    provider?: string;
+    payment_id?: string;
+    payment_code?: string;
+    payment_url?: string;
+    expires_at?: number;
+    status?: string;
+    mock?: Record<string, unknown>;
+  } | null;
 }
 
 export type SummaryData = {

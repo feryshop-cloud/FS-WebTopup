@@ -181,7 +181,10 @@ export default function InvoicePage() {
 
     const isQrispy = String(order.payment_method || "").toUpperCase() === "QRISPY";
     const isDompetX = Boolean(order.dompetx_transaction_id);
-    if (!isQrispy && !isDompetX) return;
+    const isGatewayProvider = ["mock", "pakasir"].includes(
+      String(order.gateway_response?.provider || ""),
+    );
+    if (!isQrispy && !isDompetX && !isGatewayProvider) return;
     if (order.payment_status !== "UNPAID") return;
 
     let cancelled = false;

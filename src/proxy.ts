@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { formatLog } from "@/lib/logging/format";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const incomingId = request.headers.get("x-request-id");
   const requestId = incomingId || crypto.randomUUID();
 

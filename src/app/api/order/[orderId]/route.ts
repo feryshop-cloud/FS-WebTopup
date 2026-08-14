@@ -41,7 +41,10 @@ async function getHandler(req: Request, context: { params: Promise<Params> }) {
             price: Number(o.price),
             total_price: Number(o.totalPrice),
             payment_name: o.paymentName,
+            payment_method: o.paymentMethodId || o.paymentName || "",
             payment_code: o.paymentCode,
+            payment_code_display: o.paymentCodeDisplay,
+            qr_string: o.qrString,
             payment_status: o.paymentStatus,
             buy_status: o.buyStatus,
             serial_number: o.serialNumber,
@@ -49,6 +52,7 @@ async function getHandler(req: Request, context: { params: Promise<Params> }) {
             email: o.email,
             created_at: o.createdAt,
             expired_time: o.expiredTime,
+            gateway_response: o.gatewayResponse,
           };
 
           const dbGame = await db.select().from(games).where(eq(games.slug, o.gameSlug)).limit(1);

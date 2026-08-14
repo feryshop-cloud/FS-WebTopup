@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { db, orders, sqlClient } from "@/lib/db";
+import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { callValidatePromo, getProductUnitPrice, computeDiscount } from "@/lib/promo";
+import { createPayment, getPaymentServiceBaseUrl } from "@/lib/payment-client";
 
 const money = (v: any) => Math.max(0, Math.floor(Number(v ?? 0)));
 
@@ -176,6 +178,57 @@ async function postHandler(req: Request) {
       totalPrice: Number(newOrderData.totalPrice),
     });
 
+    // ---- Payment service worker (abstraction mock/pakasir, terpisah network) ----
+    // Buat payment intent di worker; simpan hasil di gateway_response.
+    // Jika gateway tidak dikonfigurasi / offline, order tetap berjalan (alur lama).
+    let paymentIntent: Awaited<ReturnType<typeof createPayment>> = null;
+    if (hasDb && getPaymentServiceBaseUrl()) {
+      try {
+        paymentIntent = await createPayment({
+          orderId,
+          amount: priorityTotal,
+          description: `${newOrderData.productTitle} - ${primaryId}${serverVal ? ` (${serverVal})` : ""}`,
+          customer: {
+            name: newOrderData.nickname,
+            whatsapp: newOrderData.whatsapp,
+            email: newOrderData.email,
+          },
+          expiresInSeconds: 86400,
+          returnUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/invoices/${orderId}`,
+        });
+
+        if (paymentIntent) {
+          const isQris =
+            paymentIntent.payment_method === "qris" || Boolean(paymentIntent.qr_string);
+          await db
+            .update(orders)
+            .set({
+              paymentCode: paymentIntent.payment_code,
+              paymentCodeDisplay:
+                paymentIntent.payment_code_display ??
+                (isQris ? "QRIS" : `Virtual Account ${paymentIntent.payment_code}`),
+              qrString: paymentIntent.qr_string ?? null,
+              paymentMethodId: paymentIntent.payment_method || newOrderData.paymentMethodId,
+              paymentName: paymentIntent.payment_method || newOrderData.paymentName,
+              gatewayResponse: { ...paymentIntent },
+              expiredTime: paymentIntent.expires_at,
+            })
+            .where(eq(orders.orderId, orderId));
+          logger.info("payment intent created", {
+            orderId,
+            provider: paymentIntent.provider,
+            paymentId: paymentIntent.payment_id,
+            status: paymentIntent.status,
+          });
+        }
+      } catch (e) {
+        logger.warn("payment setup failed, order proceeds without gateway", {
+          orderId,
+          error: e,
+        });
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
@@ -186,9 +239,17 @@ async function postHandler(req: Request) {
           payment_name: newOrderData.paymentName,
           total_price: Number(newOrderData.totalPrice),
           payment_status: "pending",
-          expired_time: expiredTime,
+          expired_time: paymentIntent?.expires_at ?? expiredTime,
+          gateway: paymentIntent
+            ? {
+                provider: paymentIntent.provider,
+                payment_id: paymentIntent.payment_id,
+                payment_code: paymentIntent.payment_code,
+                payment_url: paymentIntent.payment_url,
+              }
+            : null,
         },
-        redirect_url: `/invoice/${orderId}`,
+        redirect_url: paymentIntent?.payment_url ?? `/invoice/${orderId}`,
       },
       { status: 200 },
     );

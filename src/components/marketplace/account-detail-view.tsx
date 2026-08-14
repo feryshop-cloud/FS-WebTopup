@@ -18,22 +18,49 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
+import { useSettings } from "@/context/settings-context";
 import { cn, resolveStorageUrl } from "@/lib/utils";
+
+const toString = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : String(v));
 
 export function MarketplaceAccountDetailView({ account }: { account: GameAccount }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const settings = useSettings();
+  const data = settings?.data ?? {};
 
   const discountPercentage = account.originalPrice
     ? Math.round(((account.originalPrice - account.price) / account.originalPrice) * 100)
     : 0;
 
+  // Dashboard-controllable texts & WhatsApp contact (fallbacks to seed defaults)
+  const brandName = toString(data["marketplace.brand_name"] || "Feryshop");
+  const adminPhone = toString(data["marketplace.admin_whatsapp"] || "6281234567890");
+  const antiHackBadge = toString(
+    data["marketplace.anti_hack_badge"] || "100% Anti-Hack & All Monsep",
+  );
+  const priceLabel = toString(data["marketplace.price_label"] || "Harga Pas Rekber");
+  const buyButtonText = toString(data["marketplace.buy_button_text"] || "Beli via Rekber WhatsApp");
+  const askButtonText = toString(data["marketplace.ask_button_text"] || "Tanya Stok & Detail");
+  const securityTitle = toString(
+    data["marketplace.security_title"] || "Transaksi 100% Aman via Rekber Feryshop",
+  );
+  const securitySubtitle = toString(
+    data["marketplace.security_subtitle"] || "Garansi Penggantian / Anti-Hack",
+  );
+  const sellerInfoLabel = toString(data["marketplace.seller_info_label"] || "Informasi Penjual");
+  const specsTitle = toString(data["marketplace.specs_title"] || "Spesifikasi Akun Utama");
+  const descriptionTitle = toString(
+    data["marketplace.description_title"] || "Detail Deskripsi & Kelengkapan",
+  );
+  const listedLabel = toString(data["marketplace.listed_label"] || "Diposting");
+  const discountLabel = toString(data["marketplace.discount_label"] || "Diskon");
+
   // WhatsApp pre-filled messages
-  const adminPhone = "6281234567890"; // Admin Feryshop Rekber WhatsApp
   const tanyaMessage = encodeURIComponent(
-    `Halo Admin Feryshop, saya ingin bertanya tentang akun game berikut:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\n\nApakah akun ini masih tersedia dan ready Rekber?`,
+    `Halo Admin ${brandName}, saya ingin bertanya tentang akun game berikut:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\n\nApakah akun ini masih tersedia dan ready Rekber?`,
   );
   const beliMessage = encodeURIComponent(
-    `Halo Admin Feryshop, saya ingin MEMBELI akun game melalui Rekber resmi Feryshop:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\nPenjual: ${account.seller.name}\n\nMohon instruksi pembayaran dan proses serah terima datanya Admin.`,
+    `Halo Admin ${brandName}, saya ingin MEMBELI akun game melalui Rekber resmi ${brandName}:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\nPenjual: ${account.seller.name}\n\nMohon instruksi pembayaran dan proses serah terima datanya Admin.`,
   );
 
   const whatsappTanyaUrl = `https://wa.me/${adminPhone}?text=${tanyaMessage}`;
@@ -85,7 +112,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 )}
                 {discountPercentage > 0 && (
                   <span className="rounded-xl bg-red-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-lg">
-                    Diskon {discountPercentage}%
+                    {discountLabel} {discountPercentage}%
                   </span>
                 )}
               </div>
@@ -94,7 +121,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white">
                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/70 px-3 py-1.5 backdrop-blur-md">
                   <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                  100% Anti-Hack & All Monsep
+                  {antiHackBadge}
                 </span>
                 <span className="bg-primary/90 text-primary-foreground rounded-xl px-3 py-1.5">
                   ID: #{account.id.toUpperCase()}
@@ -137,7 +164,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               </span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs font-semibold">
                 <Clock className="h-3.5 w-3.5" />
-                Diposting {account.createdAt}
+                {listedLabel} {account.createdAt}
               </span>
             </div>
 
@@ -161,7 +188,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           {/* Key Specifications Grid */}
           <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
-              <Sparkles className="text-primary h-4 w-4" /> Spesifikasi Akun Utama
+              <Sparkles className="text-primary h-4 w-4" /> {specsTitle}
             </h2>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -203,7 +230,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           {/* Detailed Account Description */}
           <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Detail Deskripsi & Kelengkapan
+              <CheckCircle2 className="h-4 w-4 text-emerald-500" /> {descriptionTitle}
             </h2>
 
             <ul className="text-muted-foreground space-y-2.5 text-xs leading-relaxed sm:text-sm">
@@ -226,7 +253,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
 
             <div className="space-y-2">
               <span className="text-muted-foreground block text-xs font-bold uppercase tracking-wider">
-                Harga Pas Rekber
+                {priceLabel}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-black text-emerald-500 sm:text-3xl">
@@ -249,7 +276,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               >
                 <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="h-5 w-5 fill-white text-emerald-600" />
-                  Beli via Rekber WhatsApp
+                  {buyButtonText}
                 </a>
               </Button>
 
@@ -261,7 +288,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               >
                 <a href={whatsappTanyaUrl} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="text-primary h-4 w-4" />
-                  Tanya Stok & Detail
+                  {askButtonText}
                 </a>
               </Button>
             </div>
@@ -270,11 +297,11 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
             <div className="border-border/60 text-muted-foreground space-y-2.5 border-t pt-4 text-xs">
               <div className="text-foreground flex items-center gap-2 font-semibold">
                 <Lock className="h-4 w-4 shrink-0 text-emerald-500" />
-                <span>Transaksi 100% Aman via Rekber Feryshop</span>
+                <span>{securityTitle}</span>
               </div>
               <div className="flex items-center gap-2">
                 <UserCheck className="text-primary h-4 w-4 shrink-0" />
-                <span>Garansi Penggantian / Anti-Hack</span>
+                <span>{securitySubtitle}</span>
               </div>
             </div>
           </div>
@@ -282,7 +309,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           {/* Seller Profile Box */}
           <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-5 shadow-sm">
             <span className="text-muted-foreground block text-xs font-bold uppercase tracking-wider">
-              Informasi Penjual
+              {sellerInfoLabel}
             </span>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

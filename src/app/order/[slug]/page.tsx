@@ -464,11 +464,17 @@ export default function OrderPage() {
 
       const orderId =
         result?.orderId || result?.data?.orderId || result?.data?.order_id || result?.data?.orderID;
+      const gatewayPaymentUrl =
+        result?.data?.gateway?.payment_url || result?.data?.payment_url || null;
 
       if (response.ok && orderId) {
         toast.success("Pembelian berhasil, silakan lakukan pembayaran.");
         setIsConfirmOpen(false);
-        router.push(`/invoices/${orderId}`);
+        if (gatewayPaymentUrl) {
+          window.location.href = gatewayPaymentUrl;
+        } else {
+          router.push(`/invoices/${orderId}`);
+        }
       } else {
         toast.error(result.message || "Pembelian gagal silahkan coba lagi!");
       }
