@@ -1,37 +1,55 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import type { Metadata } from "next";
 import Image from "next/image";
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
-import { ContentLayout } from "@/components/panel/content-layout";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 import { format } from "date-fns";
 import { Eye } from "lucide-react";
-import Link from "next/link";
+import { ContentLayout } from "@/components/panel/content-layout";
+import { getArticleBySlug } from "@/lib/data/articles";
 
-export default function BlogDetailPage() {
-  const { slug } = useParams();
-  const { data, isLoading } = useSWR(`/api/blog/${slug}`, fetcher);
+interface BlogDetailPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
 
-  if (isLoading) {
-    return (
-      <ContentLayout title="Blog">
-        <div className="flex h-[80vh] items-center justify-center">
-          <LoadingSpinner size={40} />
-        </div>
-      </ContentLayout>
-    );
-  }
-
-  const blog = data?.blog;
+export async function generateMetadata({ params }: BlogDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const blog = await getArticleBySlug(slug);
 
   if (!blog) {
-    return (
-      <ContentLayout title="Blog">
-        <div className="py-20 text-center">Blog tidak ditemukan</div>
-      </ContentLayout>
-    );
+    return { title: "Feryshop | Artikel Tidak Ditemukan" };
+  }
+
+  const description = blog.excerpt ?? `Artikel ${blog.title} di Feryshop.`;
+
+  return {
+    title: `Feryshop | ${blog.title}`,
+    description,
+    openGraph: {
+      title: blog.title,
+      description,
+      type: "article",
+      url: `https://feryshop.com/artikel/${slug}`,
+      images: blog.thumbnail
+        ? [{ url: blog.thumbnail, width: 640, height: 360, alt: blog.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: blog.title,
+      description,
+      images: blog.thumbnail ? [blog.thumbnail] : [],
+    },
+  };
+}
+
+export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const { slug } = await params;
+  const blog = await getArticleBySlug(slug);
+
+  if (!blog) {
+    notFound();
   }
 
   return (
@@ -49,13 +67,15 @@ export default function BlogDetailPage() {
         <h1 className="text-3xl font-bold tracking-tight">{blog.title}</h1>
 
         {/* Featured Image */}
-        <Image
-          src={blog.image}
-          alt={blog.title}
-          width={640}
-          height={360}
-          className="h-auto w-full rounded-lg object-cover"
-        />
+        {blog.image ? (
+          <Image
+            src={blog.image}
+            alt={blog.title}
+            width={640}
+            height={360}
+            className="h-auto w-full rounded-lg object-cover"
+          />
+        ) : null}
 
         {/* Meta Info */}
         <div className="text-muted-foreground flex items-center justify-between text-sm">

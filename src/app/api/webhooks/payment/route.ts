@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { db, orders } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
@@ -79,6 +80,11 @@ async function postHandler(req: Request) {
           },
         })
         .where(eq(orders.orderId, orderId));
+
+      // Invalidate cache seketika: akun (jika akun marketplace) langsung hilang dari katalog,
+      // dan halaman invoice status user langsung ter-update lunas secara real-time.
+      revalidateTag("marketplace-accounts", { expire: 0 });
+      revalidatePath(`/invoices/${orderId}`);
     } else if (event === "payment.failed") {
       await db
         .update(orders)

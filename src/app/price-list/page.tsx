@@ -1,85 +1,28 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
-import { ExternalLink, CheckCircle2, XCircle } from "lucide-react";
-import { MEMBER_PRICE_FLAG } from "@/lib/pricing";
-
+import type { Metadata } from "next";
 import { ContentLayout } from "@/components/panel/content-layout";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { PriceListClient } from "@/components/price-list/price-list-client";
+import { getPriceListGames } from "@/lib/data/price-list";
 
-const num = (v: any) => {
-  const n = Number(v ?? 0);
-  return Number.isFinite(n) ? n : 0;
+export const metadata: Metadata = {
+  title: "Feryshop | Daftar Harga Produk Top Up",
+  description:
+    "Lihat daftar harga lengkap top up game di Feryshop. Murah, cepat, dan terpercaya dengan garansi 100% legal dan proses instan.",
+  openGraph: {
+    title: "Feryshop | Daftar Harga Produk Top Up",
+    description:
+      "Lihat daftar harga lengkap top up game di Feryshop. Murah, cepat, dan terpercaya dengan garansi 100% legal dan proses instan.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Feryshop | Daftar Harga Produk Top Up",
+    description:
+      "Lihat daftar harga lengkap top up game di Feryshop. Murah, cepat, dan terpercaya dengan garansi 100% legal dan proses instan.",
+  },
 };
 
-const fmtRupiah = (v: any) => {
-  const n = Math.max(0, Math.floor(num(v)));
-  if (!n) return "-";
-  return `Rp ${n.toLocaleString("id-ID")}`;
-};
-
-export default function PriceListPage() {
-  const { data, error, isLoading } = useSWR<any>("/api/price-list", fetcher, {
-    keepPreviousData: true,
-    revalidateIfStale: false,
-    dedupingInterval: 300_000,
-  });
-  const loading = isLoading && !data;
-  const err = error ? String(error?.message || error) : null;
-
-  const [selectedGameId, setSelectedGameId] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
-
-  const gameList = useMemo(() => {
-    if (!data?.success) return [];
-    return Array.isArray(data.data) ? data.data : [];
-  }, [data]);
-
-  useEffect(() => {
-    if (gameList.length && !selectedGameId) {
-      setSelectedGameId(String(gameList[0].id));
-    }
-  }, [gameList, selectedGameId]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedGameId]);
-
-  const selectedGame = useMemo(() => {
-    return gameList.find((g: any) => String(g.id) === String(selectedGameId)) || null;
-  }, [selectedGameId, gameList]);
-
-  const totalPages = useMemo(() => {
-    const total = selectedGame?.products?.length ?? 0;
-    return Math.max(1, Math.ceil(total / itemsPerPage));
-  }, [selectedGame, itemsPerPage]);
-
-  const paginatedProducts = useMemo(() => {
-    const products = Array.isArray(selectedGame?.products) ? selectedGame.products : [];
-    const start = (currentPage - 1) * itemsPerPage;
-    return products.slice(start, start + itemsPerPage);
-  }, [selectedGame, currentPage, itemsPerPage]);
+export default async function PriceListPage() {
+  const games = await getPriceListGames();
 
   return (
     <ContentLayout title="Daftar Produk">
@@ -91,177 +34,7 @@ export default function PriceListPage() {
           </p>
         </div>
 
-        {err ? (
-          <div className="bg-background mx-auto w-full max-w-4xl rounded-md border p-4 text-sm">
-            <div className="font-semibold text-red-600">Gagal memuat daftar harga</div>
-            <div className="text-muted-foreground mt-1">{err}</div>
-            <div className="mt-3">
-              <button
-                className="bg-my-color rounded-lg px-3 py-2 text-xs font-semibold text-white"
-                onClick={() => location.reload()}
-              >
-                Coba Lagi
-              </button>
-            </div>
-          </div>
-        ) : null}
-
-        <div className="mx-auto w-full max-w-md">
-          {loading ? (
-            <Skeleton className="h-10 w-full" />
-          ) : (
-            <Select value={selectedGameId} onValueChange={setSelectedGameId}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pilih Game" />
-              </SelectTrigger>
-              <SelectContent>
-                {gameList.map((game: any) => (
-                  <SelectItem key={game.id} value={String(game.id)}>
-                    {game.title || game.game_name || game.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
-        {loading ? (
-          <div className="bg-background mx-auto w-full max-w-4xl rounded-md border p-4">
-            <Skeleton className="h-10 w-full" />
-            <div className="mt-3 space-y-2">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </div>
-          </div>
-        ) : selectedGame ? (
-          <div className="space-y-4">
-            <div className="bg-background mx-auto w-full max-w-4xl rounded-md border">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="min-w-[260px]">Produk</TableHead>
-                      <TableHead className="whitespace-nowrap text-left">{MEMBER_PRICE_FLAG ? 'Basic' : 'Harga'}</TableHead>
-                      {MEMBER_PRICE_FLAG && (
-                        <>
-                          <TableHead className="whitespace-nowrap text-left">Gold</TableHead>
-                          <TableHead className="whitespace-nowrap text-left">Platinum</TableHead>
-                        </>
-                      )}
-                      <TableHead className="whitespace-nowrap text-left">Status</TableHead>
-                      <TableHead className="whitespace-nowrap text-center">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {paginatedProducts.map((product: any) => {
-                      const isActive = product.status === 1;
-
-                      const href = selectedGame?.slug
-                        ? `/order/${selectedGame.slug}?product_id=${encodeURIComponent(String(product.id))}`
-                        : "#";
-
-                      const imageUrl =
-                        product.logo || selectedGame?.logo || selectedGame?.image || null;
-
-                      return (
-                        <TableRow key={product.id}>
-                          <TableCell className="min-w-[260px]">
-                            <div className="flex items-center gap-3">
-                              <div className="bg-muted relative h-10 w-10 overflow-hidden rounded-md border">
-                                {imageUrl ? (
-                                  <Image
-                                    src={imageUrl}
-                                    alt={product.title}
-                                    fill
-                                    className="object-cover"
-                                    sizes="40px"
-                                    unoptimized
-                                  />
-                                ) : null}
-                              </div>
-
-                              <div className="min-w-0">
-                                <div className="line-clamp-2 font-medium leading-tight">
-                                  {product.title}
-                                </div>
-                                <div className="text-muted-foreground text-xs">{product.brand}</div>
-                              </div>
-                            </div>
-                          </TableCell>
-
-                          <TableCell className="whitespace-nowrap">
-                            {fmtRupiah(product.selling_price)}
-                          </TableCell>
-                          {MEMBER_PRICE_FLAG && (
-                            <>
-                              <TableCell className="whitespace-nowrap">
-                                {fmtRupiah(product.selling_price_gold)}
-                              </TableCell>
-                              <TableCell className="whitespace-nowrap">
-                                {fmtRupiah(product.selling_price_platinum)}
-                              </TableCell>
-                            </>
-                          )}
-
-                          <TableCell className="whitespace-nowrap">
-                            <div className="inline-flex items-center gap-2">
-                              {isActive ? (
-                                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                              ) : (
-                                <XCircle className="h-4 w-4 text-red-600" />
-                              )}
-                              <span className={isActive ? "text-emerald-600" : "text-red-600"}>
-                                {isActive ? "Tersedia" : "Gangguan"}
-                              </span>
-                            </div>
-                          </TableCell>
-
-                          <TableCell className="whitespace-nowrap text-center">
-                            <Button asChild size="sm" disabled={!selectedGame?.slug || !isActive}>
-                              <Link href={href} className="inline-flex items-center gap-2">
-                                Order <ExternalLink className="h-4 w-4" />
-                              </Link>
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-
-            {totalPages > 1 ? (
-              <div className="flex items-center justify-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                >
-                  Sebelumnya
-                </Button>
-
-                <div className="text-muted-foreground text-sm">
-                  Halaman {currentPage} / {totalPages}
-                </div>
-
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  Berikutnya
-                </Button>
-              </div>
-            ) : null}
-          </div>
-        ) : (
-          <div className="bg-background text-muted-foreground mx-auto w-full max-w-4xl rounded-md border p-4 text-sm">
-            Tidak ada produk.
-          </div>
-        )}
+        <PriceListClient games={games} />
       </div>
     </ContentLayout>
   );

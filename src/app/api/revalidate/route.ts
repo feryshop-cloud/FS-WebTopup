@@ -10,6 +10,7 @@ const ALLOWED_TAGS = new Set([
   "catalog-payment",
   "settings",
   "marketplace",
+  "marketplace-accounts",
 ]);
 
 async function postHandler(req: Request) {
