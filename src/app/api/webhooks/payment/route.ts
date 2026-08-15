@@ -8,9 +8,16 @@ import { verifyPaymentWebhookSignature, type PaymentWebhookPayload } from "@/lib
 export const dynamic = "force-dynamic";
 
 /**
- * Webhook endpoint yang dipanggil payment-service worker (Cloudflare Worker).
- * Worker menandatangani body dengan HMAC-SHA256 (header x-payment-signature,
- * kompat mundur x-mock-signature). Provider bisa mock / pakasir.
+ * POST /api/webhooks/payment
+ *
+ * Webhook handler invoked by the external payment-service worker (Cloudflare Worker).
+ * The worker signs request bodies with an HMAC-SHA256 signature using the shared secret.
+ *
+ * Key Steps:
+ * 1. Verifies HMAC-SHA256 signature from `x-payment-signature` or `x-mock-signature` header.
+ * 2. Parses event payload (`payment.paid`, `payment.failed`, `payment.expired`).
+ * 3. Updates order status in PostgreSQL DB (`orders` table).
+ * 4. Triggers item fulfillment / provisioning workflow on successful payment.
  */
 async function postHandler(req: Request) {
   const rawBody = await req.text();

@@ -17,32 +17,58 @@ function resolveStorageUrl(path: string | null | undefined): string | null {
   return `/api/proxy-image?path=${encodeURIComponent(cleanPath)}`;
 }
 
+/**
+ * Public catalog game representation served to storefront UI.
+ */
 export interface PublicGame {
+  /** Unique UUID identifier */
   id: string;
+  /** Display title of the game */
   title: string;
+  /** URL-friendly slug (e.g. mobile-legends) */
   slug: string;
+  /** Primary card image URL */
   image: string;
+  /** Header banner image URL */
   banner: string | null;
+  /** Game logo image URL */
   logo: string | null;
+  /** Developer / Publisher name */
   developers: string;
+  /** Category ID classification */
   category_id: number;
+  /** Descriptive overview of the game */
   description: string | null;
+  /** JSON payload instructions for inputting account IDs */
   instructions: unknown;
+  /** Flag indicating if game is featured on popular grid */
   is_popular: boolean;
 }
 
+/**
+ * Public top-up item / product variant representation.
+ */
 export interface PublicProduct {
+  /** Unique UUID identifier */
   id: string;
+  /** Associated game slug string */
   game_slug: string;
+  /** Item title (e.g. 86 Diamonds) */
   title: string;
+  /** Description or badge text */
   description?: string | null;
+  /** Base retail selling price in IDR */
   selling_price: number | string;
   selling_price_gold?: number | string | null;
   selling_price_platinum?: number | string | null;
+  /** Active promo price override if greater than zero */
   promo_price?: number | string | null;
   cost_price?: number | string | null;
+  /** Digiflazz or SKU identifier string */
   sku?: string | null;
+  /** Availability flag */
   is_active?: boolean | null;
+  /** Out of service / disruption flag */
   is_gangguan?: boolean | null;
   logo?: string | null;
   images?: string | null;
@@ -53,6 +79,9 @@ export interface PublicProduct {
   category?: PublicProductCategory | null;
 }
 
+/**
+ * Denormalized product category grouping (e.g. Top-Up, Membership).
+ */
 export interface PublicProductCategory {
   id: number;
   title: string;
@@ -307,7 +336,7 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 
     const products = data.map((p) => {
       const cat = p.product_categories;
-      const category = Array.isArray(cat) ? cat[0] ?? null : cat ?? null;
+      const category = Array.isArray(cat) ? (cat[0] ?? null) : (cat ?? null);
       const { product_categories: _omit, ...rest } = p;
       return { ...rest, category };
     });

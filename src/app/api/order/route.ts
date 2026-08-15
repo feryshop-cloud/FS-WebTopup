@@ -10,6 +10,21 @@ import { createPayment, getPaymentServiceBaseUrl } from "@/lib/payment-client";
 
 const money = (v: any) => Math.max(0, Math.floor(Number(v ?? 0)));
 
+/**
+ * POST /api/order
+ *
+ * Primary checkout endpoint for creating top-up and marketplace purchase orders.
+ *
+ * Processing Steps:
+ * 1. Resolves active user session and validates user ID against `public.users` table.
+ * 2. Parses game item inputs (e.g. User ID, Server ID, Riot ID).
+ * 3. Resolves product pricing, calculates discounts if promo code is supplied.
+ * 4. Inserts new pending order record into PostgreSQL database (`orders` table).
+ * 5. Calls external `payment-service` worker to create payment intent (QRIS / Virtual Account).
+ *
+ * @param req - Incoming Next.js API request containing checkout payload.
+ * @returns JSON response with created order details and payment redirect/code info.
+ */
 async function postHandler(req: Request) {
   try {
     const body = await req.json();
