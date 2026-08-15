@@ -213,16 +213,24 @@ function mapInventoryToAccount(row: PublicStockRow): GameAccount {
   };
 }
 
-export async function getLiveMarketplaceAccounts(): Promise<GameAccount[]> {
+export type GetLiveMarketplaceAccountsOptions = {
+  limit?: number;
+  status?: string;
+};
+
+export async function getLiveMarketplaceAccounts(
+  options: GetLiveMarketplaceAccountsOptions = {},
+): Promise<GameAccount[]> {
   const { restUrl, publishableKey } = getSupabaseRestConfig();
   if (!restUrl || !publishableKey) return [];
 
   const params = new URLSearchParams({
     select:
       "id,title_reference,account_specs,asking_price,status,image_urls,screenshot_url,created_at,games(name,slug,image_url)",
-    status: "eq.AVAILABLE",
+    status: `eq.${options.status ?? "AVAILABLE"}`,
     order: "created_at.desc",
   });
+  if (options.limit) params.set("limit", String(options.limit));
 
   try {
     const response = await fetch(`${restUrl}/rest/v1/inventory?${params.toString()}`, {
@@ -243,9 +251,14 @@ export async function getLiveMarketplaceAccounts(): Promise<GameAccount[]> {
   }
 }
 
-export async function getMarketplaceAccounts() {
-  const liveAccounts = await getLiveMarketplaceAccounts();
-  return liveAccounts.length > 0 ? liveAccounts : MOCK_ACCOUNTS;
+export async function getMarketplaceAccounts(options?: GetLiveMarketplaceAccountsOptions) {
+  const liveAccounts = await getLiveMarketplaceAccounts(options);
+  if (liveAccounts.length > 0) return liveAccounts;
+
+  const featuredFallback = MOCK_ACCOUNTS.filter(
+    (account) => account.isFeatured || account.badge === "Sultan",
+  );
+  return options?.limit ? featuredFallback.slice(0, options.limit) : MOCK_ACCOUNTS;
 }
 
 export async function getMarketplaceCategories() {

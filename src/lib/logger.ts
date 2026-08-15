@@ -1,32 +1,49 @@
 /**
- * Structured Logger for FS-Public (Storefront)
- * Outputs structured JSON logs suitable for Railway / Cloudwatch stdout aggregation.
+ * Structured Logger for FS-Public (Storefront) — pino-based.
+ * Emits pino payload: numeric `level`, epoch-ms `time`, `pid`, `hostname`,
+ * `service`, `environment`, `msg`, plus custom meta (err/req/res serialized).
  *
- * Level filtering: controlled by LOG_LEVEL (debug|info|warn|error), default info in prod, debug in dev.
- * Error values passed via meta are serialized with name/message/stack/cause.
- * When running inside a request context (see withRequestLogging), each line carries `requestId`.
+ * Level filtering controlled by LOG_LEVEL (debug|info|warn|error).
+ * When running inside a request context (see withRequestLogging), each line
+ * carries `requestId` for correlation.
  */
-import {
-  formatLog,
-  isLevelEnabled,
-  resolveLogLevel,
-  serializeError,
-  type LogLevel,
-} from "@/lib/logging/format";
+import pino, { type Logger, type LoggerOptions } from "pino";
+import { resolveLogLevel, serializeError, type LogLevel } from "@/lib/logging/format";
 import { getRequestId } from "@/lib/logging/request-context";
 
 const SERVICE = "FS-Public";
-const configuredLevel = resolveLogLevel();
+
+function createLogger(): Logger {
+  const options: LoggerOptions = {
+    level: resolveLogLevel(),
+    mixin: () => ({
+      service: SERVICE,
+      environment: process.env.NODE_ENV ?? "development",
+    }),
+    timestamp: pino.stdTimeFunctions.epochTime,
+    serializers: {
+      err: serializeError,
+      error: serializeError,
+    },
+  };
+  return pino(options);
+}
+
+export const pinoLogger = createLogger();
 
 function write(level: LogLevel, message: string, meta?: Record<string, unknown>): void {
-  if (!isLevelEnabled(configuredLevel, level)) return;
-  const line = formatLog(level, message, meta, {
-    service: SERVICE,
-    requestId: getRequestId(),
-  });
-  if (level === "error") console.error(line);
-  else if (level === "warn") console.warn(line);
-  else console.log(line);
+  const requestId = getRequestId();
+  const payload: Record<string, unknown> = { ...meta };
+  if ("error" in payload && !("err" in payload)) {
+    payload.err = payload.error;
+    delete payload.error;
+  }
+  if (requestId) payload.requestId = requestId;
+  if (Object.keys(payload).length === 0) {
+    pinoLogger[level](message);
+  } else {
+    pinoLogger[level](payload, message);
+  }
 }
 
 export const logger = {

@@ -8,6 +8,10 @@ import {
 } from "@/lib/db/live-adapter";
 import { seedCategories, seedGames, seedSliders } from "@/lib/db/seed-data";
 import { getSeedArticles, hasArticleDatabaseEnabled, normalizeArticle } from "@/lib/data/articles";
+import {
+  getMarketplaceAccounts,
+  getMarketplaceCategories,
+} from "@/lib/marketplace/live-marketplace";
 import { logger } from "@/lib/logger";
 
 export type HomeFallbackData = {
@@ -17,6 +21,8 @@ export type HomeFallbackData = {
   promo: Awaited<ReturnType<typeof getPromoPayload>>;
   popupPromo: Awaited<ReturnType<typeof getPopupPromoPayload>>;
   blogLite: Awaited<ReturnType<typeof getBlogLitePayload>>;
+  marketplaceAccounts: Awaited<ReturnType<typeof getMarketplaceAccounts>>;
+  marketplaceCategories: Awaited<ReturnType<typeof getMarketplaceCategories>>;
 };
 
 export async function getSliderPayload() {
@@ -155,13 +161,24 @@ export async function getBlogLitePayload(page = 1, perPage = 6) {
 }
 
 export async function getHomeFallbackData(): Promise<HomeFallbackData> {
-  const [slider, games, categories, promo, popupPromo, blogLite] = await Promise.all([
+  const [
+    slider,
+    games,
+    categories,
+    promo,
+    popupPromo,
+    blogLite,
+    marketplaceAccounts,
+    marketplaceCategories,
+  ] = await Promise.all([
     getSliderPayload(),
     getGamesPayload(),
     getCategoriesPayload(),
     getPromoPayload(),
     getPopupPromoPayload(),
     getBlogLitePayload(1, 6),
+    getMarketplaceAccounts({ limit: 8, status: "AVAILABLE" }),
+    getMarketplaceCategories(),
   ]);
 
   return {
@@ -171,5 +188,7 @@ export async function getHomeFallbackData(): Promise<HomeFallbackData> {
     promo,
     popupPromo,
     blogLite,
+    marketplaceAccounts,
+    marketplaceCategories,
   };
 }

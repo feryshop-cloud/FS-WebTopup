@@ -95,6 +95,20 @@ function normalizeDbReview(r: Review): ReviewItem {
   };
 }
 
+/** Environment variable feature flag that enables reviews from the database. */
+export const REVIEWS_FEATURE_FLAG = "FS_PUBLIC_REVIEWS_DB_ENABLED";
+
+/** Checks whether the database-reviews feature flag is on (no DB credentials check). */
+export function isReviewsDatabaseEnabled(): boolean {
+  return process.env[REVIEWS_FEATURE_FLAG] === "true";
+}
+
+/** Checks whether a database review query is worth attempting: flag on AND credentials configured. */
+export function hasReviewsDatabaseEnabled(): boolean {
+  if (!process.env.DATABASE_URL && !process.env.SUPABASE_DB_URL) return false;
+  return isReviewsDatabaseEnabled();
+}
+
 /**
  * Fetches a page of published reviews (newest first). Database is tried first,
  * falling back to seed data when unavailable, empty, or failing.
@@ -107,7 +121,7 @@ export async function getReviewsPayload(page = 1, perPage = 12): Promise<Reviews
   let total = 0;
   let useSeed = true;
 
-  if (process.env.DATABASE_URL || process.env.SUPABASE_DB_URL) {
+  if (hasReviewsDatabaseEnabled()) {
     try {
       const [dbReviews, countRow] = await Promise.all([
         db

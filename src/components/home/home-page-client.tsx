@@ -11,7 +11,9 @@ import { GameList } from "@/components/home/game-list";
 import Promo from "@/components/home/promo";
 import PromoPopup from "@/components/home/promo-popup";
 import Artikel from "@/components/home/artikel";
+import { FeaturedAccounts } from "@/components/home/featured-accounts";
 import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
 import { fetcher } from "@/lib/fetcher";
 import type { HomeFallbackData } from "@/lib/data/home";
 
@@ -97,6 +99,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
   return (
     <ContentLayout title="Beranda">
       <div className="space-y-8">
+        {/* 1. Hero Slider - Banner promo & highlight akun terlaris */}
         <div className="w-full pt-1">
           {isLoadingSlider ? (
             <Skeleton className="h-[150px] w-full rounded-2xl sm:h-[220px] md:h-[280px] lg:h-[340px]" />
@@ -146,25 +149,50 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           </div>
         )}
 
-        <Promo initialData={initialData.promo} />
-
-        <PopularGames isLoading={isLoadingGames} popularGames={dataGames?.populerGames} />
-
-        <GameCategories
-          dataCategories={isLoadingCategories ? undefined : dataCategories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={(id) => setSelectedCategory(String(id))}
-          scrollCategories={scrollCategories}
-          categoryRef={categoryRef}
+        {/* 2-4. Kategori Game Akun, Katalog Akun Pilihan, Jaminan Keamanan - Marketplace section */}
+        <FeaturedAccounts
+          accounts={initialData.marketplaceAccounts}
+          categories={initialData.marketplaceCategories}
         />
 
-        <GameList isLoading={isLoadingGames} filteredGames={filteredGames} />
-
-        {!isLoadingGames && !errorGames && filteredGames.length === 0 && (
-          <div className="text-muted-foreground py-6 text-center text-sm">
-            Tidak ada game pada kategori ini
+        {/* 5. Layanan Top-Up Cepat - Section sekunder */}
+        <div className="border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6">
+          <div className="mb-5 flex items-center gap-2.5">
+            <span className="bg-primary/10 text-primary border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
+              <Zap className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="text-foreground text-lg font-bold tracking-tight sm:text-xl">
+                Layanan Top-Up Cepat
+              </h2>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Butuh diamond, skin, atau voucher game? Top-up instan di sini
+              </p>
+            </div>
           </div>
-        )}
+
+          <div className="space-y-8">
+            <Promo initialData={initialData.promo} />
+
+            <PopularGames isLoading={isLoadingGames} popularGames={dataGames?.populerGames} />
+
+            <GameCategories
+              dataCategories={isLoadingCategories ? undefined : dataCategories}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={(id) => setSelectedCategory(String(id))}
+              scrollCategories={scrollCategories}
+              categoryRef={categoryRef}
+            />
+
+            <GameList isLoading={isLoadingGames} filteredGames={filteredGames} />
+
+            {!isLoadingGames && !errorGames && filteredGames.length === 0 && (
+              <div className="text-muted-foreground py-6 text-center text-sm">
+                Tidak ada game pada kategori ini
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="mt-16">
