@@ -1,4 +1,3 @@
-import { connection } from "next/server";
 import { logger } from "@/lib/logger";
 
 const FALLBACK_GAME_IMAGE = "/placeholder.png";
@@ -158,26 +157,7 @@ export function isSupabaseLiveConfigured(): boolean {
   return Boolean(getSupabaseRestUrl() && getSupabasePublishableKey());
 }
 
-/**
- * Opts the current route into dynamic rendering (like headers()/cookies()) without
- * reading any request value. During build-time static prerendering, calling it marks
- * the route dynamic and throws, so callers should short-circuit their fetch and return
- * fallback data — this avoids "Dynamic server usage" noise in the build log while still
- * running the live fetch at runtime.
- */
-async function isPrerendering(): Promise<boolean> {
-  try {
-    await connection();
-    return false;
-  } catch {
-    // connection() only throws during build-time static prerendering, as Next.js's
-    // signal to flag the route dynamic. Runtime calls resolve normally.
-    return true;
-  }
-}
-
 export async function getLivePublicGames(): Promise<PublicGame[]> {
-  if (await isPrerendering()) return [];
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
@@ -195,7 +175,7 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
         apikey: publishableKey,
         Authorization: `Bearer ${publishableKey}`,
       },
-      cache: "no-store",
+      next: { revalidate: 60, tags: ["catalog-games"] },
     });
 
     if (!response.ok) {
@@ -231,7 +211,6 @@ export async function getLivePublicGames(): Promise<PublicGame[]> {
 }
 
 export async function getRemoteSettingsFromRest(): Promise<Record<string, unknown>> {
-  if (await isPrerendering()) return {};
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) return {};
@@ -242,7 +221,7 @@ export async function getRemoteSettingsFromRest(): Promise<Record<string, unknow
         apikey: publishableKey,
         Authorization: `Bearer ${publishableKey}`,
       },
-      cache: "no-store",
+      next: { revalidate: 60, tags: ["settings"] },
     });
 
     if (!response.ok) return {};
@@ -296,7 +275,6 @@ function mapLiveGames(
 }
 
 export async function getLivePublicProducts(): Promise<PublicProduct[]> {
-  if (await isPrerendering()) return [];
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
@@ -315,7 +293,7 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        cache: "no-store",
+        next: { revalidate: 60, tags: ["catalog-products"] },
       },
     );
 
@@ -350,7 +328,6 @@ export async function getLivePublicProducts(): Promise<PublicProduct[]> {
 }
 
 export async function getLivePublicProductCategories(): Promise<PublicProductCategory[]> {
-  if (await isPrerendering()) return [];
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
@@ -369,7 +346,7 @@ export async function getLivePublicProductCategories(): Promise<PublicProductCat
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        cache: "no-store",
+        next: { revalidate: 60, tags: ["catalog-categories"] },
       },
     );
 
@@ -392,7 +369,6 @@ export async function getLivePublicProductCategories(): Promise<PublicProductCat
 }
 
 export async function getLivePublicCategories(): Promise<PublicCategory[]> {
-  if (await isPrerendering()) return [];
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
@@ -411,7 +387,7 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        cache: "no-store",
+        next: { revalidate: 60, tags: ["catalog-categories"] },
       },
     );
 
@@ -433,7 +409,6 @@ export async function getLivePublicCategories(): Promise<PublicCategory[]> {
 }
 
 export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod[]> {
-  if (await isPrerendering()) return [];
   const restUrl = getSupabaseRestUrl();
   const publishableKey = getSupabasePublishableKey();
   if (!restUrl || !publishableKey) {
@@ -452,7 +427,7 @@ export async function getLivePublicPaymentMethods(): Promise<PublicPaymentMethod
           apikey: publishableKey,
           Authorization: `Bearer ${publishableKey}`,
         },
-        cache: "no-store",
+        next: { revalidate: 60, tags: ["catalog-payment"] },
       },
     );
 

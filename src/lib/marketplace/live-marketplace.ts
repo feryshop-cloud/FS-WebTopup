@@ -230,7 +230,7 @@ export async function getLiveMarketplaceAccounts(): Promise<GameAccount[]> {
         apikey: publishableKey,
         Authorization: `Bearer ${publishableKey}`,
       },
-      next: { revalidate: 30 },
+      next: { revalidate: 20, tags: ["marketplace"] },
     });
 
     if (!response.ok) return [];
@@ -317,7 +317,6 @@ export async function searchLiveMarketplace(
         game_slug_filter: gameSlug || null,
         match_limit: limit,
       }),
-      next: { revalidate: 10 },
     });
 
     if (!response.ok) {

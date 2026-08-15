@@ -18,6 +18,16 @@ const nextConfig = {
   output: "standalone",
   ...(basePath ? { basePath } : {}),
   poweredByHeader: false,
+  reactCompiler: true,
+
+  // Tampilkan status cache tiap fetch di terminal (HIT/MISS) saat dev.
+  logging: {
+    fetches: {
+      fullUrl: true,
+      hmrRefreshes: true,
+    },
+  },
+
   experimental: {},
 
   images: {
