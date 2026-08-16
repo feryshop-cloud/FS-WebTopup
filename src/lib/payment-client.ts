@@ -9,7 +9,7 @@ export interface PaymentResult {
   /** Internal store transaction order ID */
   order_id: string;
   /** Active payment provider processing the transaction */
-  provider: "mock" | "pakasir";
+  provider: "mock" | "pakasir" | "sumopod";
   /** Current state of the payment intent */
   status: "pending" | "paid" | "failed" | "expired";
   /** Base transaction amount */

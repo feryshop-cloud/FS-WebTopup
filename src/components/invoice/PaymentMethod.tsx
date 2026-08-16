@@ -118,7 +118,8 @@ export function InvoicePaymentMethod({
   const paymentMethodCode = String(order.payment_method || "").toUpperCase();
   const rawPaymentCode = String(order.payment_code || "").trim();
   const gatewayPaymentUrl = String(order.gateway_response?.payment_url || "").trim();
-  const isMockGateway = order.gateway_response?.provider === "mock" || gatewayPaymentUrl.length > 0;
+  const hasGatewayUrl = gatewayPaymentUrl.length > 0;
+  const hasPayableCode = Boolean(order.payment_code);
   const explicitQrString = String(order.qr_string || "").trim();
   const explicitQrImageUrl = String(order.qr_image_url || "").trim();
   const qrispyImageBase64 = String(order.qrispy_image_base64 || "").trim();
@@ -190,13 +191,21 @@ export function InvoicePaymentMethod({
   }, [explicitQrString, rawPaymentCode, isQrisStringMethod, isQrisImageMethod]);
 
   const showQrBlock = useMemo(() => {
+    if (hasGatewayUrl) return false;
     if (isQrispy) return true;
     if (isQrisImageMethod) return true;
     if (isQrisStringMethod) return true;
     if (explicitQrString) return true;
     if (explicitQrImageUrl) return true;
     return false;
-  }, [isQrispy, isQrisImageMethod, isQrisStringMethod, explicitQrString, explicitQrImageUrl]);
+  }, [
+    hasGatewayUrl,
+    isQrispy,
+    isQrisImageMethod,
+    isQrisStringMethod,
+    explicitQrString,
+    explicitQrImageUrl,
+  ]);
 
   const isQrImageDataUri = useMemo(() => {
     if (!qrImageSrc) return false;
@@ -452,13 +461,17 @@ export function InvoicePaymentMethod({
             <div className="space-y-1">
               <div className="text-sm font-medium">Kode Pembayaran</div>
               <div className="text-muted-foreground text-sm">
-                {isQrispy || showQrBlock
-                  ? "Silakan scan QR / gunakan QR string di bawah."
-                  : "Salin dan gunakan kode berikut."}
+                {hasGatewayUrl
+                  ? "Lanjutkan pembayaran via tombol Bayar Sekarang di bawah."
+                  : !hasPayableCode && gatewayPaymentUrl
+                    ? "Lanjutkan pembayaran via tombol Bayar Sekarang di bawah."
+                    : isQrispy || showQrBlock
+                      ? "Silakan scan QR / gunakan QR string di bawah."
+                      : "Salin dan gunakan kode berikut."}
               </div>
             </div>
 
-            {!showQrBlock && (
+            {!showQrBlock && hasPayableCode && !hasGatewayUrl && (
               <div className="flex items-center gap-2">
                 <div className="bg-muted max-w-[220px] truncate rounded-lg border px-3 py-2 text-sm">
                   {String(order.payment_code_display || order.payment_code || "-")}
@@ -475,16 +488,23 @@ export function InvoicePaymentMethod({
             )}
           </div>
 
-          {isMockGateway && gatewayPaymentUrl && (
+          {hasGatewayUrl && (
             <div className="mt-4">
               <Button asChild className="w-full" size="lg">
                 <a href={gatewayPaymentUrl} target="_blank" rel="noreferrer">
                   Bayar Sekarang
                 </a>
               </Button>
-              <p className="text-muted-foreground mt-2 text-xs">
-                Kamu akan diarahkan ke halaman simulasi pembayaran sandbox (mock gateway).
-              </p>
+              {order.gateway_response?.provider === "mock" ? (
+                <p className="text-muted-foreground mt-2 text-xs">
+                  Kamu akan diarahkan ke halaman simulasi pembayaran sandbox (mock gateway).
+                </p>
+              ) : (
+                <p className="text-muted-foreground mt-2 text-xs">
+                  Kamu akan diarahkan ke halaman pembayaran resmi gateway untuk menyelesaikan
+                  transaksi.
+                </p>
+              )}
             </div>
           )}
 

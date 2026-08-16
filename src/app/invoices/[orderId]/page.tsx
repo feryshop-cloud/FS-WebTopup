@@ -251,6 +251,25 @@ export default function InvoicePage() {
     };
   }, [safeOrderId, order, loadInvoice]);
 
+  useEffect(() => {
+    if (!safeOrderId) return;
+    if (!order) return;
+    if (order.payment_status !== "UNPAID") return;
+
+    const externalUrl = String(order.gateway_response?.payment_url || "").trim();
+    if (!externalUrl) return;
+
+    const guardKey = `payment-redirect:${safeOrderId}`;
+    try {
+      if (sessionStorage.getItem(guardKey)) return;
+      sessionStorage.setItem(guardKey, "1");
+    } catch {
+      return;
+    }
+
+    window.location.href = externalUrl;
+  }, [safeOrderId, order]);
+
   const getPayStatusMessage = () => {
     if (!order) return "Pesanan tidak ditemukan.";
     const normPayment = normalizePaymentStatus(order.payment_status);
