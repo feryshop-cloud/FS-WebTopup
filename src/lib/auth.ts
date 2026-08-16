@@ -6,8 +6,9 @@ import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 import { logger } from "@/lib/logger";
 
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+const ALLOW_BUILD_WITHOUT_SECRET = process.env.NEXTAUTH_SECRET_ALLOW_BUILD_WITHOUT === "true";
 
-if (!NEXTAUTH_SECRET && process.env.NODE_ENV !== "production") {
+if (!NEXTAUTH_SECRET && !ALLOW_BUILD_WITHOUT_SECRET) {
   throw new Error(
     "NEXTAUTH_SECRET is not set. Set it before starting the app (see .env.local or Railway Variables).",
   );

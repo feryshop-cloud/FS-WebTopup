@@ -34,6 +34,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXTAUTH_SECRET_ALLOW_BUILD_WITHOUT: "true"
 
       - name: Test
         run: npm run test
