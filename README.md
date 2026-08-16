@@ -1,83 +1,91 @@
-# Feryshop - Platform Top-Up & Marketplace Akun
+# Feryshop — Platform Top-Up & Marketplace Akun Game
 
-**Feryshop** adalah frontend modern berbasis Next.js (TypeScript/JavaScript) untuk platform Feryshop yang siap pakai di desktop & mobile. Frontend ini menjadi antarmuka utama pelanggan untuk eksplorasi produk digital top-up, transaksi, riwayat, marketplace akun, dan dashboard pengguna.
+**Feryshop** adalah storefront publik untuk platform top-up game dan marketplace akun game. Dibangun dengan Next.js 15 (App Router), React 19, Tailwind CSS v3, Drizzle ORM, dan Supabase.
 
----
+## Tech Stack
 
-## Deskripsi
+- **Framework:** Next.js 15 (React 19) dengan App Router & Server Components
+- **Styling:** Tailwind CSS v3 + custom design system "Midnight Game Counter"
+- **Database:** Supabase (PostgreSQL) via Drizzle ORM + REST client
+- **Auth:** NextAuth v4 (Google, Credentials email/password, WhatsApp OTP)
+- **Realtime:** Pusher (payment status, order updates)
+- **Payment:** Integration dengan `payment-service` (Cloudflare Worker) untuk QRIS/e-wallet/VA
+- **Runtime:** Node.js standalone di Railway
 
-Feryshop terhubung langsung ke backend via API untuk menyajikan layanan transaksi pulsa, paket data, voucher game, dan marketplace akun digital secara real time dengan UI/UX modern bertema Dark Mode eksklusif.
+## Fitur Utama
 
----
-
-## Fitur-Fitur
-
-- Registrasi & Login User (OAuth Google & Email/Password)
-- Dashboard Pengguna & Pengaturan Akun
-- Browse dan Pesan Produk Digital & Marketplace Akun
-- Riwayat & Status Transaksi Real Time
-- Info Saldo, TopUp & Kode Promo
-- Notifikasi & WhatsApp Bubble Integration
-- Admin Panel / Seller Management
-- Responsive Design (Mobile & Desktop)
-- Dark Theme Only dengan Estetika Premium
-- Menyajikan metode pembayaran (QRIS / e-wallet / transfer) beserta kode/QR pembayaran & status order/pembayaran
-
----
-
-## Scope & Batasan
-
-Repo ini adalah **storefront (customer-facing)** Feryshop: katalog top-up, marketplace akun, invoice, promo, dan dashboard member.
-
-- **Pembayaran:** Checkout menampilkan metode pembayaran (QRIS, e-wallet, transfer bank) beserta kode/QR pembayaran, dan menyimpan status order/pembayaran (termasuk `gateway_response`). **Penyelesaian dana bersifat eksternal** — pelanggan membayar lewat kode yang ditampilkan; repo ini **tidak** melakukan settlement/kallback otomatis ke payment gateway.
-- **Admin & pembukuan** (inventori, deal, ledger, laporan) ada di repo terpisah: `game-inventori` (admin ERP). Di repo tersebut integrasi payment gateway **secara eksplisit di luar scope**; transaksi hanya dicatat manual oleh admin.
-
----
+- Registrasi & Login User (OAuth Google & Email/Password + WhatsApp OTP)
+- Top-Up game (Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dll.)
+- Marketplace akun game (filter by game, rank, price)
+- Invoice & QR pembayaran dengan countdown timer
+- Real-time status pembayaran & order via Pusher
+- Riwayat transaksi & dashboard pengguna
+- Kode promo & saldo
+- Admin panel seller management
+- Responsive design (mobile & desktop)
+- Dark theme only dengan estetika premium
 
 ## Struktur Direktori
 
 ```
+FS-Public/
 ├── src/
-│   ├── app/           # Next.js App Router (Pages & API Routes)
-│   ├── components/    # Reusable UI Components (Lucide Icons, Tailwind)
-│   ├── context/       # React Context Providers (Settings, Theme)
-│   ├── lib/           # Database (Drizzle ORM), Auth, Utilities, & Seed Data
-│   └── types/         # TypeScript Definitions
-├── public/            # Static Assets & Logos
+│   ├── app/                 # Next.js App Router (pages, layouts, API routes)
+│   ├── components/          # Reusable UI components
+│   │   ├── ui/              # Base UI primitives
+│   │   ├── home/            # Homepage sections
+│   │   ├── order/           # Order flow components
+│   │   ├── invoice/         # Invoice components
+│   │   ├── marketplace/     # Marketplace components
+│   │   └── panel/           # User panel/dashboard
+│   ├── lib/
+│   │   ├── db/              # Drizzle schema & database client
+│   │   ├── supabase-*.ts    # Supabase client adapters
+│   │   ├── auth.ts          # NextAuth configuration
+│   │   ├── payment-client.ts # Payment service integration
+│   │   └── data/            # Seed data & fallback data
+│   ├── hooks/               # Custom React hooks
+│   ├── context/             # React context providers
+│   └── types/               # TypeScript definitions
+├── public/                  # Static assets & logos
+├── registry/                # UI registry
 ├── package.json
 └── README.md
 ```
 
----
-
-## Instalasi & Menjalankan secara Lokal
+## Instalasi & Menjalankan Lokal
 
 ### Prasyarat
 
-- Node.js (disarankan v18+)
-- Package manager (npm / pnpm / yarn)
+- Node.js >= 20.x
+- Package manager: npm / pnpm / yarn
+- Proyek Supabase aktif
 
 ### Langkah Instalasi
 
-1. **Clone Project / Masuk ke Direktori**
+1. **Masuk ke Direktori**
    ```bash
    cd FS-Public
    ```
 
-2. **Install Dependency**
+2. **Install Dependencies**
    ```bash
    npm install
    ```
 
 3. **Siapkan Konfigurasi Environment**
-   - Salin dan edit file `.env.local`, contoh minimum untuk koneksi DB & auth:
-     ```env
-     NEXT_PUBLIC_SUPABASE_URL=https://<project_ref>.supabase.co
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-     NEXTAUTH_SECRET=your_nextauth_secret
-     NEXTAUTH_URL=http://localhost:3000
-     ```
-   - Variabel lain yang dibaca app (storage, pusher, oauth, dsb.) terdaftar di `src/` — lihat `AGENTS.md` repo ini.
+   Salin `.env.example` menjadi `.env.local` dan isi dengan:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   NEXTAUTH_SECRET=your_nextauth_secret
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_GOOGLE_ID=your_google_client_id
+   NEXTAUTH_GOOGLE_SECRET=your_google_client_secret
+   NEXT_PUBLIC_PUSHER_APP_KEY=your_pusher_key
+   NEXT_PUBLIC_PUSHER_CLUSTER=your_pusher_cluster
+   PAYMENT_CALLBACK_SECRET=your_payment_secret
+   ```
 
 4. **Jalankan Development Server**
    ```bash
@@ -91,10 +99,32 @@ Repo ini adalah **storefront (customer-facing)** Feryshop: katalog top-up, marke
    npm start
    ```
 
+## Arsitektur Data
+
+- **Storefront** membaca data publik dari Supabase via REST + RLS: `games`, `categories`, `settings`, dan `inventory` dengan status `AVAILABLE`
+- **Payment** menggunakan `payment-service` (Cloudflare Worker terpisah) untuk create payment intent, simulate, dan webhook callback
+- **Realtime** menggunakan Pusher untuk update status pembayaran dan order secara live
+- **Gambar** di-host di Railway S3 bucket dan di-serve via `/api/storage/[...key]` (S3 signed URL) atau `/api/proxy-image`
+
+## Batasan Scope
+
+- **Pembayaran** menggunakan `payment-service` untuk generate VA/QRIS; settlement dan callback diverifikasi via HMAC signature.
+- **Admin & pembukuan** (inventori, deal, ledger, laporan) ada di repo terpisah: `game-inventori` (admin ERP).
+- Kedua repo berbagi satu database Supabase.
+
+## Commands
+
+```bash
+npm run dev                  # start dev server
+npm run build                # production build + type/lint check
+npm run start                # serve production build
+npm run start:railway        # serve standalone di Railway (HOSTNAME=::)
+npm run lint                 # ESLint flat config
+npm run format               # format codebase dengan Prettier
+npm run registry:build       # rebuild UI registry
+```
+
 ---
 
-## Branding & Kredit
+_Dikembangkan dengan Zero-Hallucination Vibe Coding Principles._
 
-- **Brand**: Feryshop
-- **Credit**: Made in Feryshop
-- All rights reserved.
