@@ -67,7 +67,9 @@ export const games = pgTable("games", {
 export const products = pgTable("products", {
   id: uuid("id").primaryKey().defaultRandom(), // generated UUID (bukan SKU)
   gameSlug: varchar("game_slug", { length: 255 }).notNull(),
-  categoryId: integer("category_id").references(() => productCategories.id, { onDelete: "set null" }),
+  categoryId: integer("category_id").references(() => productCategories.id, {
+    onDelete: "set null",
+  }),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   sellingPrice: numeric("selling_price", { precision: 15, scale: 2 }).notNull(),

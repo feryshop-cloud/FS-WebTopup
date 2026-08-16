@@ -14,8 +14,7 @@ async function getHandler() {
     const rawUserId =
       typeof (session?.user as any)?.id === "string" ? (session?.user as any).id : null;
     const userId =
-      rawUserId &&
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId)
+      rawUserId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId)
         ? rawUserId
         : null;
     const sessionEmail =

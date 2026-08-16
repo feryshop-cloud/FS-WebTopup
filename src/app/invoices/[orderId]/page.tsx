@@ -120,8 +120,7 @@ export default function InvoicePage() {
   useEffect(() => {
     if (!safeOrderId) return;
     if (!order) return;
-
-    if (order.buy_status !== "Sukses") {
+    if (normalizeBuyStatus(order.buy_status) !== BuyStatus.SUCCESS) {
       setReview(null);
       return;
     }
@@ -185,7 +184,7 @@ export default function InvoicePage() {
       String(order.gateway_response?.provider || ""),
     );
     if (!isQrispy && !isDompetX && !isGatewayProvider) return;
-    if (order.payment_status !== "UNPAID") return;
+    if (normalizePaymentStatus(order.payment_status) !== PaymentStatus.PENDING) return;
 
     let cancelled = false;
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -254,7 +253,7 @@ export default function InvoicePage() {
   useEffect(() => {
     if (!safeOrderId) return;
     if (!order) return;
-    if (order.payment_status !== "UNPAID") return;
+    if (normalizePaymentStatus(order.payment_status) !== PaymentStatus.PENDING) return;
 
     const externalUrl = String(order.gateway_response?.payment_url || "").trim();
     if (!externalUrl) return;
@@ -360,13 +359,14 @@ export default function InvoicePage() {
 
   const getBackgroundPayStatusColor = () => {
     if (!order) return "bg-muted";
-    switch (order.payment_status) {
-      case "UNPAID":
+    const normPayment = normalizePaymentStatus(order.payment_status);
+    switch (normPayment) {
+      case PaymentStatus.PENDING:
         return "bg-yellow-100 text-yellow-800";
-      case "EXPIRED":
-      case "FAILED":
+      case PaymentStatus.EXPIRED:
+      case PaymentStatus.FAILED:
         return "bg-red-100 text-red-800";
-      case "PAID":
+      case PaymentStatus.PAID:
         return "bg-green-100 text-green-800";
       default:
         return "bg-muted";
@@ -422,7 +422,7 @@ export default function InvoicePage() {
 
         <div className="mt-8 space-y-4 lg:mt-12 lg:space-y-12">
           <div className="flex w-full flex-col gap-4">
-            {order.payment_status === "UNPAID" ? (
+            {normalizePaymentStatus(order.payment_status) === PaymentStatus.PENDING ? (
               <InvoiceCountdown timeLeft={timeLeft} />
             ) : (
               <div className="mt-4">
@@ -454,10 +454,12 @@ export default function InvoicePage() {
                 />
               </div>
 
-              {order.payment_status === "UNPAID" && <InvoicePaymentInstructions order={order} />}
+              {normalizePaymentStatus(order.payment_status) === PaymentStatus.PENDING && (
+                <InvoicePaymentInstructions order={order} />
+              )}
             </div>
 
-            {order.buy_status === "Sukses" && safeOrderId !== "" && (
+            {normalizeBuyStatus(order.buy_status) === BuyStatus.SUCCESS && safeOrderId !== "" && (
               <ReviewSection
                 orderId={safeOrderId}
                 canReview={true}

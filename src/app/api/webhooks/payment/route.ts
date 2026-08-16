@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { db, orders } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { and, eq, notInArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { verifyPaymentWebhookSignature, type PaymentWebhookPayload } from "@/lib/payment-client";
@@ -46,31 +46,38 @@ async function postHandler(req: Request) {
   }
 
   try {
-    const rows = await db.select().from(orders).where(eq(orders.orderId, orderId)).limit(1);
-    const order = rows[0];
+    const [order] = await db
+      .select({
+        id: orders.id,
+        orderId: orders.orderId,
+        paymentStatus: orders.paymentStatus,
+        gatewayResponse: orders.gatewayResponse,
+      })
+      .from(orders)
+      .where(eq(orders.orderId, orderId))
+      .limit(1);
 
     if (!order) {
-      logger.warn("payment webhook for unknown order", { orderId, paymentId, event });
-      return NextResponse.json({ success: true, received: true, message: "Order unknown" });
+      logger.warn("payment webhook order not found", { orderId, paymentId });
+      return NextResponse.json({ success: false, message: "Order not found" }, { status: 404 });
     }
 
-    // Idempotent: jangan menimpa status final.
-    const finalStatuses = new Set(["success", "failed", "expired"]);
-    if (order.paymentStatus && finalStatuses.has(order.paymentStatus)) {
-      return NextResponse.json({ success: true, received: true, deduplicated: true });
-    }
+    type GatewayData = { provider?: string; [key: string]: unknown };
+    const existingGateway = (order.gatewayResponse as GatewayData | null) ?? {};
+    const provider = existingGateway.provider ?? "mock";
+    const finalStatuses = ["success", "failed", "expired"];
 
-    const provider = (order.gatewayResponse as { provider?: string } | null)?.provider ?? "mock";
+    let applied = false;
 
     if (event === "payment.paid") {
-      await db
+      const updated = await db
         .update(orders)
         .set({
           paymentStatus: "success",
           buyStatus: "success",
           serialNumber: `${provider.toUpperCase()}-${orderId}`,
           gatewayResponse: {
-            ...(order.gatewayResponse as object | null),
+            ...existingGateway,
             [provider]: {
               status,
               paymentId,
@@ -79,19 +86,23 @@ async function postHandler(req: Request) {
             },
           },
         })
-        .where(eq(orders.orderId, orderId));
+        .where(and(eq(orders.orderId, orderId), notInArray(orders.paymentStatus, finalStatuses)))
+        .returning({ id: orders.id });
+      applied = updated.length > 0;
 
-      // Invalidate cache seketika: akun (jika akun marketplace) langsung hilang dari katalog,
-      // dan halaman invoice status user langsung ter-update lunas secara real-time.
-      revalidateTag("marketplace-accounts", { expire: 0 });
-      revalidatePath(`/invoices/${orderId}`);
+      if (applied) {
+        // Invalidate cache seketika: akun (jika akun marketplace) langsung hilang dari katalog,
+        // dan halaman invoice status user langsung ter-update lunas secara real-time.
+        revalidateTag("marketplace-accounts", { expire: 0 });
+        revalidatePath(`/invoices/${orderId}`);
+      }
     } else if (event === "payment.failed") {
-      await db
+      const updated = await db
         .update(orders)
         .set({
           paymentStatus: "failed",
           gatewayResponse: {
-            ...(order.gatewayResponse as object | null),
+            ...existingGateway,
             [provider]: {
               status,
               paymentId,
@@ -100,14 +111,16 @@ async function postHandler(req: Request) {
             },
           },
         })
-        .where(eq(orders.orderId, orderId));
+        .where(and(eq(orders.orderId, orderId), notInArray(orders.paymentStatus, finalStatuses)))
+        .returning({ id: orders.id });
+      applied = updated.length > 0;
     } else if (event === "payment.expired") {
-      await db
+      const updated = await db
         .update(orders)
         .set({
           paymentStatus: "expired",
           gatewayResponse: {
-            ...(order.gatewayResponse as object | null),
+            ...existingGateway,
             [provider]: {
               status,
               paymentId,
@@ -116,7 +129,13 @@ async function postHandler(req: Request) {
             },
           },
         })
-        .where(eq(orders.orderId, orderId));
+        .where(and(eq(orders.orderId, orderId), notInArray(orders.paymentStatus, finalStatuses)))
+        .returning({ id: orders.id });
+      applied = updated.length > 0;
+    }
+
+    if (!applied) {
+      return NextResponse.json({ success: true, received: true, deduplicated: true });
     }
 
     logger.info("payment webhook processed", { orderId, paymentId, event, status, provider });
