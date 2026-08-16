@@ -5,7 +5,9 @@ import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 import { logger } from "@/lib/logger";
 
-if (!process.env.NEXTAUTH_SECRET) {
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+
+if (!NEXTAUTH_SECRET && process.env.NODE_ENV !== "production") {
   throw new Error(
     "NEXTAUTH_SECRET is not set. Set it before starting the app (see .env.local or Railway Variables).",
   );
@@ -111,5 +113,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: NEXTAUTH_SECRET,
 };
