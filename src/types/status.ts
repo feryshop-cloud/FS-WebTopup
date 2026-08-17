@@ -1,58 +1,69 @@
-export const BuyStatus = {
-  PENDING: "pending",
-  PROCESSING: "processing",
-  SUCCESS: "success",
-  FAILED: "failed",
-} as const;
+/**
+ * Standard PostgreSQL ENUMs for Order Statuses.
+ * Synchronized with Database ENUMs: public.order_payment_status & public.order_buy_status
+ */
 
-export type BuyStatus = (typeof BuyStatus)[keyof typeof BuyStatus];
+export enum OrderBuyStatus {
+  PENDING = "pending",
+  PROCESSING = "processing",
+  SUCCESS = "success",
+  FAILED = "failed",
+}
 
-export const BuyStatusLabel: Record<BuyStatus, string> = {
-  [BuyStatus.PENDING]: "Menunggu",
-  [BuyStatus.PROCESSING]: "Diproses",
-  [BuyStatus.SUCCESS]: "Sukses",
-  [BuyStatus.FAILED]: "Gagal",
+export type BuyStatus = OrderBuyStatus;
+export const BuyStatus = OrderBuyStatus;
+
+export const BuyStatusLabel: Record<OrderBuyStatus, string> = {
+  [OrderBuyStatus.PENDING]: "Menunggu",
+  [OrderBuyStatus.PROCESSING]: "Diproses",
+  [OrderBuyStatus.SUCCESS]: "Sukses",
+  [OrderBuyStatus.FAILED]: "Gagal",
 };
 
-export const BuyStatusBadgeClass: Record<BuyStatus, string> = {
-  [BuyStatus.PENDING]: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
-  [BuyStatus.PROCESSING]: "bg-info/10 text-info border border-info/20",
-  [BuyStatus.SUCCESS]: "bg-success/10 text-success border border-success/20",
-  [BuyStatus.FAILED]: "bg-destructive/10 text-destructive border border-destructive/20",
+export const BuyStatusBadgeClass: Record<OrderBuyStatus, string> = {
+  [OrderBuyStatus.PENDING]: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
+  [OrderBuyStatus.PROCESSING]: "bg-info/10 text-info border border-info/20",
+  [OrderBuyStatus.SUCCESS]: "bg-success/10 text-success border border-success/20",
+  [OrderBuyStatus.FAILED]: "bg-destructive/10 text-destructive border border-destructive/20",
 };
 
-export const BuyStatusLegacyBadgeClass: Record<BuyStatus, string> = {
-  [BuyStatus.PENDING]: "bg-yellow-500 text-black",
-  [BuyStatus.PROCESSING]: "bg-info text-info-foreground",
-  [BuyStatus.SUCCESS]: "bg-green-500 text-white",
-  [BuyStatus.FAILED]: "bg-red-500 text-white",
+export const BuyStatusLegacyBadgeClass: Record<OrderBuyStatus, string> = {
+  [OrderBuyStatus.PENDING]: "bg-yellow-500 text-black",
+  [OrderBuyStatus.PROCESSING]: "bg-info text-info-foreground",
+  [OrderBuyStatus.SUCCESS]: "bg-green-500 text-white",
+  [OrderBuyStatus.FAILED]: "bg-red-500 text-white",
 };
 
-export const PaymentStatus = {
-  PENDING: "pending",
-  PAID: "paid",
-  FAILED: "failed",
-  EXPIRED: "expired",
-} as const;
+export enum OrderPaymentStatus {
+  PENDING = "pending",
+  PAID = "paid",
+  SUCCESS = "success",
+  FAILED = "failed",
+  EXPIRED = "expired",
+}
 
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+export type PaymentStatus = OrderPaymentStatus;
+export const PaymentStatus = OrderPaymentStatus;
 
-export const PaymentStatusLabel: Record<PaymentStatus, string> = {
-  [PaymentStatus.PENDING]: "Menunggu",
-  [PaymentStatus.PAID]: "Lunas",
-  [PaymentStatus.FAILED]: "Gagal",
-  [PaymentStatus.EXPIRED]: "Kadaluarsa",
+export const PaymentStatusLabel: Record<OrderPaymentStatus, string> = {
+  [OrderPaymentStatus.PENDING]: "Menunggu",
+  [OrderPaymentStatus.PAID]: "Lunas",
+  [OrderPaymentStatus.SUCCESS]: "Sukses",
+  [OrderPaymentStatus.FAILED]: "Gagal",
+  [OrderPaymentStatus.EXPIRED]: "Kadaluarsa",
 };
 
-export const PaymentStatusBadgeClass: Record<PaymentStatus, string> = {
-  [PaymentStatus.PENDING]: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
-  [PaymentStatus.PAID]: "bg-success/10 text-success border border-success/20",
-  [PaymentStatus.FAILED]: "bg-destructive/10 text-destructive border border-destructive/20",
-  [PaymentStatus.EXPIRED]: "bg-muted text-muted-foreground border border-border",
+export const PaymentStatusBadgeClass: Record<OrderPaymentStatus, string> = {
+  [OrderPaymentStatus.PENDING]: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
+  [OrderPaymentStatus.PAID]: "bg-success/10 text-success border border-success/20",
+  [OrderPaymentStatus.SUCCESS]: "bg-success/10 text-success border border-success/20",
+  [OrderPaymentStatus.FAILED]: "bg-destructive/10 text-destructive border border-destructive/20",
+  [OrderPaymentStatus.EXPIRED]: "bg-muted text-muted-foreground border border-border",
 };
 
-export const VALID_BUY_STATUSES: readonly BuyStatus[] = Object.values(BuyStatus);
-export const VALID_PAYMENT_STATUSES: readonly PaymentStatus[] = Object.values(PaymentStatus);
+export const VALID_BUY_STATUSES: readonly OrderBuyStatus[] = Object.values(OrderBuyStatus);
+export const VALID_PAYMENT_STATUSES: readonly OrderPaymentStatus[] =
+  Object.values(OrderPaymentStatus);
 
 /**
  * Normalizes buy status string to standard BuyStatus type regardless of casing or legacy Indonesian labels.

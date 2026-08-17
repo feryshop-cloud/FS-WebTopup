@@ -5,6 +5,7 @@ import { and, eq, notInArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { verifyPaymentWebhookSignature, type PaymentWebhookPayload } from "@/lib/payment-client";
+import { OrderPaymentStatus, OrderBuyStatus } from "@/types/status";
 
 export const dynamic = "force-dynamic";
 
@@ -66,7 +67,11 @@ async function postHandler(req: Request) {
     type GatewayData = { provider?: string; [key: string]: unknown };
     const existingGateway = (order.gatewayResponse as GatewayData | null) ?? {};
     const provider = existingGateway.provider ?? "mock";
-    const finalStatuses = ["success", "failed", "expired"];
+    const finalStatuses: OrderPaymentStatus[] = [
+      OrderPaymentStatus.SUCCESS,
+      OrderPaymentStatus.FAILED,
+      OrderPaymentStatus.EXPIRED,
+    ];
 
     let applied = false;
 
@@ -74,8 +79,8 @@ async function postHandler(req: Request) {
       const updated = await db
         .update(orders)
         .set({
-          paymentStatus: "success",
-          buyStatus: "success",
+          paymentStatus: OrderPaymentStatus.SUCCESS,
+          buyStatus: OrderBuyStatus.SUCCESS,
           serialNumber: `${provider.toUpperCase()}-${orderId}`,
           gatewayResponse: {
             ...existingGateway,
@@ -101,7 +106,7 @@ async function postHandler(req: Request) {
       const updated = await db
         .update(orders)
         .set({
-          paymentStatus: "failed",
+          paymentStatus: OrderPaymentStatus.FAILED,
           gatewayResponse: {
             ...existingGateway,
             [provider]: {

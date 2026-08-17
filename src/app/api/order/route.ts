@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { callValidatePromo, getProductUnitPrice, computeDiscount } from "@/lib/promo";
 import { createPayment, getPaymentServiceBaseUrl } from "@/lib/payment-client";
+import { OrderPaymentStatus, OrderBuyStatus } from "@/types/status";
 
 const money = (v: any) => Math.max(0, Math.floor(Number(v ?? 0)));
 
@@ -129,8 +130,8 @@ async function postHandler(req: Request) {
       email: body.email || "",
       promoCode,
       promoDiscount: promoCode ? discountPrice : "0",
-      paymentStatus: "pending",
-      buyStatus: "pending",
+      paymentStatus: OrderPaymentStatus.PENDING,
+      buyStatus: OrderBuyStatus.PENDING,
       expiredTime,
       accountData: fullAccountData,
     };

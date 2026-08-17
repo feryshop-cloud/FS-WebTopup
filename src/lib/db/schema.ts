@@ -1,5 +1,6 @@
 import {
   pgTable,
+  pgEnum,
   text,
   integer,
   boolean,
@@ -10,6 +11,22 @@ import {
   serial,
   varchar,
 } from "drizzle-orm/pg-core";
+
+// 0. PostgreSQL Status Enums (Matches live DB: public.order_payment_status & public.order_buy_status)
+export const orderPaymentStatusEnum = pgEnum("order_payment_status", [
+  "pending",
+  "paid",
+  "success",
+  "failed",
+  "expired",
+]);
+
+export const orderBuyStatusEnum = pgEnum("order_buy_status", [
+  "pending",
+  "processing",
+  "success",
+  "failed",
+]);
 
 // 1. Users & Profiles (Matches live DB: public.users)
 export const users = pgTable("users", {
@@ -151,8 +168,8 @@ export const orders = pgTable("orders", {
   paymentCodeDisplay: varchar("payment_code_display", { length: 255 }),
   qrString: text("qr_string"),
   qrImageUrl: text("qr_image_url"),
-  paymentStatus: varchar("payment_status", { length: 50 }).default("pending").notNull(),
-  buyStatus: varchar("buy_status", { length: 50 }).default("pending").notNull(),
+  paymentStatus: orderPaymentStatusEnum("payment_status").default("pending").notNull(),
+  buyStatus: orderBuyStatusEnum("buy_status").default("pending").notNull(),
   serialNumber: text("serial_number").default(""),
   whatsapp: varchar("whatsapp", { length: 50 }),
   email: varchar("email", { length: 255 }),
