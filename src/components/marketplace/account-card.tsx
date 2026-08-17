@@ -29,7 +29,7 @@ export function AccountCard({ account }: { account: GameAccount }) {
   return (
     <Link
       href={`/marketplace/${account.gameSlug}/${account.id}`}
-      className="border-border/70 bg-card hover:border-primary/50 focus-visible:ring-primary group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2"
+      className="border-border/70 bg-card hover:border-primary/50 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2"
     >
       {/* Thumbnail Section */}
       <div className="bg-muted/60 relative aspect-[16/10] w-full overflow-hidden">

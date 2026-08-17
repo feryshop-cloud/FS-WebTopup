@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { ContentLayout } from "@/components/panel/content-layout";
-import { MarketplaceHero } from "@/components/marketplace/marketplace-hero";
-import { MarketplaceCategoryGrid } from "@/components/marketplace/category-grid";
+import { MarketplaceCategoryView } from "@/components/marketplace/category-view";
 import { MarketplaceWhyUsSection } from "@/components/marketplace/why-us-section";
-import { getMarketplaceCategories } from "@/lib/marketplace/live-marketplace";
+import {
+  getMarketplaceAccounts,
+  getMarketplaceCategories,
+} from "@/lib/marketplace/live-marketplace";
 
 export const metadata: Metadata = {
   title: "Feryshop | Pusat Jual Beli Akun Game Sultan & Terverifikasi #1 Di Indonesia",
@@ -22,15 +24,22 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function MarketplaceHomePage() {
-  const categories = await getMarketplaceCategories();
+  const [accounts, categories] = await Promise.all([
+    getMarketplaceAccounts(),
+    getMarketplaceCategories(),
+  ]);
 
   return (
     <ContentLayout title="Marketplace Akun Game">
-      <div className="space-y-5 sm:space-y-8">
-        <MarketplaceHero />
-        <MarketplaceCategoryGrid categories={categories} />
+      <div className="space-y-8">
+        <MarketplaceCategoryView
+          categorySlug="all"
+          accounts={accounts}
+          categories={categories}
+        />
         <MarketplaceWhyUsSection />
       </div>
     </ContentLayout>
   );
 }
+

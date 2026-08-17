@@ -10,6 +10,7 @@ import {
   Sparkles,
   AlertCircle,
   RefreshCw,
+  Gamepad2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,37 +25,43 @@ import {
 import { cn } from "@/lib/utils";
 
 export function MarketplaceCategoryView({
-  categorySlug,
+  categorySlug = "all",
   accounts = MOCK_ACCOUNTS,
   categories = MARKETPLACE_CATEGORIES,
   initialQuery = "",
 }: {
-  categorySlug: string;
+  categorySlug?: string;
   accounts?: GameAccount[];
   categories?: GameCategory[];
   initialQuery?: string;
 }) {
-  const category =
-    categorySlug === "all"
-      ? ({
-          id: "all",
-          name: "Semua Game",
-          slug: "all",
-          subtitle: "Hasil Pencarian Global",
-          iconName: "mlbb",
-          bannerUrl: "",
-          totalAccounts: accounts.length,
-          colorTheme: "from-primary/20 to-secondary/20",
-          popularRanks: [],
-        } as GameCategory)
-      : categories.find((c) => c.slug === categorySlug) ||
-        categories[0] ||
-        MARKETPLACE_CATEGORIES[0];
+  const [selectedGameCategory, setSelectedGameCategory] = useState<string>(categorySlug);
+
+  const activeCategory = useMemo(() => {
+    if (selectedGameCategory === "all") {
+      return {
+        id: "all",
+        name: "Semua Game",
+        slug: "all",
+        subtitle: "Pilih game atau cari akun Sultan terverifikasi dengan garansi anti-hack 100%",
+        iconName: "mlbb",
+        bannerUrl: "",
+        totalAccounts: accounts.length,
+        colorTheme: "from-primary/20 via-background to-secondary/10",
+        popularRanks: ["Mythic", "Immortal", "Grandmaster", "Radiant", "Immortal 3", "Ace Master"],
+      } as GameCategory;
+    }
+    return (
+      categories.find((c) => c.slug === selectedGameCategory) ||
+      categories[0] ||
+      MARKETPLACE_CATEGORIES[0]
+    );
+  }, [categories, selectedGameCategory, accounts.length]);
 
   const allCategoryAccounts = useMemo(() => {
-    if (categorySlug === "all") return accounts;
-    return accounts.filter((acc) => acc.gameSlug === category.slug);
-  }, [accounts, category.slug, categorySlug]);
+    if (selectedGameCategory === "all") return accounts;
+    return accounts.filter((acc) => acc.gameSlug === selectedGameCategory);
+  }, [accounts, selectedGameCategory]);
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState<GameAccount[]>(
@@ -79,7 +86,7 @@ export function MarketplaceCategoryView({
       try {
         const queryParams = new URLSearchParams({
           q,
-          ...(categorySlug !== "all" && { gameSlug: category.slug }),
+          ...(selectedGameCategory !== "all" && { gameSlug: activeCategory.slug }),
         });
         const res = await fetch(`/api/search-accounts?${queryParams.toString()}`);
         if (res.ok) {
@@ -94,7 +101,7 @@ export function MarketplaceCategoryView({
     }, 400);
 
     return () => clearTimeout(delayDebounce);
-  }, [searchQuery, categorySlug, category.slug]);
+  }, [searchQuery, selectedGameCategory, activeCategory.slug]);
 
   // Extract unique login types from this category's accounts
   const availableLoginTypes = useMemo(() => {
@@ -118,6 +125,10 @@ export function MarketplaceCategoryView({
           const matchDesc = acc.description.some((d) => d.toLowerCase().includes(q));
           if (!matchTitle && !matchRank && !matchDesc) return false;
         }
+        // Game filter if search results returned mixed games
+        if (selectedGameCategory !== "all" && acc.gameSlug !== selectedGameCategory) {
+          return false;
+        }
         // Rank filter
         if (selectedRank !== "ALL") {
           if (!acc.specs.rank.toLowerCase().includes(selectedRank.toLowerCase())) return false;
@@ -138,7 +149,7 @@ export function MarketplaceCategoryView({
         }
         return 0; // DEFAULT (Featured first)
       });
-  }, [allCategoryAccounts, searchResults, searchQuery, selectedRank, selectedLogin, selectedSort]);
+  }, [allCategoryAccounts, searchResults, searchQuery, selectedGameCategory, selectedRank, selectedLogin, selectedSort]);
 
   const resetFilters = () => {
     setSearchQuery("");
@@ -149,46 +160,52 @@ export function MarketplaceCategoryView({
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Back Button & Breadcrumb */}
-      <div className="text-muted-foreground flex items-center gap-2 text-sm">
-        <Link
-          href="/marketplace"
-          className="hover:text-primary inline-flex items-center gap-1.5 font-medium transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Kembali ke Daftar Akun</span>
-        </Link>
-        <span>/</span>
-        <span className="text-foreground font-semibold">{category.name}</span>
-      </div>
+      {/* Back Button & Breadcrumb (only if deep-linked to a specific category) */}
+      {categorySlug !== "all" && (
+        <div className="text-muted-foreground flex items-center gap-2 text-sm">
+          <Link
+            href="/marketplace"
+            className="hover:text-primary inline-flex items-center gap-1.5 font-medium transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Semua Akun Marketplace</span>
+          </Link>
+          <span>/</span>
+          <span className="text-foreground font-semibold">{activeCategory.name}</span>
+        </div>
+      )}
 
-      {/* Category Header Banner */}
+      {/* Header Banner */}
       <div
         className={cn(
           "border-border/80 from-card via-card to-primary/5 relative overflow-hidden rounded-3xl border bg-gradient-to-br p-6 shadow-sm sm:p-8",
-          category.colorTheme,
+          activeCategory.colorTheme,
         )}
       >
         <div className="relative z-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
           <div className="flex items-start gap-4 sm:items-center">
             <div className="bg-background border-border/70 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border shadow-md sm:h-16 sm:w-16">
-              <GameCategoryIcon iconName={category.iconName} className="h-7 w-7 sm:h-8 sm:w-8" />
+              {selectedGameCategory === "all" ? (
+                <Gamepad2 className="text-primary h-7 w-7 sm:h-8 sm:w-8" />
+              ) : (
+                <GameCategoryIcon iconName={activeCategory.iconName} className="h-7 w-7 sm:h-8 sm:w-8" />
+              )}
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="bg-primary/10 text-primary border-primary/20 inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold">
-                  {allCategoryAccounts.length} Akun Tersedia
+                  {allCategoryAccounts.length} Akun Siap Beli
                 </span>
                 <span className="flex items-center gap-1 text-xs font-semibold text-emerald-500">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                  Live Update
+                  Live Stock
                 </span>
               </div>
               <h1 className="text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
-                {category.name}
+                {selectedGameCategory === "all" ? "Katalog Akun Sultan Feryshop" : activeCategory.name}
               </h1>
               <p className="text-muted-foreground max-w-xl text-xs sm:text-sm">
-                {category.subtitle}
+                {activeCategory.subtitle}
               </p>
             </div>
           </div>
@@ -201,7 +218,7 @@ export function MarketplaceCategoryView({
               className="border-border bg-background/80 h-10 gap-2 rounded-xl px-4 font-semibold shadow-sm"
             >
               <SlidersHorizontal className="text-primary h-4 w-4" />
-              <span>Filter & Urutkan</span>
+              <span>Filter Lanjutan</span>
               {(selectedRank !== "ALL" ||
                 selectedLogin !== "ALL" ||
                 selectedSort !== "DEFAULT" ||
@@ -215,6 +232,79 @@ export function MarketplaceCategoryView({
         </div>
       </div>
 
+      {/* Game Selection Pill Filters (Instant 0-click category switching) */}
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
+          <span>Pilih Game:</span>
+          {selectedGameCategory !== "all" && (
+            <button
+              onClick={() => {
+                setSelectedGameCategory("all");
+                setSelectedRank("ALL");
+              }}
+              className="text-primary hover:underline active:scale-95 transition-transform"
+            >
+              Lihat Semua Game ({accounts.length})
+            </button>
+          )}
+        </div>
+        <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedGameCategory("all");
+              setSelectedRank("ALL");
+            }}
+            className={cn(
+              "inline-flex items-center gap-2 shrink-0 rounded-2xl px-4 py-2.5 min-h-[44px] text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              selectedGameCategory === "all"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 scale-[1.02]"
+                : "bg-card border-border/80 text-muted-foreground hover:border-primary/40 hover:text-foreground border hover:bg-muted/40",
+            )}
+          >
+            <Gamepad2 className="h-4 w-4" />
+            <span>Semua Game</span>
+            <span className={cn(
+              "rounded-full px-2 py-0.5 text-[10px] font-extrabold",
+              selectedGameCategory === "all" ? "bg-black/20 text-white" : "bg-muted text-muted-foreground"
+            )}>
+              {accounts.length}
+            </span>
+          </button>
+          {categories.map((cat) => {
+            const count = accounts.filter((a) => a.gameSlug === cat.slug).length;
+            const isSelected = selectedGameCategory === cat.slug;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  setSelectedGameCategory(isSelected ? "all" : cat.slug);
+                  setSelectedRank("ALL");
+                }}
+                className={cn(
+                  "inline-flex items-center gap-2 shrink-0 rounded-2xl px-4 py-2.5 min-h-[44px] text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  isSelected
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 scale-[1.02]"
+                    : "bg-card border-border/80 text-muted-foreground hover:border-primary/40 hover:text-foreground border hover:bg-muted/40",
+                )}
+              >
+                <GameCategoryIcon iconName={cat.iconName} className="h-4 w-4" />
+                <span>{cat.name}</span>
+                {count > 0 && (
+                  <span className={cn(
+                    "rounded-full px-2 py-0.5 text-[10px] font-extrabold",
+                    isSelected ? "bg-black/20 text-white" : "bg-muted text-muted-foreground"
+                  )}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Search Bar & Quick Rank Filter Pills */}
       <div className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -222,16 +312,17 @@ export function MarketplaceCategoryView({
             <Search className="text-muted-foreground absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2" />
             <Input
               type="text"
-              placeholder={`Cari spesifikasi akun ${category.name} (misal: Sultan, Mythic, Skin)...`}
+              placeholder={`Cari spesifikasi akun ${selectedGameCategory === "all" ? "game" : activeCategory.name} (misal: Sultan, Mythic, Skin, Monsep)...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-border bg-card focus-visible:ring-primary h-11 rounded-xl pl-10 text-sm shadow-sm sm:h-12"
+              className="border-border bg-card focus-visible:ring-primary h-11 rounded-xl pl-10 pr-12 text-sm shadow-sm sm:h-12 transition-colors"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="text-muted-foreground hover:text-foreground absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold"
+                className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 rounded-lg hover:bg-muted text-xs font-semibold active:scale-95 transition-all"
+                aria-label="Hapus kata kunci pencarian"
               >
                 Hapus
               </button>
@@ -242,7 +333,7 @@ export function MarketplaceCategoryView({
           <select
             value={selectedSort}
             onChange={(e) => setSelectedSort(e.target.value)}
-            className="border-border bg-card text-foreground focus:ring-primary h-11 rounded-xl border px-4 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 sm:h-12 sm:w-56"
+            className="border-border bg-card text-foreground focus:ring-primary h-11 rounded-xl border px-4 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 sm:h-12 sm:w-56 cursor-pointer"
           >
             <option value="DEFAULT">Rekomendasi (Sultan)</option>
             <option value="PRICE_ASC">Harga Termurah</option>
@@ -252,38 +343,40 @@ export function MarketplaceCategoryView({
         </div>
 
         {/* Quick Filter Pills (Rank) */}
-        <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-2">
-          <span className="text-muted-foreground mr-1 shrink-0 text-xs font-bold">
-            Rank Populer:
-          </span>
-          <button
-            type="button"
-            onClick={() => setSelectedRank("ALL")}
-            className={cn(
-              "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all",
-              selectedRank === "ALL"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50 border",
-            )}
-          >
-            Semua Rank
-          </button>
-          {category.popularRanks.map((rank) => (
+        {activeCategory.popularRanks.length > 0 && (
+          <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-2 pt-0.5">
+            <span className="text-muted-foreground mr-1 shrink-0 text-xs font-bold">
+              Rank Populer:
+            </span>
             <button
-              key={rank}
               type="button"
-              onClick={() => setSelectedRank(selectedRank === rank ? "ALL" : rank)}
+              onClick={() => setSelectedRank("ALL")}
               className={cn(
-                "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all",
-                selectedRank === rank
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                "shrink-0 rounded-full px-3.5 py-2 min-h-[38px] flex items-center text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                selectedRank === "ALL"
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                   : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50 border",
               )}
             >
-              {rank}
+              Semua Rank
             </button>
-          ))}
-        </div>
+            {activeCategory.popularRanks.map((rank) => (
+              <button
+                key={rank}
+                type="button"
+                onClick={() => setSelectedRank(selectedRank === rank ? "ALL" : rank)}
+                className={cn(
+                  "shrink-0 rounded-full px-3.5 py-2 min-h-[38px] flex items-center text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  selectedRank === rank
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                    : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50 border",
+                )}
+              >
+                {rank}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Expanded Filter Drawer / Panel */}
         {showFilters && (
@@ -352,8 +445,7 @@ export function MarketplaceCategoryView({
                     100% All Monsep & Clean Data
                   </div>
                   <div>
-                    Seluruh akun dalam kategori ini siap bind ke email baru pembeli dengan kawalan
-                    admin.
+                    Seluruh akun dalam katalog ini siap bind ke email baru pembeli dengan kawalan admin Rekber resmi.
                   </div>
                 </div>
               </div>
@@ -362,16 +454,16 @@ export function MarketplaceCategoryView({
         )}
       </div>
 
-      {/* Account Cards Grid (Mobile First: 1 col on mobile, 2 on sm, 3 on lg) */}
+      {/* Account Cards Grid */}
       <div className="space-y-4">
         <div className="text-muted-foreground flex items-center justify-between text-xs font-bold">
           <span>
             Menampilkan <span className="text-foreground">{filteredAccounts.length}</span> akun{" "}
-            {category.name}
+            {selectedGameCategory === "all" ? "dari semua game" : activeCategory.name}
           </span>
-          {(selectedRank !== "ALL" || selectedLogin !== "ALL" || searchQuery) && (
-            <button onClick={resetFilters} className="text-primary font-semibold hover:underline">
-              Hapus Filter Active
+          {(selectedRank !== "ALL" || selectedLogin !== "ALL" || searchQuery || selectedGameCategory !== "all") && (
+            <button onClick={() => { resetFilters(); setSelectedGameCategory("all"); }} className="text-primary font-semibold hover:underline">
+              Reset Semua Filter
             </button>
           )}
         </div>
@@ -396,11 +488,11 @@ export function MarketplaceCategoryView({
               <h3 className="text-foreground text-base font-bold">Akun Tidak Ditemukan</h3>
               <p className="text-muted-foreground mx-auto max-w-md text-xs sm:text-sm">
                 Belum ada akun yang sesuai dengan kata kunci atau filter pencarian kamu saat ini.
-                Coba reset filter atau gunakan kata kunci yang lebih umum.
+                Coba reset filter atau pilih kategori game lainnya.
               </p>
             </div>
             <Button
-              onClick={resetFilters}
+              onClick={() => { resetFilters(); setSelectedGameCategory("all"); }}
               variant="outline"
               className="rounded-xl px-6 font-semibold"
             >

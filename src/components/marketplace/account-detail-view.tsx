@@ -67,7 +67,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   const whatsappBeliUrl = `https://wa.me/${adminPhone}?text=${beliMessage}`;
 
   return (
-    <div className="space-y-8 pb-24 lg:pb-12">
+    <div className="space-y-8 pb-28 lg:pb-12">
       {/* Breadcrumb Navigation */}
       <div className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
         <Link href="/marketplace" className="hover:text-primary font-medium transition-colors">
@@ -336,6 +336,55 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           </div>
         </div>
       </div>
+
+      {/* Mobile Fixed Bottom Sticky Purchase Bar */}
+      <div className="border-border/80 bg-card/95 supports-[backdrop-filter]:bg-card/85 fixed inset-x-0 bottom-0 z-40 border-t p-3.5 shadow-[0_-8px_24px_rgba(0,0,0,0.4)] backdrop-blur-xl transition-all duration-300 lg:hidden">
+        <div className="mx-auto flex max-w-md items-center justify-between gap-3">
+          {/* Price details */}
+          <div className="min-w-0 flex-1">
+            <span className="text-muted-foreground block truncate text-[10px] font-bold uppercase tracking-wider">
+              {priceLabel}
+            </span>
+            <div className="flex items-baseline gap-1.5 truncate">
+              <span className="text-lg font-black text-emerald-500 sm:text-xl">
+                Rp {account.price.toLocaleString("id-ID")}
+              </span>
+              {account.originalPrice && (
+                <span className="text-muted-foreground text-[10px] font-semibold line-through">
+                  Rp {account.originalPrice.toLocaleString("id-ID")}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Action CTAs */}
+          <div className="flex items-center gap-2">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
+            >
+              <a href={whatsappTanyaUrl} target="_blank" rel="noopener noreferrer" aria-label={askButtonText}>
+                <MessageCircle className="text-primary h-4 w-4" />
+                <span className="hidden sm:inline ml-1.5">Tanya</span>
+              </a>
+            </Button>
+
+            <Button
+              asChild
+              size="sm"
+              className="h-11 rounded-xl bg-emerald-600 px-4 text-xs font-extrabold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
+            >
+              <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="h-4 w-4 fill-white text-emerald-600 mr-1.5" />
+                <span>Beli Rekber</span>
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
+
