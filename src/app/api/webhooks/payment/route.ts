@@ -16,7 +16,8 @@ export const dynamic = "force-dynamic";
  *
  * Key Steps:
  * 1. Verifies HMAC-SHA256 signature from `x-payment-signature` or `x-mock-signature` header.
- * 2. Parses event payload (`payment.paid`, `payment.failed`, `payment.expired`).
+ * 2. Parses event payload (`payment.paid`, `payment.failed`).
+ *    Order expiry is handled separately by `POST /api/orders/expire`, owned by payment-service.
  * 3. Updates order status in PostgreSQL DB (`orders` table).
  * 4. Triggers item fulfillment / provisioning workflow on successful payment.
  */
@@ -101,24 +102,6 @@ async function postHandler(req: Request) {
         .update(orders)
         .set({
           paymentStatus: "failed",
-          gatewayResponse: {
-            ...existingGateway,
-            [provider]: {
-              status,
-              paymentId,
-              failureReason: payload.failure_reason,
-              eventId: payload.event_id,
-            },
-          },
-        })
-        .where(and(eq(orders.orderId, orderId), notInArray(orders.paymentStatus, finalStatuses)))
-        .returning({ id: orders.id });
-      applied = updated.length > 0;
-    } else if (event === "payment.expired") {
-      const updated = await db
-        .update(orders)
-        .set({
-          paymentStatus: "expired",
           gatewayResponse: {
             ...existingGateway,
             [provider]: {
