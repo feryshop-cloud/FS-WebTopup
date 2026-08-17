@@ -4,13 +4,11 @@ import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
-type Params = { orderId: string };
-
 export const dynamic = "force-dynamic";
 
-async function getHandler(req: Request, context: { params: Promise<Params> }) {
+async function getHandler(req: Request, context?: RouteContext<"/api/order/[orderId]">) {
   try {
-    const { orderId } = await context.params;
+    const { orderId } = await context?.params ?? { orderId: undefined };
     if (!orderId) {
       return NextResponse.json(
         { success: false, message: "Order ID tidak ditemukan" },

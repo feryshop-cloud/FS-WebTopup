@@ -3,7 +3,7 @@ import { pinoLogger } from "@/lib/logger";
 import { runWithRequestId } from "@/lib/logging/request-context";
 import { userFromRequest } from "@/lib/logging/user-context";
 
-export type RouteHandler<C = unknown> = (req: Request, ctx: C) => Promise<Response> | Response;
+export type RouteHandler<C = unknown> = (req: Request, ctx?: C) => Promise<Response> | Response;
 
 /**
  * Derive the correlation id for a request: reuse `x-request-id` header when
