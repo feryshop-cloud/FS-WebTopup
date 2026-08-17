@@ -1,6 +1,19 @@
+/**
+ * @file proxy.ts
+ * @description Next.js proxy middleware responsible for request correlation tracking
+ * (via `x-request-id`), early 404 fast-path intercept for nonexistent routes,
+ * and forwarding enriched request headers downstream.
+ */
+
 import { NextResponse, type NextRequest } from "next/server";
 import { shouldReturnNotFound } from "@/lib/middleware/route-exists";
 
+/**
+ * Self-contained static HTML page returned for 404 Not Found responses.
+ *
+ * Rendered directly at the Edge/Middleware layer to provide zero-cost early exits
+ * for invalid route requests (scanners/bots) without invoking SSR or React rendering pipelines.
+ */
 const NOT_FOUND_HTML = `<!doctype html>
 <html lang="id">
 <head>
@@ -25,6 +38,16 @@ const NOT_FOUND_HTML = `<!doctype html>
 </body>
 </html>`;
 
+/**
+ * Core middleware proxy handler.
+ *
+ * 1. Generates or propagates incoming `x-request-id` header for distributed tracing.
+ * 2. Checks route validity via {@link shouldReturnNotFound}. If unknown, immediately serves {@link NOT_FOUND_HTML}.
+ * 3. Injects `x-request-id` into downstream request and response headers.
+ *
+ * @param request - The incoming Next.js HTTP request.
+ * @returns A Next.js response (either 404 early-exit or downstream NextResponse with tracking headers).
+ */
 export async function proxy(request: NextRequest) {
   const incomingId = request.headers.get("x-request-id");
   const requestId = incomingId || crypto.randomUUID();
@@ -51,6 +74,12 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
+/**
+ * Middleware matcher configuration.
+ *
+ * Excludes static assets (`_next/static`, `_next/image`, images, fonts, JS, CSS)
+ * and health check endpoints (`/api/health`) from middleware execution to maximize throughput.
+ */
 export const config = {
   matcher: [
     "/((?!api/health|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
