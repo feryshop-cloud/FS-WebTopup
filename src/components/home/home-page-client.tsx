@@ -24,6 +24,15 @@ const swrOptions = {
   keepPreviousData: true,
 };
 
+/**
+ * Scroll smoothly to a section by ID.
+ * @param id - The DOM element ID to scroll to (without #)
+ */
+function scrollToSection(id: string): void {
+  const el = document.getElementById(id);
+  el?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 export function HomePageClient({ initialData }: { initialData: HomeFallbackData }) {
   const {
     data: dataSlider,
@@ -127,10 +136,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
               variant="default"
               size="lg"
               className="group w-full sm:w-auto px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground"
-              onClick={() => {
-                const el = document.getElementById("topup-catalog");
-                el?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
+              onClick={() => scrollToSection("topup-section")}
               aria-label="Scroll ke katalog Top-Up"
             >
               <Zap className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
@@ -140,10 +146,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
               variant="outline"
               size="lg"
               className="group w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-primary/30 bg-card text-primary shadow-sm hover:bg-primary/5 hover:border-primary/50 transition-all duration-200"
-              onClick={() => {
-                const el = document.getElementById("marketplace-catalog");
-                el?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
+              onClick={() => scrollToSection("account-section")}
               aria-label="Scroll ke katalog Akun Game"
             >
               <Gamepad2 className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
@@ -182,7 +185,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         )}
 
         {/* 2-4. Kategori Game Akun, Katalog Akun Pilihan, Jaminan Keamanan - Marketplace section */}
-        <div id="marketplace-catalog">
+        <div id="account-section">
           <FeaturedAccounts
             accounts={initialData.marketplaceAccounts}
             categories={initialData.marketplaceCategories}
@@ -190,7 +193,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         </div>
 
         {/* 5. Layanan Top-Up Cepat - Section sekunder */}
-        <div id="topup-catalog" className="border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6">
+        <div id="topup-section" className="border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6">
           <div className="mb-5 flex items-center gap-2.5">
             <span className="bg-primary/10 text-primary border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
               <Zap className="h-5 w-5" />
