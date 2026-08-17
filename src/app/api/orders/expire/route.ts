@@ -81,6 +81,7 @@ async function postHandler(req: Request) {
       .update(orders)
       .set({
         paymentStatus: "expired",
+        buyStatus: "failed",
         gatewayResponse: {
           ...existingGateway,
           [provider]: {
