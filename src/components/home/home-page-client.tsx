@@ -185,15 +185,23 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         )}
 
         {/* 2-4. Kategori Game Akun, Katalog Akun Pilihan, Jaminan Keamanan - Marketplace section */}
-        <div id="account-section">
+        <section
+          id="account-section"
+          className="scroll-mt-24 pb-8"
+          aria-labelledby="account-section-title"
+        >
           <FeaturedAccounts
             accounts={initialData.marketplaceAccounts}
             categories={initialData.marketplaceCategories}
           />
-        </div>
+        </section>
 
         {/* 5. Layanan Top-Up Cepat - Section sekunder */}
-        <div id="topup-section" className="border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6">
+        <section
+          id="topup-section"
+          className="scroll-mt-24 border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6 pt-8"
+          aria-labelledby="topup-section-title"
+        >
           <div className="mb-5 flex items-center gap-2.5">
             <span className="bg-primary/10 text-primary border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
               <Zap className="h-5 w-5" />
@@ -229,7 +237,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
               </div>
             )}
           </div>
-        </div>
+        </section>
       </div>
 
       <div className="mt-16">
