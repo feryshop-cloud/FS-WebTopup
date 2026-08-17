@@ -13,7 +13,7 @@ import PromoPopup from "@/components/home/promo-popup";
 import Artikel from "@/components/home/artikel";
 import { FeaturedAccounts } from "@/components/home/featured-accounts";
 import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
+import { Zap, Gamepad2 } from "lucide-react";
 import { fetcher } from "@/lib/fetcher";
 import type { HomeFallbackData } from "@/lib/data/home";
 
@@ -120,6 +120,38 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           )}
         </div>
 
+        {/* Quick Action Buttons - Dual intent self-segmentation */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
+            <Button
+              variant="default"
+              size="lg"
+              className="group w-full sm:w-auto px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground"
+              onClick={() => {
+                const el = document.getElementById("topup-catalog");
+                el?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              aria-label="Scroll ke katalog Top-Up"
+            >
+              <Zap className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
+              <span className="font-bold text-base">⚡ Top Up Cepat</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="group w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-primary/30 bg-card text-primary shadow-sm hover:bg-primary/5 hover:border-primary/50 transition-all duration-200"
+              onClick={() => {
+                const el = document.getElementById("marketplace-catalog");
+                el?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              aria-label="Scroll ke katalog Akun Game"
+            >
+              <Gamepad2 className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
+              <span className="font-bold text-base">🎮 Beli Akun Game</span>
+            </Button>
+          </div>
+        </div>
+
         {hasAnyError && (
           <div className="border-border bg-muted/30 rounded-xl border p-6">
             <div className="text-sm font-medium">Sebagian data gagal dimuat</div>
@@ -150,13 +182,15 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         )}
 
         {/* 2-4. Kategori Game Akun, Katalog Akun Pilihan, Jaminan Keamanan - Marketplace section */}
-        <FeaturedAccounts
-          accounts={initialData.marketplaceAccounts}
-          categories={initialData.marketplaceCategories}
-        />
+        <div id="marketplace-catalog">
+          <FeaturedAccounts
+            accounts={initialData.marketplaceAccounts}
+            categories={initialData.marketplaceCategories}
+          />
+        </div>
 
         {/* 5. Layanan Top-Up Cepat - Section sekunder */}
-        <div className="border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6">
+        <div id="topup-catalog" className="border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6">
           <div className="mb-5 flex items-center gap-2.5">
             <span className="bg-primary/10 text-primary border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
               <Zap className="h-5 w-5" />
