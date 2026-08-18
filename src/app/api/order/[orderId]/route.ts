@@ -3,6 +3,7 @@ import { db, orders, games, products } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
+import { OrderPaymentStatus } from "@/types/status";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,27 @@ async function getHandler(req: Request, context?: RouteContext<"/api/order/[orde
         const dbOrder = await db.select().from(orders).where(eq(orders.orderId, orderId)).limit(1);
         if (dbOrder && dbOrder[0]) {
           const o = dbOrder[0];
+          const nowSec = Math.floor(Date.now() / 1000);
+          let currentPaymentStatus = o.paymentStatus;
+
+          // Lazy Expire: Jika status PENDING dan expiredTime sudah lewat, update ke EXPIRED di DB
+          if (
+            currentPaymentStatus === OrderPaymentStatus.PENDING &&
+            o.expiredTime &&
+            o.expiredTime <= nowSec
+          ) {
+            try {
+              await db
+                .update(orders)
+                .set({ paymentStatus: OrderPaymentStatus.EXPIRED })
+                .where(eq(orders.orderId, orderId));
+              currentPaymentStatus = OrderPaymentStatus.EXPIRED;
+              logger.info("order lazy-expired on GET invoice", { orderId, expiredTime: o.expiredTime });
+            } catch (lazyErr) {
+              logger.error("failed to lazy-expire order on GET invoice", { orderId, error: lazyErr });
+            }
+          }
+
           orderData = {
             order_id: o.orderId,
             user_id: o.userId,
@@ -43,7 +65,7 @@ async function getHandler(req: Request, context?: RouteContext<"/api/order/[orde
             payment_code: o.paymentCode,
             payment_code_display: o.paymentCodeDisplay,
             qr_string: o.qrString,
-            payment_status: o.paymentStatus,
+            payment_status: currentPaymentStatus,
             buy_status: o.buyStatus,
             serial_number: o.serialNumber,
             whatsapp: o.whatsapp,
