@@ -5,7 +5,7 @@ import { and, eq, notInArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { verifyPaymentWebhookSignature } from "@/lib/payment-client";
-import { OrderPaymentStatus } from "@/types/status";
+import { OrderBuyStatus, OrderPaymentStatus } from "@/types/status";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +86,7 @@ async function postHandler(req: Request) {
       .update(orders)
       .set({
         paymentStatus: OrderPaymentStatus.EXPIRED,
+        buyStatus: OrderBuyStatus.FAILED,
         gatewayResponse: {
           ...existingGateway,
           [provider]: {

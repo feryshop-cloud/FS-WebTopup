@@ -6,9 +6,12 @@ import { withRequestLogging } from "@/lib/logging/with-request-logging";
 
 export const dynamic = "force-dynamic";
 
-async function getHandler(req: Request, context?: RouteContext<"/api/order/[orderId]/payment-status">) {
+async function getHandler(
+  req: Request,
+  context?: RouteContext<"/api/order/[orderId]/payment-status">,
+) {
   try {
-    const { orderId } = await context?.params ?? { orderId: undefined };
+    const { orderId } = (await context?.params) ?? { orderId: undefined };
 
     if (!orderId) {
       return NextResponse.json(

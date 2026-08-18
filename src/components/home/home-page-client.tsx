@@ -135,22 +135,28 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
             <Button
               variant="default"
               size="lg"
-              className="group w-full sm:w-auto px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground"
+              className="from-primary to-primary/80 text-primary-foreground group w-full rounded-2xl bg-gradient-to-r px-8 py-4 shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto"
               onClick={() => scrollToSection("topup-section")}
               aria-label="Scroll ke katalog Top-Up"
             >
-              <Zap className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
-              <span className="font-bold text-base">⚡ Top Up Cepat</span>
+              <Zap
+                className="mr-2 h-5 w-5 transition-transform group-hover:scale-110"
+                aria-hidden="true"
+              />
+              <span className="text-base font-bold">⚡ Top Up Cepat</span>
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="group w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-primary/30 bg-card text-primary shadow-sm hover:bg-primary/5 hover:border-primary/50 transition-all duration-200"
+              className="border-primary/30 bg-card text-primary hover:bg-primary/5 hover:border-primary/50 group w-full rounded-2xl border-2 px-8 py-4 shadow-sm transition-all duration-200 sm:w-auto"
               onClick={() => scrollToSection("account-section")}
               aria-label="Scroll ke katalog Akun Game"
             >
-              <Gamepad2 className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" aria-hidden="true" />
-              <span className="font-bold text-base">🎮 Beli Akun Game</span>
+              <Gamepad2
+                className="mr-2 h-5 w-5 transition-transform group-hover:scale-110"
+                aria-hidden="true"
+              />
+              <span className="text-base font-bold">🎮 Beli Akun Game</span>
             </Button>
           </div>
         </div>
@@ -199,7 +205,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         {/* 5. Layanan Top-Up Cepat - Section sekunder */}
         <section
           id="topup-section"
-          className="scroll-mt-24 border-border/70 bg-card/50 rounded-3xl border p-4 sm:p-6 pt-8"
+          className="border-border/70 bg-card/50 scroll-mt-24 rounded-3xl border p-4 pt-8 sm:p-6"
           aria-labelledby="topup-section-title"
         >
           <div className="mb-5 flex items-center gap-2.5">

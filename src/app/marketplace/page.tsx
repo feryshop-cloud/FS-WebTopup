@@ -32,14 +32,9 @@ export default async function MarketplaceHomePage() {
   return (
     <ContentLayout title="Marketplace Akun Game">
       <div className="space-y-8">
-        <MarketplaceCategoryView
-          categorySlug="all"
-          accounts={accounts}
-          categories={categories}
-        />
+        <MarketplaceCategoryView categorySlug="all" accounts={accounts} categories={categories} />
         <MarketplaceWhyUsSection />
       </div>
     </ContentLayout>
   );
 }
-

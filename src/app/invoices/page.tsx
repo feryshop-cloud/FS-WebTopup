@@ -337,10 +337,15 @@ export default function InvoiceSearchPage() {
                       return "-";
                     })();
 
+                    const rawPaymentStatus = (order.payment_status as string) || "";
+                    const isPaymentExpired = rawPaymentStatus.toLowerCase() === "expired";
+
                     const rawStatus = order.buy_status as string;
                     const status = normalizeBuyStatus(rawStatus);
-                    const statusLabel = BuyStatusLabel[status];
-                    const badgeClass = BuyStatusBadgeClass[status];
+                    const statusLabel = isPaymentExpired ? "Kadaluarsa" : BuyStatusLabel[status];
+                    const badgeClass = isPaymentExpired
+                      ? "bg-destructive/10 text-destructive border border-destructive/20"
+                      : BuyStatusBadgeClass[status];
 
                     return (
                       <motion.tr

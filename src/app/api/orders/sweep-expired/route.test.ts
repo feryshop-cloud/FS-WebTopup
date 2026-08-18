@@ -36,7 +36,10 @@ vi.mock("@/lib/db", () => ({
 
 import { POST, GET } from "@/app/api/orders/sweep-expired/route";
 
-function makeRequest(url = "http://localhost/api/orders/sweep-expired", headersObj: Record<string, string> = {}) {
+function makeRequest(
+  url = "http://localhost/api/orders/sweep-expired",
+  headersObj: Record<string, string> = {},
+) {
   const headers = new Headers();
   for (const [k, v] of Object.entries(headersObj)) {
     headers.set(k, v);

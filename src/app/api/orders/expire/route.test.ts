@@ -47,7 +47,12 @@ vi.mock("@/lib/db", () => ({
     update: vi.fn(() => updateChain),
     select: vi.fn(() => selectChain),
   },
-  orders: { id: "id", orderId: "orderId", paymentStatus: "paymentStatus", gatewayResponse: "gatewayResponse" },
+  orders: {
+    id: "id",
+    orderId: "orderId",
+    paymentStatus: "paymentStatus",
+    gatewayResponse: "gatewayResponse",
+  },
 }));
 
 import { POST } from "@/app/api/orders/expire/route";
@@ -105,7 +110,9 @@ describe("POST /api/orders/expire", () => {
     (selectChain.limit as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
       { id: 1, orderId: "O1", paymentStatus: "pending", gatewayResponse: { provider: "mock" } },
     ]);
-    (updateChain.returning as ReturnType<typeof vi.fn>).mockResolvedValueOnce([{ id: 1 }] as unknown[]);
+    (updateChain.returning as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
+      { id: 1 },
+    ] as unknown[]);
 
     const res = await POST(makeRequest({ order_id: "O1", payment_id: "P1", event_id: "E1" }));
 

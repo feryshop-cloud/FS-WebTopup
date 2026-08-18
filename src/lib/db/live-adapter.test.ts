@@ -47,9 +47,7 @@ describe("resolveStorageUrl", () => {
   });
 
   it("returns full http URLs as-is", () => {
-    expect(resolveStorageUrl("http://example.com/image.png")).toBe(
-      "http://example.com/image.png",
-    );
+    expect(resolveStorageUrl("http://example.com/image.png")).toBe("http://example.com/image.png");
   });
 
   it("returns full https URLs as-is", () => {
@@ -83,8 +81,6 @@ describe("resolveStorageUrl", () => {
 
   it("handles path with query-like characters", () => {
     const result = resolveStorageUrl("/images/banner&logo.png");
-    expect(result).toBe(
-      `/api/proxy-image?path=${encodeURIComponent("/images/banner&logo.png")}`,
-    );
+    expect(result).toBe(`/api/proxy-image?path=${encodeURIComponent("/images/banner&logo.png")}`);
   });
 });

@@ -365,9 +365,14 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               size="sm"
               className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
             >
-              <a href={whatsappTanyaUrl} target="_blank" rel="noopener noreferrer" aria-label={askButtonText}>
+              <a
+                href={whatsappTanyaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={askButtonText}
+              >
                 <MessageCircle className="text-primary h-4 w-4" />
-                <span className="hidden sm:inline ml-1.5">Tanya</span>
+                <span className="ml-1.5 hidden sm:inline">Tanya</span>
               </a>
             </Button>
 
@@ -377,7 +382,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               className="h-11 rounded-xl bg-emerald-600 px-4 text-xs font-extrabold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
             >
               <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="h-4 w-4 fill-white text-emerald-600 mr-1.5" />
+                <MessageCircle className="mr-1.5 h-4 w-4 fill-white text-emerald-600" />
                 <span>Beli Rekber</span>
               </a>
             </Button>
@@ -387,4 +392,3 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
     </div>
   );
 }
-

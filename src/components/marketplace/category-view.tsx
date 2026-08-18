@@ -149,7 +149,15 @@ export function MarketplaceCategoryView({
         }
         return 0; // DEFAULT (Featured first)
       });
-  }, [allCategoryAccounts, searchResults, searchQuery, selectedGameCategory, selectedRank, selectedLogin, selectedSort]);
+  }, [
+    allCategoryAccounts,
+    searchResults,
+    searchQuery,
+    selectedGameCategory,
+    selectedRank,
+    selectedLogin,
+    selectedSort,
+  ]);
 
   const resetFilters = () => {
     setSearchQuery("");
@@ -188,7 +196,10 @@ export function MarketplaceCategoryView({
               {selectedGameCategory === "all" ? (
                 <Gamepad2 className="text-primary h-7 w-7 sm:h-8 sm:w-8" />
               ) : (
-                <GameCategoryIcon iconName={activeCategory.iconName} className="h-7 w-7 sm:h-8 sm:w-8" />
+                <GameCategoryIcon
+                  iconName={activeCategory.iconName}
+                  className="h-7 w-7 sm:h-8 sm:w-8"
+                />
               )}
             </div>
             <div className="space-y-1">
@@ -202,7 +213,9 @@ export function MarketplaceCategoryView({
                 </span>
               </div>
               <h1 className="text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
-                {selectedGameCategory === "all" ? "Katalog Akun Sultan Feryshop" : activeCategory.name}
+                {selectedGameCategory === "all"
+                  ? "Katalog Akun Sultan Feryshop"
+                  : activeCategory.name}
               </h1>
               <p className="text-muted-foreground max-w-xl text-xs sm:text-sm">
                 {activeCategory.subtitle}
@@ -234,7 +247,7 @@ export function MarketplaceCategoryView({
 
       {/* Game Selection Pill Filters (Instant 0-click category switching) */}
       <div className="space-y-2.5">
-        <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
+        <div className="text-muted-foreground flex items-center justify-between text-xs font-bold">
           <span>Pilih Game:</span>
           {selectedGameCategory !== "all" && (
             <button
@@ -242,7 +255,7 @@ export function MarketplaceCategoryView({
                 setSelectedGameCategory("all");
                 setSelectedRank("ALL");
               }}
-              className="text-primary hover:underline active:scale-95 transition-transform"
+              className="text-primary transition-transform hover:underline active:scale-95"
             >
               Lihat Semua Game ({accounts.length})
             </button>
@@ -256,18 +269,22 @@ export function MarketplaceCategoryView({
               setSelectedRank("ALL");
             }}
             className={cn(
-              "inline-flex items-center gap-2 shrink-0 rounded-2xl px-4 py-2.5 min-h-[44px] text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              "focus-visible:ring-primary inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 active:scale-95",
               selectedGameCategory === "all"
-                ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 scale-[1.02]"
-                : "bg-card border-border/80 text-muted-foreground hover:border-primary/40 hover:text-foreground border hover:bg-muted/40",
+                ? "bg-primary text-primary-foreground shadow-primary/25 scale-[1.02] shadow-md"
+                : "bg-card border-border/80 text-muted-foreground hover:border-primary/40 hover:text-foreground hover:bg-muted/40 border",
             )}
           >
             <Gamepad2 className="h-4 w-4" />
             <span>Semua Game</span>
-            <span className={cn(
-              "rounded-full px-2 py-0.5 text-[10px] font-extrabold",
-              selectedGameCategory === "all" ? "bg-black/20 text-white" : "bg-muted text-muted-foreground"
-            )}>
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 text-[10px] font-extrabold",
+                selectedGameCategory === "all"
+                  ? "bg-black/20 text-white"
+                  : "bg-muted text-muted-foreground",
+              )}
+            >
               {accounts.length}
             </span>
           </button>
@@ -283,19 +300,21 @@ export function MarketplaceCategoryView({
                   setSelectedRank("ALL");
                 }}
                 className={cn(
-                  "inline-flex items-center gap-2 shrink-0 rounded-2xl px-4 py-2.5 min-h-[44px] text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "focus-visible:ring-primary inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 active:scale-95",
                   isSelected
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 scale-[1.02]"
-                    : "bg-card border-border/80 text-muted-foreground hover:border-primary/40 hover:text-foreground border hover:bg-muted/40",
+                    ? "bg-primary text-primary-foreground shadow-primary/25 scale-[1.02] shadow-md"
+                    : "bg-card border-border/80 text-muted-foreground hover:border-primary/40 hover:text-foreground hover:bg-muted/40 border",
                 )}
               >
                 <GameCategoryIcon iconName={cat.iconName} className="h-4 w-4" />
                 <span>{cat.name}</span>
                 {count > 0 && (
-                  <span className={cn(
-                    "rounded-full px-2 py-0.5 text-[10px] font-extrabold",
-                    isSelected ? "bg-black/20 text-white" : "bg-muted text-muted-foreground"
-                  )}>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-extrabold",
+                      isSelected ? "bg-black/20 text-white" : "bg-muted text-muted-foreground",
+                    )}
+                  >
                     {count}
                   </span>
                 )}
@@ -315,13 +334,13 @@ export function MarketplaceCategoryView({
               placeholder={`Cari spesifikasi akun ${selectedGameCategory === "all" ? "game" : activeCategory.name} (misal: Sultan, Mythic, Skin, Monsep)...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-border bg-card focus-visible:ring-primary h-11 rounded-xl pl-10 pr-12 text-sm shadow-sm sm:h-12 transition-colors"
+              className="border-border bg-card focus-visible:ring-primary h-11 rounded-xl pl-10 pr-12 text-sm shadow-sm transition-colors sm:h-12"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="text-muted-foreground hover:text-foreground absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 rounded-lg hover:bg-muted text-xs font-semibold active:scale-95 transition-all"
+                className="text-muted-foreground hover:text-foreground hover:bg-muted absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-xs font-semibold transition-all active:scale-95"
                 aria-label="Hapus kata kunci pencarian"
               >
                 Hapus
@@ -333,7 +352,7 @@ export function MarketplaceCategoryView({
           <select
             value={selectedSort}
             onChange={(e) => setSelectedSort(e.target.value)}
-            className="border-border bg-card text-foreground focus:ring-primary h-11 rounded-xl border px-4 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 sm:h-12 sm:w-56 cursor-pointer"
+            className="border-border bg-card text-foreground focus:ring-primary h-11 cursor-pointer rounded-xl border px-4 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 sm:h-12 sm:w-56"
           >
             <option value="DEFAULT">Rekomendasi (Sultan)</option>
             <option value="PRICE_ASC">Harga Termurah</option>
@@ -352,9 +371,9 @@ export function MarketplaceCategoryView({
               type="button"
               onClick={() => setSelectedRank("ALL")}
               className={cn(
-                "shrink-0 rounded-full px-3.5 py-2 min-h-[38px] flex items-center text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                "focus-visible:ring-primary flex min-h-[38px] shrink-0 items-center rounded-full px-3.5 py-2 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 active:scale-95",
                 selectedRank === "ALL"
-                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                  ? "bg-primary text-primary-foreground shadow-primary/20 shadow-sm"
                   : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50 border",
               )}
             >
@@ -366,9 +385,9 @@ export function MarketplaceCategoryView({
                 type="button"
                 onClick={() => setSelectedRank(selectedRank === rank ? "ALL" : rank)}
                 className={cn(
-                  "shrink-0 rounded-full px-3.5 py-2 min-h-[38px] flex items-center text-xs font-bold transition-all duration-200 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "focus-visible:ring-primary flex min-h-[38px] shrink-0 items-center rounded-full px-3.5 py-2 text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 active:scale-95",
                   selectedRank === rank
-                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                    ? "bg-primary text-primary-foreground shadow-primary/20 shadow-sm"
                     : "bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground border-border/50 border",
                 )}
               >
@@ -445,7 +464,8 @@ export function MarketplaceCategoryView({
                     100% All Monsep & Clean Data
                   </div>
                   <div>
-                    Seluruh akun dalam katalog ini siap bind ke email baru pembeli dengan kawalan admin Rekber resmi.
+                    Seluruh akun dalam katalog ini siap bind ke email baru pembeli dengan kawalan
+                    admin Rekber resmi.
                   </div>
                 </div>
               </div>
@@ -461,8 +481,17 @@ export function MarketplaceCategoryView({
             Menampilkan <span className="text-foreground">{filteredAccounts.length}</span> akun{" "}
             {selectedGameCategory === "all" ? "dari semua game" : activeCategory.name}
           </span>
-          {(selectedRank !== "ALL" || selectedLogin !== "ALL" || searchQuery || selectedGameCategory !== "all") && (
-            <button onClick={() => { resetFilters(); setSelectedGameCategory("all"); }} className="text-primary font-semibold hover:underline">
+          {(selectedRank !== "ALL" ||
+            selectedLogin !== "ALL" ||
+            searchQuery ||
+            selectedGameCategory !== "all") && (
+            <button
+              onClick={() => {
+                resetFilters();
+                setSelectedGameCategory("all");
+              }}
+              className="text-primary font-semibold hover:underline"
+            >
               Reset Semua Filter
             </button>
           )}
@@ -492,7 +521,10 @@ export function MarketplaceCategoryView({
               </p>
             </div>
             <Button
-              onClick={() => { resetFilters(); setSelectedGameCategory("all"); }}
+              onClick={() => {
+                resetFilters();
+                setSelectedGameCategory("all");
+              }}
               variant="outline"
               className="rounded-xl px-6 font-semibold"
             >

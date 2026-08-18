@@ -59,10 +59,7 @@ async function sweepHandler(req: Request) {
         paymentStatus: OrderPaymentStatus.EXPIRED,
       })
       .where(
-        and(
-          eq(orders.paymentStatus, OrderPaymentStatus.PENDING),
-          lte(orders.expiredTime, nowSec),
-        ),
+        and(eq(orders.paymentStatus, OrderPaymentStatus.PENDING), lte(orders.expiredTime, nowSec)),
       )
       .returning({ id: orders.id, orderId: orders.orderId });
 
@@ -83,10 +80,7 @@ async function sweepHandler(req: Request) {
     });
   } catch (error: any) {
     logger.error("sweep-expired failed", { error: error?.message });
-    return NextResponse.json(
-      { success: false, message: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }
 

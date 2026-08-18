@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 async function getHandler(req: Request, context?: RouteContext<"/api/order/[orderId]">) {
   try {
-    const { orderId } = await context?.params ?? { orderId: undefined };
+    const { orderId } = (await context?.params) ?? { orderId: undefined };
     if (!orderId) {
       return NextResponse.json(
         { success: false, message: "Order ID tidak ditemukan" },
@@ -42,9 +42,15 @@ async function getHandler(req: Request, context?: RouteContext<"/api/order/[orde
                 .set({ paymentStatus: OrderPaymentStatus.EXPIRED })
                 .where(eq(orders.orderId, orderId));
               currentPaymentStatus = OrderPaymentStatus.EXPIRED;
-              logger.info("order lazy-expired on GET invoice", { orderId, expiredTime: o.expiredTime });
+              logger.info("order lazy-expired on GET invoice", {
+                orderId,
+                expiredTime: o.expiredTime,
+              });
             } catch (lazyErr) {
-              logger.error("failed to lazy-expire order on GET invoice", { orderId, error: lazyErr });
+              logger.error("failed to lazy-expire order on GET invoice", {
+                orderId,
+                error: lazyErr,
+              });
             }
           }
 
