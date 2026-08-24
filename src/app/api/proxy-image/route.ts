@@ -1,21 +1,8 @@
 import { NextResponse } from "next/server";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import fs from "fs";
 import path from "path";
 
 export const dynamic = "force-dynamic";
-
-const s3 = new S3Client({
-  region: process.env.REGION || "auto",
-  endpoint: process.env.ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
-  },
-});
-
-const BUCKET = process.env.BUCKET || "";
 
 function getPlaceholderResponse() {
   try {
@@ -41,16 +28,46 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing path" }, { status: 422 });
   }
 
-  // Normalize: strip leading slash
-  const key = imagePath.replace(/^\/+/, "");
+  // 1. Jika imagePath sudah merupakan URL lengkap (http/https)
+  if (/^https?:\/\//i.test(imagePath)) {
+    try {
+      const res = await fetch(imagePath, {
+        headers: { Accept: "image/*" },
+        next: { revalidate: 86400 },
+      });
+
+      if (!res.ok) {
+        return getPlaceholderResponse();
+      }
+
+      const contentType = res.headers.get("content-type") ?? "image/webp";
+      const buf = await res.arrayBuffer();
+
+      return new NextResponse(buf, {
+        headers: {
+          "Content-Type": contentType,
+          "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
+        },
+      });
+    } catch {
+      return getPlaceholderResponse();
+    }
+  }
+
+  // 2. Fetch dari Supabase Storage
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  if (!supabaseUrl) {
+    return getPlaceholderResponse();
+  }
+
+  const cleanKey = imagePath.replace(/^\/+/, "");
+  // Support baik path format 'storage/v1/object/public/images/...' maupun 'images/...'
+  const targetUrl = cleanKey.startsWith("storage/v1/object/public/")
+    ? `${supabaseUrl.replace(/\/+$/, "")}/${cleanKey}`
+    : `${supabaseUrl.replace(/\/+$/, "")}/storage/v1/object/public/${cleanKey}`;
 
   try {
-    const command = new GetObjectCommand({ Bucket: BUCKET, Key: key });
-
-    // Try direct authenticated fetch first (faster than presigned URL)
-    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-    const res = await fetch(signedUrl, {
+    const res = await fetch(targetUrl, {
       headers: { Accept: "image/*" },
       next: { revalidate: 86400 },
     });
