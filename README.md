@@ -99,6 +99,26 @@ FS-Public/
    npm start
    ```
 
+## Deployment Docker & GitHub Container Registry (GHCR)
+
+Repositori ini memiliki image resmi di GitHub Container Registry: `ghcr.io/feryshop-cloud/fs-webtopup:latest`.
+
+### 1. Menjalankan via Docker Langsung
+```bash
+docker run -d \
+  --name fs-webtopup \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  --env-file .env.local \
+  ghcr.io/feryshop-cloud/fs-webtopup:latest
+```
+
+### 2. Build Docker Image Lokal
+```bash
+docker build -t fs-webtopup .
+docker run -d -p 8080:8080 --env-file .env.local fs-webtopup
+```
+
 ## Arsitektur Data
 
 - **Storefront** membaca data publik dari Supabase via REST + RLS: `games`, `categories`, `settings`, dan `inventory` dengan status `AVAILABLE`

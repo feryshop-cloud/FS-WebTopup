@@ -1,72 +1,16 @@
-# Panduan Deployment (Shared Hosting)
+# Panduan Deployment FS-WebTopup (Storefront)
 
-Panduan ini disusun khusus untuk hosting dengan fitur **SSH, Node.js, dan Redis**, menggunakan **Duitku** sebagai contoh payment gateway yang dipilih.
+Panduan deployment resmi sistem Feryshop dapat dilihat pada dokumentasi terpadu:
+- **Panduan Deployment Lengkap:** `docs/PANDUAN_DEPLOYMENT.md`
+- **Docker Compose Orkestrasi:** `docker-compose.prod.yml`
+- **Container Registry:** `ghcr.io/feryshop-cloud/fs-webtopup:latest`
 
-## 1. Persiapan Subdomain (di cPanel/DirectAdmin)
-Buat dua subdomain/domain:
-- **api.namadomain.com**: Arahkan ke folder `Backend/public`.
-- **namadomain.com**: Arahkan ke folder `Frontend`.
-
-## 2. Persiapan Database
-1. Buka **MySQL Databases** di cPanel.
-2. Buat database baru (contoh: `webstore_db`).
-3. Buat user baru dan berikan akses penuh ke database tersebut.
-4. Simpan Nama DB, Username, dan Password untuk file `.env`.
-
-## 3. Konfigurasi Duitku
-1. Login ke [Duitku Merchant](https://passport.duitku.com/).
-2. Masuk ke **Proyek Anda** dan cari **Merchant Code** serta **API Key**.
-3. Set **Callback URL** ke: `https://api.namadomain.com/api/callback/duitku`.
-4. Set **Return URL** ke: `https://namadomain.com/invoices/`.
-
-## 4. Deployment Backend (Laravel)
-1. Login via SSH: `ssh username@namadomain.com`
-2. Masuk ke folder Backend: `cd path/to/Backend`
-3. Copy file env: `cp .env.example .env`
-4. Edit `.env` dan masukkan detail database serta Duitku Merchant Code & API Key.
-5. Jalankan perintah berikut:
-   ```bash
-   composer install --optimize-autoloader --no-dev
-   php artisan key:generate
-   php artisan migrate --seed
-   php artisan storage:link
-   php artisan config:cache
-   php artisan route:cache
-   ```
-
-## 5. Deployment Frontend (Next.js)
-1. Masuk ke menu **Setup Node.js App** di cPanel.
-2. Buat aplikasi baru:
-   - **Node.js version**: Pilih versi terbaru (misal 20.x).
-   - **Application mode**: `production`
-   - **Application root**: `path/to/Frontend`
-   - **Application URL**: `namadomain.com`
-3. Setup Environment Variables di menu Node.js tersebut (atau buat file `.env` manual di folder Frontend).
-4. Klik **Run JS Script** lalu pilih `npm install` dan `npm run build`.
-
-## 6. SSL & Redis
-1. Gunakan **Let's Encrypt** untuk mengaktifkan HTTPS.
-2. Jika menggunakan Redis, update `.env` Backend:
-   ```env
-   CACHE_DRIVER=redis
-   REDIS_HOST=127.0.0.1
-   ```
-
----
-**Catatan Penting:**
-- Pastikan folder `storage` dan `bootstrap/cache` di Backend memiliki izin tulis (chmod 775).
-- Pastikan `DUITKU_MODE` di `.env` diset ke `production` saat sudah live.
-
-
-## Callback / Webhook :
-1. Duitku : https://api.namadomain.com/api/callback/duitku
-2. Tripay : https://api.namadomain.com/api/callback/tripay
-3. Paydisini : https://api.namadomain.com/api/callback/paydisini
-4. SMPQris : https://api.namadomain.com/api/callback/callbackqris
-5. Qrispy : https://api.namadomain.com/api/qrispy/webhook
-6. Digiflazz : https://api.namadomain.com/api/digiflazz/webhook
-7. Webhook : https://api.namadomain.com/api/webhook
-
-## Login Admin :
-Email : admin@admin.com
-Password : admin123 / 12345678 / admin
+Untuk menjalankan kontainer storefront secara mandiri:
+```bash
+docker run -d \
+  --name fs-webtopup \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  --env-file .env.local \
+  ghcr.io/feryshop-cloud/fs-webtopup:latest
+```
