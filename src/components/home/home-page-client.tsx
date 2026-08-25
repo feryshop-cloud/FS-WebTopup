@@ -53,7 +53,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
     fallbackData: initialData.games,
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("akun-game");
   const categoryRef = useRef<HTMLDivElement | null>(null);
 
   const scrollCategories = useCallback((direction: "left" | "right") => {
@@ -93,11 +93,6 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           id: "akun-game",
           title: "Katalog Akun Game",
           logo: "lucide:Gamepad2",
-        },
-        {
-          id: "",
-          title: "Semua",
-          logo: null,
         },
         ...withoutAkun,
       ],
