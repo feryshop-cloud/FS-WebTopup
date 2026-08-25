@@ -91,6 +91,35 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
     return filtered;
   }, [dataGames, dataCategories, selectedCategory]);
 
+  const modifiedCategories = useMemo(() => {
+    if (!dataCategories?.data) return dataCategories;
+    // Cek agar tidak duplikat jika dipanggil berulang
+    const hasAkunGame = dataCategories.data.some((c: any) => c.id === "akun-game");
+    if (hasAkunGame) return dataCategories;
+
+    return {
+      ...dataCategories,
+      data: [
+        {
+          id: "akun-game",
+          title: "Katalog Akun Game",
+          logo: null,
+        },
+        ...dataCategories.data,
+      ],
+    };
+  }, [dataCategories]);
+
+  const handleCategoryClick = useCallback((id: string) => {
+    if (id === "akun-game") {
+      scrollToSection("account-section");
+    } else {
+      setSelectedCategory(id);
+      // Optional: scroll ke area topup jika pilih kategori lain agar list game terlihat
+      // scrollToSection("topup-section");
+    }
+  }, []);
+
   const isLoadingGames = !dataGames && !errorGames;
   const isLoadingCategories = !dataCategories && !errorCategories;
   const isLoadingSlider = !dataSlider && !errorSlider;
@@ -129,35 +158,46 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           )}
         </div>
 
-        {/* Quick Action Buttons - Dual intent self-segmentation */}
+        {/* AC1 - Quick Menu (Menggantikan Quick Action Buttons lama) */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
-            <Button
-              variant="default"
-              size="lg"
-              className="from-primary to-primary/80 text-primary-foreground group w-full rounded-2xl bg-gradient-to-r px-8 py-4 shadow-lg transition-all duration-200 hover:shadow-xl sm:w-auto"
-              onClick={() => scrollToSection("topup-section")}
-              aria-label="Scroll ke katalog Top-Up"
-            >
-              <Zap
-                className="mr-2 h-5 w-5 transition-transform group-hover:scale-110"
-                aria-hidden="true"
-              />
-              <span className="text-base font-bold">⚡ Top Up Cepat</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-primary/30 bg-card text-primary hover:bg-primary/5 hover:border-primary/50 group w-full rounded-2xl border-2 px-8 py-4 shadow-sm transition-all duration-200 sm:w-auto"
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:mx-auto lg:max-w-3xl">
+            <button
               onClick={() => scrollToSection("account-section")}
-              aria-label="Scroll ke katalog Akun Game"
+              className="border-border/50 bg-card hover:border-primary/40 focus-visible:ring-primary group relative overflow-hidden rounded-2xl border p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 sm:rounded-3xl sm:p-6"
             >
-              <Gamepad2
-                className="mr-2 h-5 w-5 transition-transform group-hover:scale-110"
-                aria-hidden="true"
-              />
-              <span className="text-base font-bold">🎮 Beli Akun Game</span>
-            </Button>
+              <div className="bg-primary/10 group-hover:bg-primary/20 absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl transition-all duration-500" />
+              <div className="relative z-10 flex flex-col items-center gap-3 sm:items-start sm:gap-4">
+                <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
+                  <Gamepad2 className="h-6 w-6 sm:h-7 sm:w-7" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <h3 className="text-foreground text-sm font-bold sm:text-base">
+                    Katalog Akun Game
+                  </h3>
+                  <p className="text-muted-foreground mt-1 hidden text-xs sm:block sm:text-sm">
+                    Beli akun game pilihan dengan aman
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => scrollToSection("topup-section")}
+              className="border-border/50 bg-card hover:border-primary/40 focus-visible:ring-primary group relative overflow-hidden rounded-2xl border p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 sm:rounded-3xl sm:p-6"
+            >
+              <div className="bg-primary/10 group-hover:bg-primary/20 absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl transition-all duration-500" />
+              <div className="relative z-10 flex flex-col items-center gap-3 sm:items-start sm:gap-4">
+                <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
+                  <Zap className="h-6 w-6 sm:h-7 sm:w-7" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <h3 className="text-foreground text-sm font-bold sm:text-base">Top Up Game</h3>
+                  <p className="text-muted-foreground mt-1 hidden text-xs sm:block sm:text-sm">
+                    Top up diamond instan dan cepat
+                  </p>
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -228,9 +268,9 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
             <PopularGames isLoading={isLoadingGames} popularGames={dataGames?.populerGames} />
 
             <GameCategories
-              dataCategories={isLoadingCategories ? undefined : dataCategories}
+              dataCategories={isLoadingCategories ? undefined : modifiedCategories}
               selectedCategory={selectedCategory}
-              setSelectedCategory={(id) => setSelectedCategory(String(id))}
+              setSelectedCategory={handleCategoryClick}
               scrollCategories={scrollCategories}
               categoryRef={categoryRef}
             />
