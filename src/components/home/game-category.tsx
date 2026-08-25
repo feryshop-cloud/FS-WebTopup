@@ -63,28 +63,14 @@ export function GameCategories({
             initial="hidden"
             animate="visible"
           >
-            <motion.button
-              type="button"
-              onClick={() => setSelectedCategory("")}
-              className={`focus-visible:ring-my-color focus-visible:ring-offset-background inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-1 ${
-                !selectedCategory
-                  ? "border-my-color/40 bg-my-color/10 text-my-color border font-bold shadow-sm"
-                  : "border-border bg-muted text-muted-foreground hover:border-my-color/30 hover:text-foreground border"
-              }`}
-              variants={categoryItemVariants}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Semua
-            </motion.button>
             {dataCategories.data.map((category: any) => {
-              const id = String(category.id);
-              const active = String(selectedCategory || "") === id;
+              const id = String(category.id ?? "");
+              const active = String(selectedCategory ?? "") === id;
 
               return (
                 <motion.button
                   type="button"
-                  key={id}
+                  key={id || "semua"}
                   onClick={() => setSelectedCategory(id)}
                   className={`focus-visible:ring-my-color focus-visible:ring-offset-background inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-1 ${
                     active

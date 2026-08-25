@@ -12,6 +12,7 @@ import Promo from "@/components/home/promo";
 import PromoPopup from "@/components/home/promo-popup";
 import Artikel from "@/components/home/artikel";
 import { FeaturedAccounts } from "@/components/home/featured-accounts";
+import { MarketplaceWhyUsSection } from "@/components/marketplace/why-us-section";
 import { Button } from "@/components/ui/button";
 import { Zap, Gamepad2 } from "lucide-react";
 import { fetcher } from "@/lib/fetcher";
@@ -75,7 +76,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
   const filteredGames = useMemo(() => {
     if (!dataGames) return [];
     const list = Array.isArray(dataGames?.games) ? dataGames.games : [];
-    if (!selectedCategory || list.length === 0) return list;
+    if (!selectedCategory || selectedCategory === "akun-game" || list.length === 0) return list;
 
     const category = (dataCategories?.data ?? []).find(
       (c: any) => String(c.id) === String(selectedCategory),
@@ -92,32 +93,28 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
   }, [dataGames, dataCategories, selectedCategory]);
 
   const modifiedCategories = useMemo(() => {
-    if (!dataCategories?.data) return dataCategories;
-    // Cek agar tidak duplikat jika dipanggil berulang
-    const hasAkunGame = dataCategories.data.some((c: any) => c.id === "akun-game");
-    if (hasAkunGame) return dataCategories;
+    const originalList = Array.isArray(dataCategories?.data) ? dataCategories.data : [];
+    const withoutAkun = originalList.filter((c: any) => c.id !== "akun-game");
 
     return {
-      ...dataCategories,
       data: [
         {
           id: "akun-game",
           title: "Katalog Akun Game",
+          logo: "lucide:Gamepad2",
+        },
+        {
+          id: "",
+          title: "Semua",
           logo: null,
         },
-        ...dataCategories.data,
+        ...withoutAkun,
       ],
     };
   }, [dataCategories]);
 
   const handleCategoryClick = useCallback((id: string) => {
-    if (id === "akun-game") {
-      scrollToSection("account-section");
-    } else {
-      setSelectedCategory(id);
-      // Optional: scroll ke area topup jika pilih kategori lain agar list game terlihat
-      // scrollToSection("topup-section");
-    }
+    setSelectedCategory(id);
   }, []);
 
   const isLoadingGames = !dataGames && !errorGames;
@@ -158,11 +155,14 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           )}
         </div>
 
-        {/* AC1 - Quick Menu (Menggantikan Quick Action Buttons lama) */}
+        {/* Quick Menu */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:mx-auto lg:max-w-3xl">
             <button
-              onClick={() => scrollToSection("account-section")}
+              onClick={() => {
+                setSelectedCategory("akun-game");
+                scrollToSection("topup-section");
+              }}
               className="border-border/50 bg-card hover:border-primary/40 focus-visible:ring-primary group relative overflow-hidden rounded-2xl border p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 sm:rounded-3xl sm:p-6"
             >
               <div className="bg-primary/10 group-hover:bg-primary/20 absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl transition-all duration-500" />
@@ -182,7 +182,10 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
             </button>
 
             <button
-              onClick={() => scrollToSection("topup-section")}
+              onClick={() => {
+                setSelectedCategory("");
+                scrollToSection("topup-section");
+              }}
               className="border-border/50 bg-card hover:border-primary/40 focus-visible:ring-primary group relative overflow-hidden rounded-2xl border p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 sm:rounded-3xl sm:p-6"
             >
               <div className="bg-primary/10 group-hover:bg-primary/20 absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl transition-all duration-500" />
@@ -230,19 +233,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           </div>
         )}
 
-        {/* 2-4. Kategori Game Akun, Katalog Akun Pilihan, Jaminan Keamanan - Marketplace section */}
-        <section
-          id="account-section"
-          className="scroll-mt-24 pb-8"
-          aria-labelledby="account-section-title"
-        >
-          <FeaturedAccounts
-            accounts={initialData.marketplaceAccounts}
-            categories={initialData.marketplaceCategories}
-          />
-        </section>
-
-        {/* 5. Layanan Top-Up Cepat - Section sekunder */}
+        {/* Unified Catalog & Top-Up Section */}
         <section
           id="topup-section"
           className="border-border/70 bg-card/50 scroll-mt-24 rounded-3xl border p-4 pt-8 sm:p-6"
@@ -250,14 +241,22 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         >
           <div className="mb-5 flex items-center gap-2.5">
             <span className="bg-primary/10 text-primary border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
-              <Zap className="h-5 w-5" />
+              {selectedCategory === "akun-game" ? (
+                <Gamepad2 className="h-5 w-5" />
+              ) : (
+                <Zap className="h-5 w-5" />
+              )}
             </span>
             <div>
-              <h2 className="text-foreground text-lg font-bold tracking-tight sm:text-xl">
-                Layanan Top-Up Cepat
+              <h2 id="topup-section-title" className="text-foreground text-lg font-bold tracking-tight sm:text-xl">
+                {selectedCategory === "akun-game"
+                  ? "Katalog Akun Game"
+                  : "Layanan Top-Up Cepat"}
               </h2>
               <p className="text-muted-foreground text-xs sm:text-sm">
-                Butuh diamond, skin, atau voucher game? Top-up instan di sini
+                {selectedCategory === "akun-game"
+                  ? "Beli akun game sultan terverifikasi dengan garansi anti-hack & rekber resmi Feryshop"
+                  : "Butuh diamond, skin, atau voucher game? Top-up instan di sini"}
               </p>
             </div>
           </div>
@@ -265,7 +264,9 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           <div className="space-y-8">
             <Promo initialData={initialData.promo} />
 
-            <PopularGames isLoading={isLoadingGames} popularGames={dataGames?.populerGames} />
+            {selectedCategory !== "akun-game" && (
+              <PopularGames isLoading={isLoadingGames} popularGames={dataGames?.populerGames} />
+            )}
 
             <GameCategories
               dataCategories={isLoadingCategories ? undefined : modifiedCategories}
@@ -275,15 +276,24 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
               categoryRef={categoryRef}
             />
 
-            <GameList isLoading={isLoadingGames} filteredGames={filteredGames} />
+            {selectedCategory === "akun-game" ? (
+              <FeaturedAccounts accounts={initialData.marketplaceAccounts} />
+            ) : (
+              <>
+                <GameList isLoading={isLoadingGames} filteredGames={filteredGames} />
 
-            {!isLoadingGames && !errorGames && filteredGames.length === 0 && (
-              <div className="text-muted-foreground py-6 text-center text-sm">
-                Tidak ada game pada kategori ini
-              </div>
+                {!isLoadingGames && !errorGames && filteredGames.length === 0 && (
+                  <div className="text-muted-foreground py-6 text-center text-sm">
+                    Tidak ada game pada kategori ini
+                  </div>
+                )}
+              </>
             )}
           </div>
         </section>
+
+        {/* Jaminan Keamanan & Panduan Transaksi Marketplace */}
+        <MarketplaceWhyUsSection />
       </div>
 
       <div className="mt-16">
