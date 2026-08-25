@@ -25,15 +25,6 @@ const swrOptions = {
   keepPreviousData: true,
 };
 
-/**
- * Scroll smoothly to a section by ID.
- * @param id - The DOM element ID to scroll to (without #)
- */
-function scrollToSection(id: string): void {
-  const el = document.getElementById(id);
-  el?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 export function HomePageClient({ initialData }: { initialData: HomeFallbackData }) {
   const {
     data: dataSlider,
@@ -153,55 +144,6 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
           ) : (
             <Slider slides={dataSlider?.data ?? []} />
           )}
-        </div>
-
-        {/* Quick Menu */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:mx-auto lg:max-w-3xl">
-            <button
-              onClick={() => {
-                setSelectedCategory("akun-game");
-                scrollToSection("topup-section");
-              }}
-              className="border-border/50 bg-card hover:border-primary/40 focus-visible:ring-primary group relative overflow-hidden rounded-2xl border p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 sm:rounded-3xl sm:p-6"
-            >
-              <div className="bg-primary/10 group-hover:bg-primary/20 absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl transition-all duration-500" />
-              <div className="relative z-10 flex flex-col items-center gap-3 sm:items-start sm:gap-4">
-                <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
-                  <Gamepad2 className="h-6 w-6 sm:h-7 sm:w-7" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <h3 className="text-foreground text-sm font-bold sm:text-base">
-                    Katalog Akun Game
-                  </h3>
-                  <p className="text-muted-foreground mt-1 hidden text-xs sm:block sm:text-sm">
-                    Beli akun game pilihan dengan aman
-                  </p>
-                </div>
-              </div>
-            </button>
-
-            <button
-              onClick={() => {
-                setSelectedCategory("");
-                scrollToSection("topup-section");
-              }}
-              className="border-border/50 bg-card hover:border-primary/40 focus-visible:ring-primary group relative overflow-hidden rounded-2xl border p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 sm:rounded-3xl sm:p-6"
-            >
-              <div className="bg-primary/10 group-hover:bg-primary/20 absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl transition-all duration-500" />
-              <div className="relative z-10 flex flex-col items-center gap-3 sm:items-start sm:gap-4">
-                <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 sm:h-14 sm:w-14">
-                  <Zap className="h-6 w-6 sm:h-7 sm:w-7" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <h3 className="text-foreground text-sm font-bold sm:text-base">Top Up Game</h3>
-                  <p className="text-muted-foreground mt-1 hidden text-xs sm:block sm:text-sm">
-                    Top up diamond instan dan cepat
-                  </p>
-                </div>
-              </div>
-            </button>
-          </div>
         </div>
 
         {hasAnyError && (
