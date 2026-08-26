@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -14,7 +14,10 @@ import {
   Clock,
   Sparkles,
   ChevronRight,
+  ChevronLeft,
   UserCheck,
+  Maximize2,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
@@ -25,8 +28,34 @@ const toString = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : S
 
 export function MarketplaceAccountDetailView({ account }: { account: GameAccount }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const settings = useSettings();
   const data = settings?.data ?? {};
+
+  const totalImages = account.images.length;
+
+  const handlePrevImage = useCallback(() => {
+    setSelectedImageIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  }, [totalImages]);
+
+  const handleNextImage = useCallback(() => {
+    setSelectedImageIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
+  }, [totalImages]);
+
+  // Keyboard navigation for gallery & lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isLightboxOpen) {
+        setIsLightboxOpen(false);
+      } else if (e.key === "ArrowLeft") {
+        handlePrevImage();
+      } else if (e.key === "ArrowRight") {
+        handleNextImage();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLightboxOpen, handlePrevImage, handleNextImage]);
 
   const discountPercentage = account.originalPrice
     ? Math.round(((account.originalPrice - account.price) / account.originalPrice) * 100)
@@ -91,14 +120,15 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         <div className="space-y-6 lg:col-span-8">
           {/* Main Image Gallery */}
           <div className="space-y-3">
-            <div className="border-border/80 bg-muted/60 relative aspect-[16/10] w-full overflow-hidden rounded-3xl border shadow-lg">
+            <div className="border-border/80 bg-muted/60 group relative aspect-[16/10] w-full overflow-hidden rounded-3xl border shadow-lg">
               <Image
                 src={resolveStorageUrl(account.images[selectedImageIndex])}
                 alt={account.title}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 66vw"
-                className="object-cover"
+                className="cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
+                onClick={() => setIsLightboxOpen(true)}
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
@@ -117,6 +147,51 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 )}
               </div>
 
+              {/* Top Right: Expand / Photo Counter */}
+              <div className="absolute right-4 top-4 flex items-center gap-2">
+                {totalImages > 1 && (
+                  <span className="rounded-xl border border-white/15 bg-black/70 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-md">
+                    {selectedImageIndex + 1} / {totalImages} Foto
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsLightboxOpen(true)}
+                  aria-label="Perbesar gambar"
+                  className="rounded-xl border border-white/15 bg-black/70 p-2 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-black/90"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Previous / Next Arrow Controls for Main Gallery */}
+              {totalImages > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePrevImage();
+                    }}
+                    aria-label="Foto sebelumnya"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-0 backdrop-blur-md transition-all hover:bg-black/80 group-hover:opacity-100 sm:left-4"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNextImage();
+                    }}
+                    aria-label="Foto berikutnya"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-0 backdrop-blur-md transition-all hover:bg-black/80 group-hover:opacity-100 sm:right-4"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </>
+              )}
+
               {/* Bottom Security Guarantee Tag */}
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white">
                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/70 px-3 py-1.5 backdrop-blur-md">
@@ -130,7 +205,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
             </div>
 
             {/* Thumbnails if multiple images */}
-            {account.images.length > 1 && (
+            {totalImages > 1 && (
               <div className="flex items-center gap-3 overflow-x-auto pb-1">
                 {account.images.map((img, idx) => (
                   <button
@@ -389,6 +464,113 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Lightbox / Zoom Modal */}
+      {isLightboxOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Preview Gambar Layar Penuh"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => setIsLightboxOpen(false)}
+            aria-label="Tutup preview"
+            className="absolute right-4 top-4 z-50 rounded-full border border-white/20 bg-black/60 p-2.5 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/20"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          {/* Photo Counter Top Bar */}
+          <div className="absolute left-4 top-4 z-50 flex items-center gap-3">
+            <span className="rounded-xl border border-white/20 bg-black/60 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md">
+              {selectedImageIndex + 1} / {totalImages} Screenshot
+            </span>
+            <span className="text-muted-foreground hidden max-w-sm truncate text-xs font-medium sm:inline-block">
+              {account.title}
+            </span>
+          </div>
+
+          {/* Previous image button */}
+          {totalImages > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevImage();
+              }}
+              aria-label="Foto sebelumnya"
+              className="absolute left-4 top-1/2 z-50 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-3 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+          )}
+
+          {/* Next image button */}
+          {totalImages > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNextImage();
+              }}
+              aria-label="Foto berikutnya"
+              className="absolute right-4 top-1/2 z-50 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-3 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          )}
+
+          {/* Center Large Image */}
+          <div
+            className="relative flex h-full max-h-[85vh] w-full max-w-5xl items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative h-full w-full">
+              <Image
+                src={resolveStorageUrl(account.images[selectedImageIndex])}
+                alt={`${account.title} - Screenshot ${selectedImageIndex + 1}`}
+                fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Bottom Thumbnails bar in Lightbox */}
+          {totalImages > 1 && (
+            <div
+              className="absolute bottom-4 left-1/2 z-50 flex max-w-md -translate-x-1/2 gap-2 overflow-x-auto rounded-2xl border border-white/15 bg-black/70 p-2 backdrop-blur-md sm:max-w-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {account.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={cn(
+                    "relative aspect-video w-16 shrink-0 overflow-hidden rounded-lg border transition-all sm:w-20",
+                    selectedImageIndex === idx
+                      ? "border-primary ring-primary scale-105 ring-2"
+                      : "border-white/20 opacity-50 hover:opacity-100",
+                  )}
+                >
+                  <Image
+                    src={resolveStorageUrl(img)}
+                    alt={`Thumbnail ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

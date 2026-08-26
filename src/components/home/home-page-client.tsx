@@ -185,10 +185,11 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
               )}
             </span>
             <div>
-              <h2 id="topup-section-title" className="text-foreground text-lg font-bold tracking-tight sm:text-xl">
-                {selectedCategory === "akun-game"
-                  ? "Katalog Akun Game"
-                  : "Layanan Top-Up Cepat"}
+              <h2
+                id="topup-section-title"
+                className="text-foreground text-lg font-bold tracking-tight sm:text-xl"
+              >
+                {selectedCategory === "akun-game" ? "Katalog Akun Game" : "Layanan Top-Up Cepat"}
               </h2>
               <p className="text-muted-foreground text-xs sm:text-sm">
                 {selectedCategory === "akun-game"
