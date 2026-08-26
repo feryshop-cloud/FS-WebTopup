@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Zap, Flame, Award, ChevronRight } from "lucide-react";
+import { ShieldCheck, Zap, Flame, Award } from "lucide-react";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
 import { cn, resolveStorageUrl } from "@/lib/utils";
 
@@ -32,12 +32,12 @@ export function AccountCard({ account }: { account: GameAccount }) {
       className="border-border/70 bg-card hover:border-primary/50 focus-visible:ring-primary focus-visible:ring-offset-background group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
     >
       {/* Thumbnail Section */}
-      <div className="bg-muted/60 relative aspect-[16/10] w-full overflow-hidden">
+      <div className="bg-muted/60 relative aspect-[3/4] w-full overflow-hidden">
         <Image
           src={resolveStorageUrl(account.images[0])}
           alt={account.title}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -79,45 +79,26 @@ export function AccountCard({ account }: { account: GameAccount }) {
       </div>
 
       {/* Body Content */}
-      <div className="flex flex-1 flex-col justify-between space-y-3 p-3.5 sm:p-4">
-        <div>
-          {/* Game Category Label */}
-          <div className="text-muted-foreground mb-1 flex items-center justify-between text-xs font-semibold">
-            <span className="text-primary font-bold">{account.gameName}</span>
-            <span className="text-muted-foreground text-[10px]">{account.specs.deliveryType}</span>
-          </div>
+      <div className="flex flex-col gap-2 p-3 sm:p-3.5">
+        {/* Game label */}
+        <span className="text-primary text-[10px] font-bold uppercase tracking-wide">
+          {account.gameName}
+        </span>
 
-          {/* Account Title */}
-          <h3 className="text-foreground group-hover:text-primary line-clamp-2 text-xs font-bold leading-snug transition-colors sm:text-sm">
-            {account.title}
-          </h3>
-        </div>
+        {/* Account Title */}
+        <h3 className="text-foreground group-hover:text-primary line-clamp-1 text-xs font-bold leading-snug transition-colors sm:text-sm">
+          {account.title}
+        </h3>
 
-        {/* Specifications Pills */}
-        <div className="flex flex-wrap gap-1.5 text-[11px]">
-          <span className="bg-muted/80 text-muted-foreground border-border/50 rounded-md border px-2 py-0.5">
-            Skin: {account.specs.skinsCount}
-          </span>
-          <span className="bg-muted/80 text-muted-foreground border-border/50 rounded-md border px-2 py-0.5">
-            CN: {account.specs.changeName}
-          </span>
-        </div>
-
-        {/* Price & Action Section */}
-        <div className="border-border/50 flex items-end justify-between border-t pt-2">
-          <div>
-            {account.originalPrice && (
-              <span className="text-muted-foreground block text-[10px] font-medium line-through">
-                Rp {account.originalPrice.toLocaleString("id-ID")}
-              </span>
-            )}
-            <span className="text-sm font-extrabold text-emerald-500 sm:text-base">
-              Rp {account.price.toLocaleString("id-ID")}
+        {/* Price */}
+        <div className="border-border/40 flex items-baseline gap-2 border-t pt-2">
+          {account.originalPrice && (
+            <span className="text-muted-foreground text-[10px] font-medium line-through">
+              Rp {account.originalPrice.toLocaleString("id-ID")}
             </span>
-          </div>
-
-          <span className="text-primary inline-flex items-center gap-1 text-xs font-bold transition-transform group-hover:translate-x-0.5">
-            Beli <ChevronRight className="h-3.5 w-3.5" />
+          )}
+          <span className="text-sm font-extrabold text-emerald-500 sm:text-base">
+            Rp {account.price.toLocaleString("id-ID")}
           </span>
         </div>
       </div>

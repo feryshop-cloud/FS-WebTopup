@@ -503,7 +503,7 @@ export function MarketplaceCategoryView({
             <p className="text-muted-foreground text-sm">Mencari akun terbaik untukmu...</p>
           </div>
         ) : filteredAccounts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-6 md:grid-cols-3 lg:grid-cols-4">
             {filteredAccounts.map((account) => (
               <AccountCard key={account.id} account={account} />
             ))}
