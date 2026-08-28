@@ -6,12 +6,12 @@ This is a Next.js App Router project. Application routes, layouts, and API handl
 
 ## Build, Test, and Development Commands
 
-- `npm run dev`: start the local Next.js development server.
-- `npm run build`: create a production build and run Next.js type/lint checks.
-- `npm run start`: serve the production build.
-- `npm run lint`: run ESLint over the repository using `eslint.config.mjs`.
-- `npm run registry:build`: rebuild registry artifacts with `tsx ./scripts/build-registry.ts`.
-- `npm run cb`: clear Next/cache output, build, then restart PM2 processes; use only in the intended deployment environment.
+- `bun dev`: start the local Next.js development server (`bun --bun next dev`).
+- `bun run build`: create a production build and run Next.js type/lint checks (`bun --bun next build`).
+- `bun start`: serve the production build.
+- `bun run lint`: run ESLint over the repository using `eslint.config.mjs`.
+- `bun run registry:build`: rebuild registry artifacts with `bun ./scripts/build-registry.ts`.
+- `bun run cb`: clear Next/cache output, build, then restart PM2 processes.
 
 ## Bash → PowerShell Command Map
 
