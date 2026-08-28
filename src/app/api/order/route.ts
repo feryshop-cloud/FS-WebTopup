@@ -105,6 +105,25 @@ async function postHandler(req: Request) {
     const priorityTotal = money(discountedSubtotal + clientFee);
     const discountPrice = promoCode ? String(money(authoritativeDiscount)) : "0";
 
+    // Validasi minimum amount payment gateway
+    const paymentMethodId = body.payment_method_id || body.paymentMethodId || "qris";
+    if (hasDb) {
+      const [pm] = await sqlClient`
+        SELECT minimum_amount FROM public.payment_methods
+        WHERE id = ${paymentMethodId} AND status = 'ACTIVE'
+        LIMIT 1
+      `;
+      if (pm && Number(priorityTotal) < Number(pm.minimum_amount)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Minimal pembayaran untuk metode ini adalah Rp${Number(pm.minimum_amount).toLocaleString("id-ID")}`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     const newOrderData = {
       orderId,
       userId: safeUserId,
