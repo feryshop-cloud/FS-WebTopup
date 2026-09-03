@@ -48,7 +48,8 @@ const nextConfig = {
       { protocol: "https", hostname: "*.up.railway.app" },
       { protocol: "https", hostname: "*.railway.app" },
 
-      // 3. Known CDN & Image Providers
+      { protocol: "https", hostname: "picsum.photos" },
+      { protocol: "https", hostname: "*.picsum.photos" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "upload.wikimedia.org" },
       { protocol: "https", hostname: "ui-avatars.com" },

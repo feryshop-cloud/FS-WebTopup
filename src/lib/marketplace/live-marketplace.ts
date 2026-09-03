@@ -173,9 +173,15 @@ function mapInventoryToAccount(row: PublicStockRow): GameAccount {
   const categoryName = game?.name || "Akun Game";
   const gameSlug = game?.slug || categoryMeta(categoryName).slug;
   const price = toPrice(row.asking_price);
-  const images = Array.isArray(row.image_urls) ? row.image_urls.filter(Boolean) : [];
+  const rawImages = Array.isArray(row.image_urls) ? row.image_urls.filter(Boolean) : [];
   const screenshot = row.screenshot_url ? [row.screenshot_url] : [];
-  const displayImages = [...images, ...screenshot, game?.image_url].filter(Boolean) as string[];
+  const accountScreenshots = Array.from(new Set([...screenshot, ...rawImages]));
+  const displayImages =
+    accountScreenshots.length > 0
+      ? accountScreenshots
+      : game?.image_url
+        ? [game.image_url]
+        : [FALLBACK_IMAGE];
   const displayId = row.id.slice(0, 8);
   const title = row.title_reference?.trim() || `${categoryName} Account ${displayId}`;
   const parsedSpecs = parseSpecsText(row.account_specs);
