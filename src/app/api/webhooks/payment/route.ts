@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { db, orders } from "@/lib/db";
+import { db, orders, products } from "@/lib/db";
 import { and, eq, notInArray } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { verifyPaymentWebhookSignature, type PaymentWebhookPayload } from "@/lib/payment-client";
+import { triggerDigiflazzTransaction } from "@/lib/digiflazz-client";
 import { OrderPaymentStatus, OrderBuyStatus } from "@/types/status";
 
 export const dynamic = "force-dynamic";
@@ -54,8 +55,15 @@ async function postHandler(req: Request) {
         orderId: orders.orderId,
         paymentStatus: orders.paymentStatus,
         gatewayResponse: orders.gatewayResponse,
+        productId: orders.productId,
+        idGames: orders.idGames,
+        serverGames: orders.serverGames,
+        price: orders.price,
+        productSku: products.sku,
+        productProvider: products.provider,
       })
       .from(orders)
+      .leftJoin(products, eq(orders.productId, products.id))
       .where(eq(orders.orderId, orderId))
       .limit(1);
 
@@ -101,6 +109,43 @@ async function postHandler(req: Request) {
         // dan halaman invoice status user langsung ter-update lunas secara real-time.
         revalidateTag("marketplace-accounts", { expire: 0 });
         revalidatePath(`/invoices/${orderId}`);
+
+        // Jika produk adalah produk Digiflazz, jalankan orkestrasi fulfillment ke microservice
+        const sku = order.productSku;
+        const providerName = order.productProvider || "digiflazz";
+        if (sku && providerName === "digiflazz") {
+          const customerNo = order.serverGames
+            ? `${order.idGames}${order.serverGames}`
+            : order.idGames;
+
+          triggerDigiflazzTransaction({
+            orderId,
+            sku,
+            customerNo,
+            amount: Number(order.price || 0),
+          })
+            .then(async (digiRes) => {
+              logger.info("Digiflazz transaction orchestration response", {
+                orderId,
+                status: digiRes.status,
+                serialNumber: digiRes.serialNumber,
+              });
+
+              if (digiRes.status === "success" && digiRes.serialNumber) {
+                await db
+                  .update(orders)
+                  .set({
+                    buyStatus: OrderBuyStatus.SUCCESS,
+                    serialNumber: digiRes.serialNumber,
+                  })
+                  .where(eq(orders.orderId, orderId));
+                revalidatePath(`/invoices/${orderId}`);
+              }
+            })
+            .catch((err) => {
+              logger.error("Failed to trigger Digiflazz fulfillment", { orderId, error: err });
+            });
+        }
       }
     } else if (event === "payment.failed") {
       const updated = await db
