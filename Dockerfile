@@ -5,7 +5,8 @@ WORKDIR /app
 # 2. Dependencies stage
 FROM base AS deps
 COPY package.json bun.lock ./
-RUN bun install
+RUN bun install --frozen-lockfile
+RUN bun add -d @next/swc-linux-x64-gnu@16.3.0
 
 # 3. Builder stage
 FROM base AS builder
