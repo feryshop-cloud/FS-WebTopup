@@ -1,5 +1,5 @@
 # 1. Base stage
-FROM oven/bun:1.4-alpine AS base
+FROM oven/bun:1.4 AS base
 WORKDIR /app
 
 # 2. Dependencies stage
@@ -30,8 +30,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 
-RUN addgroup -S -g 1001 nodejs && \
-    adduser -S -u 1001 -G nodejs nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid 1001 nextjs
 
 # Copy standalone build artifact and static assets
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
@@ -42,4 +42,4 @@ USER nextjs
 
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]
