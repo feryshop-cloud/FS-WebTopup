@@ -22,6 +22,7 @@ const normalizeAmount = (v: any) => {
 
 const isDisabledByLimit = (method: PaymentMethod) => {
   const total = normalizeAmount(method.totalPrice);
+  if (total <= 0) return false;
   const min = normalizeAmount(method.minimum_amount);
   const maxRaw = Number(method.maximum_amount ?? 0);
   const max = Number.isFinite(maxRaw) && maxRaw > 0 ? maxRaw : 0;

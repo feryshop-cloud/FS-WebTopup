@@ -272,8 +272,10 @@ export default function OrderPage() {
     const maxRaw = Number(method.maximum_amount ?? 0);
     const max = Number.isFinite(maxRaw) && maxRaw > 0 ? maxRaw : 0;
 
-    if (min > 0 && computedTotal < min) setSelectedPayment(null);
-    if (max > 0 && computedTotal > max) setSelectedPayment(null);
+    if (subtotalPrice > 0) {
+      if (min > 0 && computedTotal < min) setSelectedPayment(null);
+      if (max > 0 && computedTotal > max) setSelectedPayment(null);
+    }
   }, [selectedPayment, paymentMethods, subtotalPrice]);
 
   const selectedPaymentMethod = useMemo(() => {

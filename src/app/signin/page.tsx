@@ -6,7 +6,6 @@ import { signIn, useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-
 import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
 import { apiPath } from "@/lib/routes";
