@@ -80,9 +80,64 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        (user as any).token = `FERY-GOOGLE-${Date.now()}`;
-        (user as any).role = "member";
-        (user as any).saldo = 50000;
+        if (!hasDatabaseConnection) return false;
+
+        const email = user.email;
+        if (!email) return false;
+
+        try {
+          // Cek apakah user sudah ada di public.users
+          let dbUser = await sqlClient<{ id: string; role_name: string; balance: number }[]>`
+            SELECT u.id, r.name as role_name, u.balance
+            FROM public.users u
+            LEFT JOIN public.roles r ON u.role_id = r.id
+            WHERE u.email = ${email}
+            LIMIT 1
+          `;
+
+          let finalUserId = dbUser[0]?.id;
+          let role = dbUser[0]?.role_name || "member";
+          let saldo = dbUser[0]?.balance || 0;
+
+          if (!finalUserId) {
+            // Cek apakah user sudah ada di auth.users (tapi belum di public.users)
+            const authCheck = await sqlClient<{ id: string }[]>`
+              SELECT id FROM auth.users WHERE email = ${email} LIMIT 1
+            `;
+            let authUserId = authCheck[0]?.id;
+
+            if (!authUserId) {
+              // Buat akun di auth.users menggunakan API Admin
+              const { createSupabaseAuthUser } = await import("@/lib/supabase-auth");
+              const randomPassword = "GGL-" + Math.random().toString(36).slice(-10) + "A1!";
+              const newAuthUser = await createSupabaseAuthUser({
+                email,
+                password: randomPassword,
+                name: user.name || "Google User",
+              });
+              authUserId = newAuthUser.id;
+            }
+
+            // Insert ke public.users agar sinkron dan relasinya valid
+            await sqlClient`
+              INSERT INTO public.users (id, full_name, email, balance, status)
+              VALUES (${authUserId}, ${user.name || "Google User"}, ${email}, 0, 'Aktif')
+              ON CONFLICT (id) DO NOTHING
+            `;
+            finalUserId = authUserId;
+          }
+
+          // Suntikkan data asli dari database ke session NextAuth
+          user.id = String(finalUserId);
+          (user as any).token = `FERY-GOOGLE-${Date.now()}`;
+          (user as any).role = role ? role.toLowerCase() : "member";
+          (user as any).saldo = Number(saldo);
+
+          return true;
+        } catch (error) {
+          logger.error("Google Auth Sync Error", { error });
+          return false; // Tolak login jika gagal sinkronisasi
+        }
       }
       return true;
     },
