@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { FcGoogle } from "react-icons/fc";
+
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
@@ -13,7 +13,6 @@ import TurnstileWidget from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { apiPath } from "@/lib/routes";
@@ -228,18 +227,6 @@ function SignupForm() {
           {loadingEmail ? "Memproses..." : "Daftar"}
         </Button>
       </div>
-
-      <Separator />
-
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => signIn("google", { callbackUrl })}
-        className="flex h-10 w-full items-center justify-center gap-2"
-      >
-        <FcGoogle className="text-xl" />
-        Daftar dengan Google
-      </Button>
     </AuthCard>
   );
 }
