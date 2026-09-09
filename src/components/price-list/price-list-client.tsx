@@ -85,15 +85,26 @@ export function PriceListClient({ games }: PriceListClientProps) {
     return Array.isArray(game?.products) ? game.products : [];
   }, [data]);
 
+  const priceFor = (product: any): number => {
+    if (!MEMBER_PRICE_FLAG || role === "basic") return Number(product.selling_price ?? 0);
+    if (role === "gold") return Number(product.selling_price_gold ?? product.selling_price);
+    return Number(product.selling_price_platinum ?? product.selling_price);
+  };
+
   const filteredProducts = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return products;
-    return products.filter((p: any) => {
-      const title = String(p.title || "").toLowerCase();
-      const brand = String(p.brand || "").toLowerCase();
-      return title.includes(q) || brand.includes(q);
-    });
-  }, [products, search]);
+    let result = products;
+    if (q) {
+      result = products.filter((p: any) => {
+        const title = String(p.title || "").toLowerCase();
+        const brand = String(p.brand || "").toLowerCase();
+        return title.includes(q) || brand.includes(q);
+      });
+    }
+    // Urutkan berdasarkan harga terkecil
+    return [...result].sort((a: any, b: any) => priceFor(a) - priceFor(b));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, search, role]);
 
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage)),
@@ -104,12 +115,6 @@ export function PriceListClient({ games }: PriceListClientProps) {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredProducts.slice(start, start + itemsPerPage);
   }, [filteredProducts, currentPage, itemsPerPage]);
-
-  const priceFor = (product: any): number => {
-    if (!MEMBER_PRICE_FLAG || role === "basic") return Number(product.selling_price ?? 0);
-    if (role === "gold") return Number(product.selling_price_gold ?? product.selling_price);
-    return Number(product.selling_price_platinum ?? product.selling_price);
-  };
 
   return (
     <div className="space-y-4">
