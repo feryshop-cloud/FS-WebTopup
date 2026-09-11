@@ -453,7 +453,6 @@ export default function InvoicePage() {
                   getBackgroundPayStatusColor={getBackgroundPayStatusColor}
                   getBackgroundBuyStatusColor={getBackgroundBuyStatusColor}
                   getBuyStatusMessage={getBuyStatusMessage}
-                  onRefresh={() => loadInvoice({ silent: true })}
                 />
               </div>
 
