@@ -27,11 +27,19 @@ export interface DigiflazzBalanceResult {
 }
 
 function getServiceUrl(): string {
-  return process.env.DIGIFLAZZ_SERVICE_URL || "http://fs-digiflazz-service:3002";
+  return (
+    process.env.DIGIFLAZZ_SERVICE_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "http://fs-digiflazz-service:3002"
+      : "http://localhost:3002")
+  );
 }
 
 function getServiceHeaders(): Record<string, string> {
-  const apiKey = process.env.DIGIFLAZZ_SERVICE_API_KEY || "";
+  const apiKey =
+    process.env.DIGIFLAZZ_SERVICE_API_KEY ||
+    process.env.SYNC_SECRET ||
+    "TKYunqx4JLOFQ7ZIvsRbU8P6ipSVM2w0";
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };

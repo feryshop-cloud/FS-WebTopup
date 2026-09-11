@@ -178,13 +178,13 @@ export default function InvoicePage() {
     if (!safeOrderId) return;
     if (!order) return;
 
-    const isQrispy = String(order.payment_method || "").toUpperCase() === "QRISPY";
-    const isDompetX = Boolean(order.dompetx_transaction_id);
-    const isGatewayProvider = ["mock", "pakasir"].includes(
-      String(order.gateway_response?.provider || ""),
-    );
-    if (!isQrispy && !isDompetX && !isGatewayProvider) return;
-    if (normalizePaymentStatus(order.payment_status) !== PaymentStatus.PENDING) return;
+    const isPendingPayment = normalizePaymentStatus(order.payment_status) === PaymentStatus.PENDING;
+    const isProcessingBuy =
+      normalizeBuyStatus(order.buy_status) === BuyStatus.PROCESSING ||
+      String(order.buy_status || "").toLowerCase() === "pending" ||
+      String(order.buy_status || "").toLowerCase() === "proses";
+
+    if (!isPendingPayment && !isProcessingBuy) return;
 
     let cancelled = false;
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -216,6 +216,8 @@ export default function InvoicePage() {
               buy_status: nextBuyStatus,
             };
           });
+
+          await loadInvoice({ silent: true });
         }
 
         if (
@@ -242,7 +244,7 @@ export default function InvoicePage() {
     };
 
     check();
-    interval = setInterval(check, 8000);
+    interval = setInterval(check, 4000);
 
     return () => {
       cancelled = true;
@@ -451,6 +453,7 @@ export default function InvoicePage() {
                   getBackgroundPayStatusColor={getBackgroundPayStatusColor}
                   getBackgroundBuyStatusColor={getBackgroundBuyStatusColor}
                   getBuyStatusMessage={getBuyStatusMessage}
+                  onRefresh={() => loadInvoice({ silent: true })}
                 />
               </div>
 

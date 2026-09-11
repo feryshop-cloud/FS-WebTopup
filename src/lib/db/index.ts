@@ -18,6 +18,7 @@ const client =
         connect_timeout: 5,
         idle_timeout: 20,
         max_lifetime: 60,
+        ssl: { rejectUnauthorized: false },
       })
     : postgres("postgres://placeholder:placeholder@localhost:5432/placeholder", {
         prepare: false,

@@ -84,12 +84,16 @@ async function postHandler(req: Request) {
     let applied = false;
 
     if (event === "payment.paid") {
+      const sku = order.productSku;
+      const providerName = order.productProvider || "digiflazz";
+      const isDigiflazz = Boolean(sku) && providerName === "digiflazz";
+
       const updated = await db
         .update(orders)
         .set({
           paymentStatus: OrderPaymentStatus.SUCCESS,
-          buyStatus: OrderBuyStatus.SUCCESS,
-          serialNumber: `${provider.toUpperCase()}-${orderId}`,
+          buyStatus: isDigiflazz ? OrderBuyStatus.PROCESSING : OrderBuyStatus.SUCCESS,
+          serialNumber: isDigiflazz ? "" : `${provider.toUpperCase()}-${orderId}`,
           gatewayResponse: {
             ...existingGateway,
             [provider]: {
@@ -111,18 +115,18 @@ async function postHandler(req: Request) {
         revalidatePath(`/invoices/${orderId}`);
 
         // Jika produk adalah produk Digiflazz, jalankan orkestrasi fulfillment ke microservice
-        const sku = order.productSku;
-        const providerName = order.productProvider || "digiflazz";
-        if (sku && providerName === "digiflazz") {
+        if (isDigiflazz && sku) {
           const customerNo = order.serverGames
             ? `${order.idGames}${order.serverGames}`
             : order.idGames;
+          const isTesting = sku.toLowerCase() === "xld10";
 
           triggerDigiflazzTransaction({
             orderId,
             sku,
             customerNo,
             amount: Number(order.price || 0),
+            testing: isTesting,
           })
             .then(async (digiRes) => {
               logger.info("Digiflazz transaction orchestration response", {
@@ -131,12 +135,28 @@ async function postHandler(req: Request) {
                 serialNumber: digiRes.serialNumber,
               });
 
-              if (digiRes.status === "success" && digiRes.serialNumber) {
+              if (digiRes.status === "success") {
                 await db
                   .update(orders)
                   .set({
                     buyStatus: OrderBuyStatus.SUCCESS,
-                    serialNumber: digiRes.serialNumber,
+                    serialNumber: digiRes.serialNumber || `${provider.toUpperCase()}-${orderId}`,
+                  })
+                  .where(eq(orders.orderId, orderId));
+                revalidatePath(`/invoices/${orderId}`);
+              } else if (digiRes.status === "failed") {
+                await db
+                  .update(orders)
+                  .set({
+                    buyStatus: OrderBuyStatus.FAILED,
+                  })
+                  .where(eq(orders.orderId, orderId));
+                revalidatePath(`/invoices/${orderId}`);
+              } else if (digiRes.status === "pending") {
+                await db
+                  .update(orders)
+                  .set({
+                    buyStatus: OrderBuyStatus.PROCESSING,
                   })
                   .where(eq(orders.orderId, orderId));
                 revalidatePath(`/invoices/${orderId}`);
