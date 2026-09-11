@@ -4,6 +4,7 @@ import { Clipboard } from "lucide-react";
 import Image from "next/image";
 import QRCode from "react-qr-code";
 import { useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Transaction } from "@/types";
 import { normalizePaymentStatus, PaymentStatus } from "@/types/status";
@@ -16,6 +17,7 @@ interface InvoicePaymentMethodProps {
   getBackgroundPayStatusColor: () => string;
   getBackgroundBuyStatusColor: () => string;
   getBuyStatusMessage: () => string;
+  onRefresh?: () => Promise<void> | void;
 }
 
 const QRIS_IMAGE_METHODS = ["QRIS", "QRISC", "QRIS2", "11", "17", "20"];
@@ -111,9 +113,44 @@ export function InvoicePaymentMethod({
   getBackgroundPayStatusColor,
   getBackgroundBuyStatusColor,
   getBuyStatusMessage,
+  onRefresh,
 }: InvoicePaymentMethodProps) {
   const [downloading, setDownloading] = useState(false);
+  const [simulating, setSimulating] = useState(false);
   const qrisSvgWrapRef = useRef<HTMLDivElement | null>(null);
+
+  const isSandboxOrder =
+    process.env.NODE_ENV === "development" &&
+    ((order as any).game_slug === "dummy-game" ||
+      (order as any).gameSlug === "dummy-game" ||
+      order.games === "dummy-game" ||
+      order.games?.toLowerCase().includes("dummy") ||
+      order.product?.toLowerCase().includes("xld10") ||
+      String((order as any).product_title || "").includes("xld10") ||
+      String((order as any).productSku || "").toLowerCase() === "xld10");
+
+  const handleSimulatePay = async () => {
+    if (simulating) return;
+    setSimulating(true);
+    try {
+      const res = await fetch(`/api/order/${encodeURIComponent(order.order_id)}/simulate-pay`, {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        toast.error(data?.message || "Gagal memproses simulasi pembayaran.");
+        return;
+      }
+      toast.success(data?.message || "Simulasi pembayaran lunas berhasil!");
+      if (onRefresh) {
+        await onRefresh();
+      }
+    } catch {
+      toast.error("Gagal menghubungi server untuk simulasi pembayaran.");
+    } finally {
+      setSimulating(false);
+    }
+  };
 
   const paymentMethodCode = String(order.payment_method || "").toUpperCase();
   const rawPaymentCode = String(order.payment_code || "").trim();
@@ -457,36 +494,67 @@ export function InvoicePaymentMethod({
 
       {normalizePaymentStatus(order.payment_status) === PaymentStatus.PENDING && (
         <div className="bg-background rounded-2xl border p-5">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <div className="space-y-1">
-              <div className="text-sm font-medium">Kode Pembayaran</div>
-              <div className="text-muted-foreground text-sm">
-                {hasGatewayUrl
-                  ? "Lanjutkan pembayaran via tombol Bayar Sekarang di bawah."
-                  : !hasPayableCode && gatewayPaymentUrl
-                    ? "Lanjutkan pembayaran via tombol Bayar Sekarang di bawah."
-                    : isQrispy || showQrBlock
-                      ? "Silakan scan QR / gunakan QR string di bawah."
-                      : "Salin dan gunakan kode berikut."}
-              </div>
+          {!hasGatewayUrl && !hasPayableCode && !showQrBlock ? (
+            <div className="space-y-2">
+              <div className="text-destructive text-sm font-medium">Gagal Memuat Pembayaran</div>
+              <p className="text-muted-foreground text-sm">
+                Terjadi kesalahan pada integrasi payment gateway, sehingga instruksi pembayaran
+                tidak dapat ditampilkan. Silakan coba buat pesanan baru atau hubungi admin.
+              </p>
             </div>
-
-            {!showQrBlock && hasPayableCode && !hasGatewayUrl && (
-              <div className="flex items-center gap-2">
-                <div className="bg-muted max-w-[220px] truncate rounded-lg border px-3 py-2 text-sm">
-                  {String(order.payment_code_display || order.payment_code || "-")}
+          ) : (
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-1">
+                <div className="text-sm font-medium">Kode Pembayaran</div>
+                <div className="text-muted-foreground text-sm">
+                  {hasGatewayUrl
+                    ? "Lanjutkan pembayaran via tombol Bayar Sekarang di bawah."
+                    : !hasPayableCode && gatewayPaymentUrl
+                      ? "Lanjutkan pembayaran via tombol Bayar Sekarang di bawah."
+                      : isQrispy || showQrBlock
+                        ? "Silakan scan QR / gunakan QR string di bawah."
+                        : "Salin dan gunakan kode berikut."}
                 </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCopyPayCode}
-                  aria-label="Copy pay code"
-                >
-                  <Clipboard className="h-4 w-4" />
-                </Button>
               </div>
-            )}
-          </div>
+
+              {!showQrBlock && hasPayableCode && !hasGatewayUrl && (
+                <div className="flex items-center gap-2">
+                  <div className="bg-muted max-w-[220px] truncate rounded-lg border px-3 py-2 text-sm">
+                    {String(order.payment_code_display || order.payment_code || "-")}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleCopyPayCode}
+                    aria-label="Copy pay code"
+                  >
+                    <Clipboard className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isSandboxOrder && (
+            <div className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-amber-500">
+                <span>🧪 Mode Sandbox Test (SKU xld10)</span>
+              </div>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Pesanan ini menggunakan SKU testing Digiflazz. Klik tombol di bawah untuk
+                mensimulasikan pembayaran lunas dan melihat alur fulfillment real-time di UI.
+              </p>
+              <Button
+                type="button"
+                className="mt-3 w-full bg-amber-600 font-medium text-white hover:bg-amber-700"
+                size="lg"
+                disabled={simulating}
+                onClick={handleSimulatePay}
+              >
+                {simulating ? "Memproses Simulasi..." : "Bayar Sekarang (Simulasi Lunas)"}
+              </Button>
+            </div>
+          )}
 
           {hasGatewayUrl && (
             <div className="mt-4">
