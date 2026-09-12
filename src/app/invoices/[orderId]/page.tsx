@@ -2,7 +2,7 @@
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { motion } from "framer-motion";
@@ -31,7 +31,17 @@ import animationFailed from "@/data/lottie/failed.json";
 
 export default function InvoicePage() {
   const { orderId } = useParams();
+  const searchParams = useSearchParams();
   const orderIdValue = Array.isArray(orderId) ? orderId[0] : orderId;
+
+  // Jika ada query param dari gateway (transactionId, status, dll),
+  // berarti user baru kembali dari halaman pembayaran — jangan redirect lagi.
+  const returnedFromGateway = Boolean(
+    searchParams.get("transactionId") ||
+    searchParams.get("transaction_id") ||
+    searchParams.get("status") ||
+    searchParams.get("payment_id"),
+  );
 
   const safeOrderId = (() => {
     const raw = typeof orderIdValue === "string" ? orderIdValue : "";
@@ -255,6 +265,7 @@ export default function InvoicePage() {
   useEffect(() => {
     if (!safeOrderId) return;
     if (!order) return;
+    if (returnedFromGateway) return; // jangan redirect balik kalau user baru kembali dari gateway
     if (normalizePaymentStatus(order.payment_status) !== PaymentStatus.PENDING) return;
 
     const externalUrl = String(order.gateway_response?.payment_url || "").trim();
@@ -269,7 +280,7 @@ export default function InvoicePage() {
     }
 
     window.location.href = externalUrl;
-  }, [safeOrderId, order]);
+  }, [safeOrderId, order, returnedFromGateway]);
 
   const getPayStatusMessage = () => {
     if (!order) return "Pesanan tidak ditemukan.";
