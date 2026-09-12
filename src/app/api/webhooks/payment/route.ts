@@ -185,6 +185,32 @@ async function postHandler(req: Request) {
         .where(and(eq(orders.orderId, orderId), notInArray(orders.paymentStatus, finalStatuses)))
         .returning({ id: orders.id });
       applied = updated.length > 0;
+
+      if (applied) {
+        revalidatePath(`/invoices/${orderId}`);
+      }
+    } else if (event === "payment.expired") {
+      const updated = await db
+        .update(orders)
+        .set({
+          paymentStatus: OrderPaymentStatus.EXPIRED,
+          buyStatus: OrderBuyStatus.FAILED,
+          gatewayResponse: {
+            ...existingGateway,
+            [provider]: {
+              status: "expired",
+              paymentId,
+              eventId: payload.event_id,
+            },
+          },
+        })
+        .where(and(eq(orders.orderId, orderId), notInArray(orders.paymentStatus, finalStatuses)))
+        .returning({ id: orders.id });
+      applied = updated.length > 0;
+
+      if (applied) {
+        revalidatePath(`/invoices/${orderId}`);
+      }
     }
 
     if (!applied) {
