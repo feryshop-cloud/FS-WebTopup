@@ -284,7 +284,7 @@ async function postHandler(req: Request) {
               }
             : null,
         },
-        redirect_url: paymentIntent?.payment_url ?? `/invoice/${orderId}`,
+        redirect_url: paymentIntent?.payment_url ?? `/invoices/${orderId}`,
       },
       { status: 200 },
     );
