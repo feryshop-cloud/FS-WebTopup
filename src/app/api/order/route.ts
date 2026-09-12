@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
-import { callValidatePromo, getProductUnitPrice, computeDiscount } from "@/lib/promo";
+import { callValidatePromo, getProductUnitPrice, computeDiscount, checkDigiflazzBalanceForProduct } from "@/lib/promo";
 import { createPayment, getPaymentServiceBaseUrl } from "@/lib/payment-client";
 import { OrderPaymentStatus, OrderBuyStatus } from "@/types/status";
 
@@ -119,6 +119,18 @@ async function postHandler(req: Request) {
             success: false,
             message: `Minimal pembayaran untuk metode ini adalah Rp${Number(pm.minimum_amount).toLocaleString("id-ID")}`,
           },
+          { status: 400 },
+        );
+      }
+    }
+
+    // C5: Pre-order balance check for Digiflazz products
+    // Prevents user from paying if deposit is insufficient
+    if (productId) {
+      const balanceCheck = await checkDigiflazzBalanceForProduct(productId);
+      if (!balanceCheck.ok) {
+        return NextResponse.json(
+          { success: false, message: balanceCheck.message },
           { status: 400 },
         );
       }

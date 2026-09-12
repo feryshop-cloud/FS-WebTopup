@@ -1,5 +1,7 @@
 import { db, products, sqlClient } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { getDigiflazzBalance } from "@/lib/digiflazz-client";
+import { logger } from "@/lib/logger";
 
 /**
  * Union type representing the result of a promo code validation check.
@@ -126,4 +128,81 @@ export function computeDiscount(
     discount = promo.discountValue;
   }
   return Math.max(0, Math.min(discount, subtotal));
+}
+
+/**
+ * Fetches product details including SKU, provider, and cost price.
+ * Used to determine if a product requires Digiflazz balance check.
+ */
+export async function getProductDetails(
+  productId: string,
+): Promise<{ sku: string | null; provider: string | null; costPrice: number } | null> {
+  try {
+    const rows = await db
+      .select({ sku: products.sku, provider: products.provider, costPrice: products.costPrice })
+      .from(products)
+      .where(eq(products.id, productId))
+      .limit(1);
+    const p = rows?.[0];
+    if (!p) return null;
+    return {
+      sku: p.sku,
+      provider: p.provider,
+      costPrice: Math.floor(Number(p.costPrice ?? 0)),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Checks if Digiflazz deposit is sufficient for a product before order creation.
+ * Returns null if check is not needed (non-digiflazz or testing SKU).
+ * Returns error message if balance is insufficient.
+ */
+export async function checkDigiflazzBalanceForProduct(
+  productId: string,
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const product = await getProductDetails(productId);
+  if (!product || product.provider !== "digiflazz" || !product.sku) {
+    return { ok: true };
+  }
+
+  // Skip balance check for testing SKUs
+  if (product.sku.toLowerCase() === "xld10") {
+    return { ok: true };
+  }
+
+  const costPrice = product.costPrice;
+  if (costPrice <= 0) {
+    return { ok: true };
+  }
+
+  try {
+    const balance = await getDigiflazzBalance();
+    if (!balance) {
+      logger.warn("Cannot verify Digiflazz balance, proceeding with order", { productId });
+      return { ok: true };
+    }
+
+    const MIN_RESERVE = Number(process.env.DIGIFLAZZ_MIN_RESERVE || 50000);
+    const required = costPrice + MIN_RESERVE;
+
+    if (balance.deposit < required) {
+      const message = `Saldo deposit tidak mencukupi untuk produk ini. Silakan coba lagi nanti atau pilih produk lain.`;
+      logger.warn("Pre-order balance check failed", {
+        productId,
+        sku: product.sku,
+        deposit: balance.deposit,
+        costPrice,
+        required,
+      });
+      return { ok: false, message };
+    }
+
+    return { ok: true };
+  } catch (error) {
+    logger.warn("Failed to check Digiflazz balance, proceeding with order", { productId, error });
+    return { ok: true };
+  }
 }
