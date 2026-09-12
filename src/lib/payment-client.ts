@@ -88,7 +88,11 @@ export function getPaymentWebhookSecret(): string {
  * Resolves the public storefront base URL used for webhook callbacks.
  */
 function getSiteBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/+$/, "");
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXTAUTH_URL ||
+    "http://localhost:3000"
+  ).replace(/\/+$/, "");
 }
 
 /**
