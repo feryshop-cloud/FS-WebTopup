@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
 import { verifyPaymentWebhookSignature, type PaymentWebhookPayload } from "@/lib/payment-client";
 import { triggerDigiflazzTransaction } from "@/lib/digiflazz-client";
+import { createNotification } from "@/lib/notifications";
 import { OrderPaymentStatus, OrderBuyStatus } from "@/types/status";
 
 export const dynamic = "force-dynamic";
@@ -152,6 +153,20 @@ async function postHandler(req: Request) {
                   })
                   .where(eq(orders.orderId, orderId));
                 revalidatePath(`/invoices/${orderId}`);
+
+                // Notify admin about failed order
+                await createNotification({
+                  type: "order_failed",
+                  title: `Order ${orderId} gagal`,
+                  body: `Produk ${sku} tidak dapat diproses. Silakan cek saldo deposit.`,
+                  metadata: {
+                    orderId,
+                    sku,
+                    amount: Number(order.price || 0),
+                    reason: digiRes.message,
+                  },
+                  targetRoles: ["OWNER", "ADMIN"],
+                });
               } else if (digiRes.status === "pending") {
                 await db
                   .update(orders)
