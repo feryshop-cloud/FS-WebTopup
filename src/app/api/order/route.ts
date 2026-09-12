@@ -130,7 +130,7 @@ async function postHandler(req: Request) {
       const balanceCheck = await checkDigiflazzBalanceForProduct(productId);
       if (!balanceCheck.ok) {
         return NextResponse.json(
-          { success: false, message: balanceCheck.message },
+          { success: false, message: "Produk sedang tidak tersedia. Silakan coba lagi nanti." },
           { status: 400 },
         );
       }
