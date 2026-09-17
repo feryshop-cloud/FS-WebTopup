@@ -331,7 +331,7 @@ export function MarketplaceCategoryView({
             <Search className="text-muted-foreground absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2" />
             <Input
               type="text"
-              placeholder={`Cari spesifikasi akun ${selectedGameCategory === "all" ? "game" : activeCategory.name} (misal: Sultan, Mythic, Skin, Monsep)...`}
+              placeholder={`Cari akun ${selectedGameCategory === "all" ? "game" : activeCategory.name} (Sultan, Rank, Skin)...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="border-border bg-card focus-visible:ring-primary h-11 rounded-xl pl-10 pr-12 text-sm shadow-sm transition-colors sm:h-12"
@@ -503,7 +503,7 @@ export function MarketplaceCategoryView({
             <p className="text-muted-foreground text-sm">Mencari akun terbaik untukmu...</p>
           </div>
         ) : filteredAccounts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
             {filteredAccounts.map((account) => (
               <AccountCard key={account.id} account={account} />
             ))}

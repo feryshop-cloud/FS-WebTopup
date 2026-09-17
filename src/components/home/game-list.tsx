@@ -44,21 +44,21 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
   return (
     <>
       <motion.ul
-        className="mb-4 grid grid-cols-3 gap-4 sm:mb-8 sm:grid-cols-4 sm:gap-x-6 sm:gap-y-8 lg:grid-cols-5 xl:grid-cols-6"
+        className="mb-4 grid grid-cols-3 gap-2.5 sm:mb-8 sm:grid-cols-4 sm:gap-4 md:gap-x-6 md:gap-y-8 lg:grid-cols-5 xl:grid-cols-6"
         initial="hidden"
         animate="visible"
         variants={{
           hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+          visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
         }}
       >
         {isLoading
           ? [...Array(9)].map((_, index) => (
-              <li key={`skeleton-${index}`} className="bg-muted relative rounded-xl">
-                <Skeleton className="aspect-square w-full rounded-xl" />
-                <div className="space-y-2 p-3">
-                  <Skeleton className="h-4 w-3/4 rounded" />
-                  <Skeleton className="h-3 w-1/2 rounded" />
+              <li key={`skeleton-${index}`} className="border-border/50 bg-card relative overflow-hidden rounded-xl border">
+                <Skeleton className="aspect-square w-full rounded-t-xl" />
+                <div className="space-y-1.5 p-2 sm:p-3">
+                  <Skeleton className="h-3.5 w-3/4 rounded" />
+                  <Skeleton className="h-2.5 w-1/2 rounded" />
                 </div>
               </li>
             ))
@@ -66,30 +66,32 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
               <motion.li
                 key={String(game.id)}
                 className="group relative"
-                whileHover={{ scale: 1.06 }}
-                whileTap={{ scale: 0.98 }}
-                initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.03, ease: [0.4, 0.0, 0.2, 1] }}
+                transition={{ duration: 0.3, delay: index * 0.02, ease: [0.4, 0.0, 0.2, 1] }}
                 layout
               >
                 <Link prefetch href={`/order/${game.slug}`} className="block">
-                  <div className="bg-muted hover:ring-my-color hover:ring-offset-background relative transform overflow-hidden rounded-xl duration-300 ease-in-out hover:shadow-2xl hover:ring-[3px] hover:ring-offset-2">
-                    <div className="aspect-square w-full overflow-hidden rounded-t-xl">
+                  <div className="border-border/70 bg-card hover:border-primary/50 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md active:scale-[0.98]">
+                    <div className="aspect-square w-full overflow-hidden rounded-t-xl bg-muted/40">
                       <Image
                         src={game.image}
                         alt={game.title}
                         width={192}
                         height={288}
-                        className="aspect-square rounded-t-xl object-cover object-center transition-all duration-300 group-hover:scale-105"
-                        priority
+                        className="aspect-square rounded-t-xl object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                        priority={index < 6}
                       />
                     </div>
-                    <div className="p-3">
-                      <h2 className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                    <div className="p-2 sm:p-3">
+                      <h3 className="group-hover:text-primary truncate text-xs font-semibold text-foreground transition-colors sm:text-sm">
                         {game.title}
-                      </h2>
-                      <p className="truncate text-xs text-gray-400">{game.developers || ""}</p>
+                      </h3>
+                      <p className="text-muted-foreground mt-0.5 truncate text-[10px] sm:text-xs">
+                        {game.developers || "Top-Up Instan"}
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -101,12 +103,12 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
         <div className="mt-4 flex justify-center">
           <motion.button
             onClick={loadMoreGames}
-            className="bg-muted rounded-full px-6 py-2 text-sm font-medium shadow-md transition-all"
+            className="border-border/80 bg-muted/60 text-foreground hover:bg-muted hover:border-primary/40 inline-flex h-10 items-center justify-center rounded-xl border px-6 text-xs font-semibold shadow-sm transition-all sm:text-sm"
             whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+            whileTap={{ scale: 0.97 }}
             type="button"
           >
-            Tampilkan Lainnya...
+            Tampilkan Lainnya ({games.length - visibleCount} lagi)
           </motion.button>
         </div>
       )}

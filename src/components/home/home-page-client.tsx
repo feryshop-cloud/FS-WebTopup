@@ -173,10 +173,10 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
         {/* Unified Catalog & Top-Up Section */}
         <section
           id="topup-section"
-          className="border-border/70 bg-card/50 scroll-mt-24 rounded-3xl border p-4 pt-8 sm:p-6"
+          className="border-border/70 bg-card/50 scroll-mt-24 rounded-2xl sm:rounded-3xl border p-3.5 pt-5 sm:p-6"
           aria-labelledby="topup-section-title"
         >
-          <div className="mb-5 flex items-center gap-2.5">
+          <div className="mb-4 sm:mb-5 flex items-center gap-2.5">
             <span className="bg-primary/10 text-primary border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
               {selectedCategory === "akun-game" ? (
                 <Gamepad2 className="h-5 w-5" />
@@ -187,7 +187,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
             <div>
               <h2
                 id="topup-section-title"
-                className="text-foreground text-lg font-bold tracking-tight sm:text-xl"
+                className="text-foreground text-base font-bold tracking-tight sm:text-xl"
               >
                 {selectedCategory === "akun-game" ? "Katalog Akun Game" : "Layanan Top-Up Cepat"}
               </h2>
@@ -199,7 +199,7 @@ export function HomePageClient({ initialData }: { initialData: HomeFallbackData 
             </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-5 sm:space-y-8">
             <Promo initialData={initialData.promo} />
 
             {selectedCategory !== "akun-game" && (

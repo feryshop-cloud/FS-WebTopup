@@ -48,17 +48,18 @@ export function GameCategories({
         >
           <motion.button
             type="button"
-            className="bg-my-color absolute left-0 rounded-full p-2 text-white shadow-md"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground absolute left-0 z-10 hidden h-8 w-8 items-center justify-center rounded-full shadow-md transition-all md:flex"
             onClick={() => scrollCategories("left")}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            aria-label="Scroll left"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </motion.button>
 
           <motion.div
             ref={categoryRef}
-            className="hide-scrollbar mx-11 flex transform items-center gap-2 overflow-auto duration-300 ease-in-out md:gap-3"
+            className="scrollbar-none mx-0 flex w-full items-center gap-2 overflow-x-auto py-1 scroll-smooth md:mx-11 md:gap-3"
             variants={categoryContainerVariants}
             initial="hidden"
             animate="visible"
@@ -72,14 +73,14 @@ export function GameCategories({
                   type="button"
                   key={id || "semua"}
                   onClick={() => setSelectedCategory(id)}
-                  className={`focus-visible:ring-my-color focus-visible:ring-offset-background inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-1 ${
+                  className={`focus-visible:ring-primary focus-visible:ring-offset-background inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-semibold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-1 active:scale-95 ${
                     active
-                      ? "border-my-color/40 bg-my-color/10 text-my-color border font-bold shadow-sm"
-                      : "border-border bg-muted text-muted-foreground hover:border-my-color/30 hover:text-foreground border"
+                      ? "border-primary/50 bg-primary/15 text-primary border font-bold shadow-sm"
+                      : "border-border/70 bg-muted/60 text-muted-foreground hover:border-primary/30 hover:text-foreground border"
                   }`}
                   variants={categoryItemVariants}
                   whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.96 }}
                 >
                   <CategoryLogo logo={category.logo} className="h-4 w-4 shrink-0" />
                   {category.title}
@@ -90,31 +91,30 @@ export function GameCategories({
 
           <motion.button
             type="button"
-            className="bg-my-color absolute right-0 rounded-full p-2 text-white shadow-md"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground absolute right-0 z-10 hidden h-8 w-8 items-center justify-center rounded-full shadow-md transition-all md:flex"
             onClick={() => scrollCategories("right")}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            aria-label="Scroll right"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </motion.button>
         </motion.div>
       ) : (
         <motion.div className="relative flex items-center">
           <motion.div
-            className="bg-muted absolute left-0 z-10 rounded-full shadow-md"
-            style={{ width: 40, height: 40 }}
+            className="bg-muted absolute left-0 z-10 hidden h-8 w-8 rounded-full shadow-md md:flex"
           />
-          <div className="hide-scrollbar mx-11 flex transform items-center gap-2 overflow-auto duration-300 ease-in-out md:gap-3">
-            {[...Array(3)].map((_, index) => (
+          <div className="scrollbar-none mx-0 flex w-full items-center gap-2 overflow-x-auto py-1 md:mx-11 md:gap-3">
+            {[...Array(5)].map((_, index) => (
               <motion.div
                 key={index}
-                className="bg-muted h-9 w-28 whitespace-nowrap rounded-full"
+                className="bg-muted/60 h-9 w-28 shrink-0 rounded-full"
               />
             ))}
           </div>
           <motion.div
-            className="bg-muted absolute right-0 z-10 rounded-full shadow-md"
-            style={{ width: 40, height: 40 }}
+            className="bg-muted absolute right-0 z-10 hidden h-8 w-8 rounded-full shadow-md md:flex"
           />
         </motion.div>
       )}

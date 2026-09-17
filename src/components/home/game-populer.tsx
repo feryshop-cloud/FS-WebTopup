@@ -20,83 +20,84 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
   return (
     <div>
       <motion.div
-        className="text-foreground mb-5"
-        initial={{ opacity: 0, y: 20 }}
+        className="text-foreground mb-3 sm:mb-5"
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+        transition={{ delay: 0.15, duration: 0.4 }}
       >
-        <div className="mb-2 flex items-center gap-1">
+        <div className="mb-1 flex items-center gap-1.5">
           <Image
             src="/promo.gif"
             alt="Promo"
-            width={28}
-            height={28}
+            width={24}
+            height={24}
             unoptimized
-            className="h-7 w-7 brightness-110 drop-shadow-[0_0_10px_rgba(249,115,22,0.9)] hue-rotate-[-10deg] saturate-[250%] sepia-[0.3] filter transition-all duration-300"
+            className="h-6 w-6 brightness-110 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] filter transition-all sm:h-7 sm:w-7"
           />
-          <h3 className="text-lg font-semibold uppercase leading-relaxed tracking-wider">
+          <h3 className="text-base font-bold uppercase tracking-wider text-foreground sm:text-lg">
             TRENDING
           </h3>
         </div>
-        <p className="pl-6 text-xs">Berikut adalah beberapa produk yang paling populer saat ini.</p>
+        <p className="text-muted-foreground text-xs">
+          Produk paling populer dengan transaksi tercepat saat ini.
+        </p>
       </motion.div>
 
-      <ul className="grid grid-cols-2 gap-4 md:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3">
         {isLoading
           ? Array.from({ length: 6 }).map((_, index) => (
-              <li key={index} className="relative rounded-2xl">
-                <div className="h-20 w-full animate-pulse rounded-2xl border border-white/5 bg-zinc-800/80" />
+              <li key={index} className="relative rounded-xl sm:rounded-2xl">
+                <div className="h-16 w-full animate-pulse rounded-xl border border-border/40 bg-muted/50 sm:h-20 sm:rounded-2xl" />
               </li>
             ))
           : popularGames?.map((gamePopuler: Game, index: number) => (
               <motion.li
                 key={gamePopuler.id}
-                className="border-border bg-card text-card-foreground hover:border-my-color/60 hover:bg-accent group relative overflow-hidden rounded-2xl border shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-md dark:border-white/10 dark:bg-gradient-to-br dark:from-zinc-900/90 dark:via-zinc-900/60 dark:to-zinc-950/90 dark:hover:from-zinc-800/90 dark:hover:to-zinc-900/90 dark:hover:shadow-[0_8px_25px_rgba(249,115,22,0.25)]"
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                className="border-border/70 bg-card text-card-foreground hover:border-primary/50 group relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] sm:rounded-2xl dark:border-white/10 dark:bg-zinc-900/80"
+                initial={{ opacity: 0, scale: 0.9, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{
-                  duration: 0.6,
-                  delay: index * 0.1,
+                  duration: 0.4,
+                  delay: index * 0.05,
                   ease: [0.4, 0.0, 0.2, 1],
                 }}
               >
-                {/* Ambient Neon Glow Spot on Hover */}
-                <div className="bg-my-color/10 group-hover:bg-my-color/20 dark:bg-my-color/15 dark:group-hover:bg-my-color/30 pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-2xl transition-all duration-500 group-hover:scale-150" />
+                {/* Ambient Subtle Glow */}
+                <div className="bg-primary/10 group-hover:bg-primary/20 pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full blur-xl transition-all duration-300" />
 
                 <Link
                   prefetch={true}
                   href={`/order/${gamePopuler.slug}`}
-                  className="focus-visible:ring-my-color focus-visible:ring-offset-background relative z-10 flex items-center gap-3 p-3 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  className="focus-visible:ring-primary focus-visible:ring-offset-background relative z-10 flex items-center gap-2 p-2 sm:gap-3 sm:p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 >
-                  {/* Gambar Game dengan Zoom & Shine Effect */}
-                  <div className="relative shrink-0 overflow-hidden rounded-xl">
+                  {/* Game Thumbnail */}
+                  <div className="relative shrink-0 overflow-hidden rounded-lg sm:rounded-xl">
                     <Image
                       alt={gamePopuler.title || "Game"}
                       priority={index < 4}
                       width={64}
                       height={64}
-                      className="aspect-square h-14 w-14 object-cover shadow-md transition-transform duration-500 ease-out group-hover:scale-110 md:h-16 md:w-16"
+                      className="aspect-square h-11 w-11 object-cover shadow-sm transition-transform duration-300 ease-out group-hover:scale-105 sm:h-14 sm:w-14 md:h-16 md:w-16"
                       src={
                         typeof gamePopuler.image === "string" && gamePopuler.image.trim()
                           ? gamePopuler.image.trim()
                           : "/default-og-image.jpg"
                       }
                     />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   </div>
 
-                  {/* Informasi Game dengan Hover Badge/Arrow */}
-                  <div className="flex-1 overflow-hidden">
-                    <h2 className="group-hover:text-my-color truncate text-xs font-bold transition-colors duration-300 sm:max-w-[125px] md:max-w-[150px] md:text-base lg:max-w-[175px]">
+                  {/* Game Details */}
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <h2 className="group-hover:text-primary truncate text-xs font-bold text-foreground transition-colors duration-200 sm:text-sm">
                       {gamePopuler.title}
                     </h2>
-                    <div className="mt-0.5 flex items-center gap-1.5">
-                      <p className="text-muted-foreground truncate text-xs md:text-sm">
+                    <div className="mt-0.5 flex items-center gap-1">
+                      <p className="text-muted-foreground truncate text-[10px] sm:text-xs">
                         {gamePopuler.developers || "Game Sultan"}
                       </p>
                       <TrendingUp
-                        size={13}
-                        className="text-my-color shrink-0 -translate-x-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                        size={12}
+                        className="text-primary shrink-0 opacity-60 transition-transform duration-200 group-hover:scale-110 sm:opacity-0 sm:group-hover:opacity-100"
                       />
                     </div>
                   </div>
