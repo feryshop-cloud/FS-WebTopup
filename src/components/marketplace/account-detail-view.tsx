@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,14 +10,14 @@ import {
   CheckCircle2,
   Award,
   Zap,
-  Lock,
   Clock,
   Sparkles,
   ChevronRight,
   ChevronLeft,
-  UserCheck,
   Maximize2,
   X,
+  Copy,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
@@ -29,6 +29,10 @@ const toString = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : S
 export function MarketplaceAccountDetailView({ account }: { account: GameAccount }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [whatsappFailed, setWhatsappFailed] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [caraBeliOpen, setCaraBeliOpen] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
   const settings = useSettings();
   const data = settings?.data ?? {};
 
@@ -69,13 +73,6 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   );
   const priceLabel = toString(data["marketplace.price_label"] || "Harga Pas Rekber");
   const buyButtonText = toString(data["marketplace.buy_button_text"] || "Beli via Rekber WhatsApp");
-  const askButtonText = toString(data["marketplace.ask_button_text"] || "Tanya Stok & Detail");
-  const securityTitle = toString(
-    data["marketplace.security_title"] || "Transaksi 100% Aman via Rekber Feryshop",
-  );
-  const securitySubtitle = toString(
-    data["marketplace.security_subtitle"] || "Garansi Penggantian / Anti-Hack",
-  );
   const sellerInfoLabel = toString(data["marketplace.seller_info_label"] || "Informasi Penjual");
   const specsTitle = toString(data["marketplace.specs_title"] || "Spesifikasi Akun Utama");
   const descriptionTitle = toString(
@@ -94,6 +91,24 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
 
   const whatsappTanyaUrl = `https://wa.me/${adminPhone}?text=${tanyaMessage}`;
   const whatsappBeliUrl = `https://wa.me/${adminPhone}?text=${beliMessage}`;
+
+  const handleWhatsAppClick = useCallback(
+    (url: string) => {
+      const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
+        setWhatsappFailed(true);
+      }
+    },
+    [],
+  );
+
+  const handleCopyNumber = useCallback(() => {
+    navigator.clipboard.writeText(adminPhone).then(() => {
+      setCopied(true);
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+      copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
+    });
+  }, [adminPhone]);
 
   return (
     <div className="space-y-8 pb-28 lg:pb-12">
@@ -120,7 +135,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         <div className="space-y-6 lg:col-span-8">
           {/* Main Image Gallery */}
           <div className="space-y-3">
-            <div className="border-border/80 bg-muted/60 group relative aspect-[16/10] w-full overflow-hidden rounded-3xl border shadow-lg">
+            <div className="border-border/80 bg-muted/60 group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border shadow-lg">
               <Image
                 src={resolveStorageUrl(account.images[selectedImageIndex])}
                 alt={account.title}
@@ -195,7 +210,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               {/* Bottom Security Guarantee Tag */}
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white">
                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/70 px-3 py-1.5 backdrop-blur-md">
-                  <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                  <ShieldCheck className="h-4 w-4 text-primary" />
                   {antiHackBadge}
                 </span>
                 <span className="bg-primary/90 text-primary-foreground rounded-xl px-3 py-1.5">
@@ -223,6 +238,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       src={resolveStorageUrl(img)}
                       alt={`Thumbnail ${idx + 1}`}
                       fill
+                      loading="lazy"
                       className="object-cover"
                     />
                   </button>
@@ -232,7 +248,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           </div>
 
           {/* Account Title & Basic Info (Mobile view prominent) */}
-          <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-6 shadow-sm">
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <span className="bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold">
                 <Zap className="h-3.5 w-3.5" /> {account.specs.deliveryType}
@@ -246,22 +262,10 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
             <h1 className="text-foreground text-xl font-extrabold leading-snug sm:text-2xl">
               {account.title}
             </h1>
-
-            {/* Price Badge for Mobile */}
-            <div className="border-border/50 flex items-baseline gap-3 border-t pt-2 lg:hidden">
-              <span className="text-2xl font-extrabold text-emerald-500">
-                Rp {account.price.toLocaleString("id-ID")}
-              </span>
-              {account.originalPrice && (
-                <span className="text-muted-foreground text-sm font-semibold line-through">
-                  Rp {account.originalPrice.toLocaleString("id-ID")}
-                </span>
-              )}
-            </div>
           </div>
 
           {/* Key Specifications Grid */}
-          <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-6 shadow-sm">
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
               <Sparkles className="text-primary h-4 w-4" /> {specsTitle}
             </h2>
@@ -303,9 +307,9 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           </div>
 
           {/* Detailed Account Description */}
-          <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-6 shadow-sm">
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" /> {descriptionTitle}
+              <CheckCircle2 className="h-4 w-4 text-primary" /> {descriptionTitle}
             </h2>
 
             <ul className="text-muted-foreground space-y-2.5 text-xs leading-relaxed sm:text-sm">
@@ -322,16 +326,13 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         {/* Right Column: Sticky Purchasing Card & Seller Info */}
         <div className="space-y-6 lg:sticky lg:top-24 lg:col-span-4">
           {/* Main Price & Purchase CTA Box */}
-          <div className="border-primary/30 bg-card relative space-y-6 overflow-hidden rounded-3xl border p-6 shadow-xl">
-            {/* Background Glow */}
-            <div className="bg-primary/10 pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full blur-2xl" />
-
+          <div className="border-primary/30 bg-card space-y-6 overflow-hidden rounded-2xl border p-6 shadow-xl">
             <div className="space-y-2">
               <span className="text-muted-foreground block text-xs font-bold uppercase tracking-wider">
                 {priceLabel}
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-emerald-500 sm:text-3xl">
+                <span className="text-2xl font-black text-primary sm:text-3xl">
                   Rp {account.price.toLocaleString("id-ID")}
                 </span>
                 {account.originalPrice && (
@@ -342,54 +343,112 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               </div>
             </div>
 
+            {/* How to Buy (collapsible) */}
+            <button
+              type="button"
+              onClick={() => setCaraBeliOpen((o) => !o)}
+              className="text-muted-foreground flex w-full items-center justify-between text-[11px] font-bold uppercase tracking-wider"
+            >
+              Cara Beli
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform duration-200",
+                  caraBeliOpen && "rotate-180",
+                )}
+              />
+            </button>
+            {caraBeliOpen && (
+              <ol className="text-muted-foreground space-y-1.5 text-[11px] leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">1.</span>
+                  Chat admin via WhatsApp
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">2.</span>
+                  Transfer via Rekber Feryshop
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">3.</span>
+                  Data akun dikirim ke Anda
+                </li>
+              </ol>
+            )}
+
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
-              <Button
-                asChild
-                size="lg"
-                className="h-12 w-full gap-2 rounded-2xl bg-emerald-600 text-sm font-extrabold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-500"
+              {whatsappFailed ? (
+                <div className="space-y-2">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="h-12 w-full gap-2 rounded-2xl bg-primary text-sm font-extrabold text-white shadow-lg shadow-primary/20 hover:bg-primary/90"
+                  >
+                    <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
+                      <MessageCircle className="h-5 w-5 fill-white text-primary" />
+                      {buyButtonText}
+                    </button>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-2xl text-xs font-bold sm:text-sm"
+                  >
+                    <button type="button" onClick={handleCopyNumber}>
+                      {copied ? (
+                        <>
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                          Nomor tersalin!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="text-primary h-4 w-4" />
+                          Salin Nomor Admin
+                        </>
+                      )}
+                    </button>
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="h-12 w-full gap-2 rounded-2xl bg-primary text-sm font-extrabold text-white shadow-lg shadow-primary/20 hover:bg-primary/90"
+                  >
+                    <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
+                      <MessageCircle className="h-5 w-5 fill-white text-primary" />
+                      {buyButtonText}
+                    </button>
+                  </Button>
+              <a
+                href={whatsappTanyaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary -my-1 block shrink-0 py-2 text-center text-xs font-bold underline-offset-2 hover:underline"
               >
-                <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="h-5 w-5 fill-white text-emerald-600" />
-                  {buyButtonText}
-                </a>
-              </Button>
-
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-2xl text-xs font-bold sm:text-sm"
-              >
-                <a href={whatsappTanyaUrl} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="text-primary h-4 w-4" />
-                  {askButtonText}
-                </a>
-              </Button>
+                    Butuh bantuan? Tanya Admin
+                  </a>
+                </>
+              )}
             </div>
 
-            {/* Transaction Security Guarantees */}
-            <div className="border-border/60 text-muted-foreground space-y-2.5 border-t pt-4 text-xs">
-              <div className="text-foreground flex items-center gap-2 font-semibold">
-                <Lock className="h-4 w-4 shrink-0 text-emerald-500" />
-                <span>{securityTitle}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <UserCheck className="text-primary h-4 w-4 shrink-0" />
-                <span>{securitySubtitle}</span>
-              </div>
+            {/* Transaction Security Guarantee */}
+            <div className="border-border/60 flex items-center gap-2 border-t pt-4 text-xs">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
+              <span className="text-foreground font-semibold">Rekber Feryshop — Garansi Anti-Hack</span>
             </div>
           </div>
 
           {/* Seller Profile Box */}
-          <div className="border-border/70 bg-card space-y-4 rounded-3xl border p-5 shadow-sm">
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-sm">
             <span className="text-muted-foreground block text-xs font-bold uppercase tracking-wider">
               {sellerInfoLabel}
             </span>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-primary/10 text-primary border-primary/20 flex h-10 w-10 items-center justify-center rounded-2xl border font-black">
-                  {account.seller.name.charAt(0)}
+                  {account.seller.name?.charAt(0) || "?"}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
@@ -413,15 +472,15 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
       </div>
 
       {/* Mobile Fixed Bottom Sticky Purchase Bar */}
-      <div className="border-border/80 bg-card/95 supports-[backdrop-filter]:bg-card/85 fixed inset-x-0 bottom-0 z-40 border-t p-3.5 shadow-[0_-8px_24px_rgba(0,0,0,0.4)] backdrop-blur-xl transition-all duration-300 lg:hidden">
-        <div className="mx-auto flex max-w-md items-center justify-between gap-3">
+      <div className="border-border/80 bg-card/95 supports-[backdrop-filter]:bg-card/85 fixed inset-x-0 bottom-0 z-40 border-t shadow-[0_-8px_24px_rgba(0,0,0,0.4)] backdrop-blur-xl transition-all duration-300 lg:hidden" style={{ paddingBottom: "max(0.875rem, env(safe-area-inset-bottom, 0.875rem))" }}>
+        <div className="mx-auto flex max-w-md items-center justify-between gap-3 px-3.5 pt-3.5">
           {/* Price details */}
           <div className="min-w-0 flex-1">
             <span className="text-muted-foreground block truncate text-[10px] font-bold uppercase tracking-wider">
               {priceLabel}
             </span>
             <div className="flex items-baseline gap-1.5 truncate">
-              <span className="text-lg font-black text-emerald-500 sm:text-xl">
+              <span className="text-lg font-black text-primary sm:text-xl">
                 Rp {account.price.toLocaleString("id-ID")}
               </span>
               {account.originalPrice && (
@@ -434,30 +493,45 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
 
           {/* Action CTAs */}
           <div className="flex items-center gap-2">
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
-            >
-              <a
-                href={whatsappTanyaUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={askButtonText}
+            {whatsappFailed ? (
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
               >
-                <MessageCircle className="text-primary h-4 w-4" />
-                <span className="ml-1.5 hidden sm:inline">Tanya</span>
+                <button type="button" onClick={handleCopyNumber}>
+                  {copied ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      <span className="ml-1.5">Tersalin!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="text-primary h-4 w-4" />
+                      <span className="ml-1.5">Salin Nomor</span>
+                    </>
+                  )}
+                </button>
+              </Button>
+            ) : (
+                  <a
+                    href={whatsappTanyaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary -my-1 block py-2 text-center text-xs font-bold underline-offset-2 hover:underline"
+                  >
+                Butuh bantuan? Tanya Admin
               </a>
-            </Button>
+            )}
 
             <Button
               asChild
               size="sm"
-              className="h-11 rounded-xl bg-emerald-600 px-4 text-xs font-extrabold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-500"
+              className="h-11 rounded-xl bg-primary px-4 text-xs font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary/90"
             >
               <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="mr-1.5 h-4 w-4 fill-white text-emerald-600" />
+                <MessageCircle className="mr-1.5 h-4 w-4 fill-white text-primary" />
                 <span>Beli Rekber</span>
               </a>
             </Button>
