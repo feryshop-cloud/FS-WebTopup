@@ -114,7 +114,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   }, [adminPhone]);
 
   return (
-    <div className="space-y-8 pb-28 lg:pb-12">
+    <div className="space-y-8 pb-12">
       {/* Breadcrumb Navigation */}
       <div className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
         <Link href="/marketplace" className="hover:text-primary font-medium transition-colors">
@@ -327,7 +327,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         </div>
 
         {/* Right Column: Sticky Purchasing Card & Seller Info */}
-        <div className="space-y-6 lg:sticky lg:top-24 lg:col-span-4">
+        <div className="sticky top-24 space-y-6 self-start lg:col-span-4">
           {/* Main Price & Purchase CTA Box */}
           <div className="border-primary/30 bg-card space-y-6 overflow-hidden rounded-2xl border p-6 shadow-xl">
             <div className="space-y-2">
@@ -494,78 +494,6 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Fixed Bottom Sticky Purchase Bar */}
-      <div className="border-border/80 bg-card/95 supports-[backdrop-filter]:bg-card/85 fixed inset-x-0 bottom-0 z-40 border-t shadow-[0_-8px_24px_rgba(0,0,0,0.4)] backdrop-blur-xl transition-all duration-300 lg:hidden" style={{ paddingBottom: "max(0.875rem, env(safe-area-inset-bottom, 0.875rem))" }}>
-        <div className="mx-auto flex max-w-md items-center justify-between gap-3 px-3.5 pt-3.5">
-          {/* Price details */}
-          <div className="min-w-0 flex-1">
-            <span className="text-muted-foreground block truncate text-[10px] font-bold uppercase tracking-wider">
-              {priceLabel}
-            </span>
-            <div className="flex items-baseline gap-1.5 truncate">
-              <span className="text-lg font-black text-primary sm:text-xl">
-                Rp {account.price.toLocaleString("id-ID")}
-              </span>
-              {account.originalPrice && (
-                <span className="text-muted-foreground text-[10px] font-semibold line-through">
-                  Rp {account.originalPrice.toLocaleString("id-ID")}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Action CTAs */}
-          <div className="flex items-center gap-2">
-            {whatsappFailed ? (
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
-              >
-                <button type="button" onClick={handleCopyNumber}>
-                  {copied ? (
-                    <>
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      <span className="ml-1.5">Tersalin!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="text-primary h-4 w-4" />
-                      <span className="ml-1.5">Salin Nomor</span>
-                    </>
-                  )}
-                </button>
-              </Button>
-            ) : (
-              <>
-                <Button
-                  asChild
-                  size="sm"
-                  className="h-11 shrink-0 rounded-xl bg-primary px-3 text-xs font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary/90"
-                >
-                  <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="mr-1.5 h-4 w-4 fill-white text-primary" />
-                    <span>Beli Akun</span>
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
-                >
-                  <a href={whatsappNegoUrl} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="text-primary mr-1.5 h-4 w-4" />
-                    <span>Nego Harga</span>
-                  </a>
-                </Button>
-              </>
-            )}
           </div>
         </div>
       </div>
