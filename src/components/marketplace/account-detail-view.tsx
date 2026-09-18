@@ -399,11 +399,11 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 </div>
               ) : (
                 <>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2.5">
                     <Button
                       asChild
                       size="lg"
-                      className="bg-primary hover:bg-primary/90 shadow-primary/25 h-12 flex-1 gap-2 rounded-xl text-sm font-extrabold text-white shadow-lg transition-all active:scale-[0.98]"
+                      className="bg-primary hover:bg-primary/90 shadow-primary/25 h-12 w-full gap-2 rounded-xl text-sm font-extrabold text-white shadow-lg transition-all active:scale-[0.98]"
                     >
                       <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
                         <MessageCircle className="h-5 w-5 fill-white text-primary" />
@@ -414,7 +414,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       asChild
                       variant="outline"
                       size="lg"
-                      className="border-border bg-background hover:bg-muted h-12 flex-1 gap-2 rounded-xl text-xs font-bold sm:text-sm active:scale-[0.98]"
+                      className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-xl text-xs font-bold sm:text-sm transition-all active:scale-[0.98]"
                     >
                       <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
                         <MessageCircle className="text-primary h-4 w-4" />
@@ -426,7 +426,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                     href={whatsappTanyaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary block py-1 text-center text-xs font-bold underline-offset-4 hover:underline"
+                    className="text-primary block pt-1 text-center text-xs font-bold underline-offset-4 hover:underline"
                   >
                     Butuh bantuan? Tanya Admin WhatsApp
                   </a>
