@@ -72,7 +72,6 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
     data["marketplace.anti_hack_badge"] || "100% Anti-Hack & All Monsep",
   );
   const priceLabel = toString(data["marketplace.price_label"] || "Harga Pas Rekber");
-  const buyButtonText = toString(data["marketplace.buy_button_text"] || "Beli via Rekber WhatsApp");
   const sellerInfoLabel = toString(data["marketplace.seller_info_label"] || "Informasi Penjual");
   const specsTitle = toString(data["marketplace.specs_title"] || "Spesifikasi Akun Utama");
   const descriptionTitle = toString(
@@ -88,9 +87,13 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   const beliMessage = encodeURIComponent(
     `Halo Admin ${brandName}, saya ingin MEMBELI akun game melalui Rekber resmi ${brandName}:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga: Rp ${account.price.toLocaleString("id-ID")}\nPenjual: ${account.seller.name}\n\nMohon instruksi pembayaran dan proses serah terima datanya Admin.`,
   );
+  const negoMessage = encodeURIComponent(
+    `Halo Admin ${brandName}, saya tertarik dengan akun ini tapi ingin NEGO HARGA dulu ya:\n\n*${account.title}*\nID Akun: ${account.id}\nHarga Listed: Rp ${account.price.toLocaleString("id-ID")}\n\nApakah ada ruang nego? Terima kasih.`,
+  );
 
   const whatsappTanyaUrl = `https://wa.me/${adminPhone}?text=${tanyaMessage}`;
   const whatsappBeliUrl = `https://wa.me/${adminPhone}?text=${beliMessage}`;
+  const whatsappNegoUrl = `https://wa.me/${adminPhone}?text=${negoMessage}`;
 
   const handleWhatsAppClick = useCallback(
     (url: string) => {
@@ -385,7 +388,18 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                   >
                     <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
                       <MessageCircle className="h-5 w-5 fill-white text-primary" />
-                      {buyButtonText}
+                      Beli Akun
+                    </button>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-2xl text-xs font-bold sm:text-sm"
+                  >
+                    <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
+                      <MessageCircle className="text-primary h-4 w-4" />
+                      Nego Harga
                     </button>
                   </Button>
                   <Button
@@ -411,22 +425,35 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 </div>
               ) : (
                 <>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="h-12 w-full gap-2 rounded-2xl bg-primary text-sm font-extrabold text-white shadow-lg shadow-primary/20 hover:bg-primary/90"
+                  <div className="flex gap-2">
+                    <Button
+                      asChild
+                      size="lg"
+                      className="h-12 flex-1 gap-2 rounded-2xl bg-primary text-sm font-extrabold text-white shadow-lg shadow-primary/20 hover:bg-primary/90"
+                    >
+                      <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
+                        <MessageCircle className="h-5 w-5 fill-white text-primary" />
+                        Beli Akun
+                      </button>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="lg"
+                      className="border-border bg-background hover:bg-muted h-12 flex-1 gap-2 rounded-2xl text-xs font-bold sm:text-sm"
+                    >
+                      <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
+                        <MessageCircle className="text-primary h-4 w-4" />
+                        Nego Harga
+                      </button>
+                    </Button>
+                  </div>
+                  <a
+                    href={whatsappTanyaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary -my-1 block shrink-0 py-2 text-center text-xs font-bold underline-offset-2 hover:underline"
                   >
-                    <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
-                      <MessageCircle className="h-5 w-5 fill-white text-primary" />
-                      {buyButtonText}
-                    </button>
-                  </Button>
-              <a
-                href={whatsappTanyaUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary -my-1 block shrink-0 py-2 text-center text-xs font-bold underline-offset-2 hover:underline"
-              >
                     Butuh bantuan? Tanya Admin
                   </a>
                 </>
@@ -515,26 +542,30 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 </button>
               </Button>
             ) : (
-                  <a
-                    href={whatsappTanyaUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary -my-1 block py-2 text-center text-xs font-bold underline-offset-2 hover:underline"
-                  >
-                Butuh bantuan? Tanya Admin
-              </a>
+              <>
+                <Button
+                  asChild
+                  size="sm"
+                  className="h-11 shrink-0 rounded-xl bg-primary px-3 text-xs font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary/90"
+                >
+                  <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-1.5 h-4 w-4 fill-white text-primary" />
+                    <span>Beli Akun</span>
+                  </a>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-border/70 bg-background/80 hover:bg-muted h-11 shrink-0 rounded-xl px-3 text-xs font-bold"
+                >
+                  <a href={whatsappNegoUrl} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="text-primary mr-1.5 h-4 w-4" />
+                    <span>Nego Harga</span>
+                  </a>
+                </Button>
+              </>
             )}
-
-            <Button
-              asChild
-              size="sm"
-              className="h-11 rounded-xl bg-primary px-4 text-xs font-extrabold text-white shadow-lg shadow-primary/25 hover:bg-primary/90"
-            >
-              <a href={whatsappBeliUrl} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="mr-1.5 h-4 w-4 fill-white text-primary" />
-                <span>Beli Rekber</span>
-              </a>
-            </Button>
           </div>
         </div>
       </div>
