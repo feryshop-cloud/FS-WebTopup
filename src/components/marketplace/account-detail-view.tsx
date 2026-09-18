@@ -17,6 +17,13 @@ import {
   Maximize2,
   X,
   ChevronDown,
+  Trophy,
+  Key,
+  FileText,
+  UserCheck,
+  Flame,
+  Swords,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
@@ -103,31 +110,53 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   );
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6 pb-20 lg:pb-12">
       {/* Breadcrumb Navigation */}
-      <div className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
+      <nav aria-label="Breadcrumb" className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
         <Link href="/marketplace" className="hover:text-primary font-medium transition-colors">
           Daftar Akun
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
         <Link
           href={`/marketplace/${account.gameSlug}`}
           className="hover:text-primary font-medium transition-colors"
         >
           {account.gameName}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
         <span className="text-foreground max-w-[200px] truncate font-semibold sm:max-w-md">
           {account.title}
         </span>
+      </nav>
+
+      {/* Main Account Title & Badges Header */}
+      <div className="border-border/60 bg-card/60 space-y-3 rounded-2xl border p-4 sm:p-6 shadow-sm backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold">
+            <Zap className="h-3.5 w-3.5" />
+            {account.specs.deliveryType}
+          </span>
+          <span className="bg-muted text-muted-foreground border-border/60 rounded-full border px-3 py-1 font-mono text-xs font-semibold">
+            ID: #{account.id.toUpperCase()}
+          </span>
+          <span className="text-muted-foreground ml-auto flex items-center gap-1.5 text-xs font-medium">
+            <Clock className="h-3.5 w-3.5" />
+            {listedLabel} {account.createdAt}
+          </span>
+        </div>
+
+        <h1 className="text-foreground text-xl font-extrabold leading-snug tracking-tight sm:text-2xl lg:text-3xl">
+          {account.title}
+        </h1>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-        {/* Left Column: Image Gallery & Specs */}
+      {/* Main 2-Column Grid */}
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8">
+        {/* Left Column: Image Gallery, Specs, and Description */}
         <div className="space-y-6 lg:col-span-8">
           {/* Main Image Gallery */}
-          <div className="space-y-3">
-            <div className="border-border/80 bg-muted/60 group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border shadow-lg">
+          <div className="border-border/70 bg-card space-y-3 rounded-2xl border p-2.5 sm:p-4 shadow-sm">
+            <div className="border-border/80 bg-black/50 group relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border shadow-inner">
               <Image
                 src={resolveStorageUrl(account.images[selectedImageIndex])}
                 alt={account.title}
@@ -137,25 +166,25 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 className="cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
                 onClick={() => setIsLightboxOpen(true)}
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
               {/* Top Badges */}
-              <div className="absolute left-4 top-4 flex items-center gap-2">
+              <div className="absolute left-3 top-3 flex items-center gap-2 sm:left-4 sm:top-4">
                 {account.badge && (
-                  <span className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3.5 py-1.5 text-xs font-extrabold text-black shadow-lg">
-                    <Award className="h-4 w-4" />
+                  <span className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-extrabold text-black shadow-lg">
+                    <Award className="h-3.5 w-3.5" />
                     {account.badge}
                   </span>
                 )}
                 {discountPercentage > 0 && (
                   <span className="rounded-xl bg-red-600 px-3 py-1.5 text-xs font-extrabold text-white shadow-lg">
-                    {discountLabel} {discountPercentage}%
+                    {discountLabel} -{discountPercentage}%
                   </span>
                 )}
               </div>
 
-              {/* Top Right: Expand / Photo Counter */}
-              <div className="absolute right-4 top-4 flex items-center gap-2">
+              {/* Top Right: Photo Counter & Expand Button */}
+              <div className="absolute right-3 top-3 flex items-center gap-2 sm:right-4 sm:top-4">
                 {totalImages > 1 && (
                   <span className="rounded-xl border border-white/15 bg-black/70 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-md">
                     {selectedImageIndex + 1} / {totalImages} Foto
@@ -171,7 +200,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                 </button>
               </div>
 
-              {/* Previous / Next Arrow Controls for Main Gallery */}
+              {/* Prev / Next Controls */}
               {totalImages > 1 && (
                 <>
                   <button
@@ -181,7 +210,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       handlePrevImage();
                     }}
                     aria-label="Foto sebelumnya"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-0 backdrop-blur-md transition-all hover:bg-black/80 group-hover:opacity-100 sm:left-4"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-90 backdrop-blur-md transition-all hover:bg-black/80 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -192,35 +221,32 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       handleNextImage();
                     }}
                     aria-label="Foto berikutnya"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-0 backdrop-blur-md transition-all hover:bg-black/80 group-hover:opacity-100 sm:right-4"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-90 backdrop-blur-md transition-all hover:bg-black/80 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </>
               )}
 
-              {/* Bottom Security Guarantee Tag */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white">
-                <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/70 px-3 py-1.5 backdrop-blur-md">
-                  <ShieldCheck className="h-4 w-4 text-primary" />
+              {/* Bottom Security Banner */}
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold text-white sm:bottom-4 sm:left-4 sm:right-4">
+                <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/75 px-3 py-1.5 backdrop-blur-md">
+                  <ShieldCheck className="text-primary h-4 w-4" />
                   {antiHackBadge}
-                </span>
-                <span className="bg-primary/90 text-primary-foreground rounded-xl px-3 py-1.5">
-                  ID: #{account.id.toUpperCase()}
                 </span>
               </div>
             </div>
 
-            {/* Thumbnails if multiple images */}
+            {/* Gallery Thumbnails */}
             {totalImages > 1 && (
-              <div className="flex items-center gap-3 overflow-x-auto pb-1">
+              <div className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-1">
                 {account.images.map((img, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImageIndex(idx)}
                     className={cn(
-                      "relative aspect-[16/10] w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all sm:w-32",
+                      "relative aspect-[16/10] w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all sm:w-28 sm:rounded-xl",
                       selectedImageIndex === idx
                         ? "border-primary ring-primary/30 scale-105 shadow-md ring-2"
                         : "border-border/50 opacity-60 hover:opacity-100",
@@ -239,92 +265,158 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
             )}
           </div>
 
-          {/* Account Title & Basic Info (Mobile view prominent) */}
-          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
-            <div className="flex items-start justify-between gap-4">
-              <span className="bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold">
-                <Zap className="h-3.5 w-3.5" /> {account.specs.deliveryType}
-              </span>
-              <span className="text-muted-foreground flex items-center gap-1 text-xs font-semibold">
-                <Clock className="h-3.5 w-3.5" />
-                {listedLabel} {account.createdAt}
-              </span>
-            </div>
-
-            <h1 className="text-foreground text-xl font-extrabold leading-snug sm:text-2xl">
-              {account.title}
-            </h1>
-          </div>
-
-          {/* Key Specifications Grid */}
-          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
+          {/* Specifications Card */}
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 sm:p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
-              <Sparkles className="text-primary h-4 w-4" /> {specsTitle}
+              <Sparkles className="text-primary h-4.5 w-4.5" /> {specsTitle}
             </h2>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
-                <span className="text-muted-foreground block text-[11px] font-semibold">
-                  Rank Utama
-                </span>
-                <span className="text-foreground block truncate text-xs font-extrabold sm:text-sm">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {/* Rank */}
+              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                  <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Rank Utama</span>
+                </div>
+                <span className="text-foreground block truncate text-sm font-extrabold">
                   {account.specs.rank}
                 </span>
               </div>
-              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
-                <span className="text-muted-foreground block text-[11px] font-semibold">
-                  Jumlah Skin
-                </span>
-                <span className="text-foreground block truncate text-xs font-extrabold sm:text-sm">
+
+              {/* Skins Count */}
+              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                  <Sparkles className="text-primary h-3.5 w-3.5" />
+                  <span>Jumlah Skin</span>
+                </div>
+                <span className="text-foreground block truncate text-sm font-extrabold">
                   {account.specs.skinsCount}
                 </span>
               </div>
-              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
-                <span className="text-muted-foreground block text-[11px] font-semibold">
-                  Metode Login
-                </span>
-                <span className="text-primary block truncate text-xs font-extrabold sm:text-sm">
+
+              {/* Heroes Count (if present) */}
+              {account.specs.heroesCount !== undefined && (
+                <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                    <Swords className="h-3.5 w-3.5 text-cyan-400" />
+                    <span>Jumlah Hero</span>
+                  </div>
+                  <span className="text-foreground block truncate text-sm font-extrabold">
+                    {account.specs.heroesCount}
+                  </span>
+                </div>
+              )}
+
+              {/* Level (if present) */}
+              {account.specs.level !== undefined && (
+                <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                    <Flame className="h-3.5 w-3.5 text-rose-400" />
+                    <span>Level Akun</span>
+                  </div>
+                  <span className="text-foreground block truncate text-sm font-extrabold">
+                    {account.specs.level}
+                  </span>
+                </div>
+              )}
+
+              {/* Winrate (if present) */}
+              {account.specs.winrate && (
+                <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                    <Activity className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Win Rate</span>
+                  </div>
+                  <span className="text-foreground block truncate text-sm font-extrabold">
+                    {account.specs.winrate}
+                  </span>
+                </div>
+              )}
+
+              {/* Login Method */}
+              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                  <Key className="text-primary h-3.5 w-3.5" />
+                  <span>Metode Login</span>
+                </div>
+                <span className="text-primary block truncate text-sm font-extrabold">
                   {account.specs.loginVia}
                 </span>
               </div>
-              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
-                <span className="text-muted-foreground block text-[11px] font-semibold">
-                  Ganti Nama (CN)
-                </span>
-                <span className="text-foreground block truncate text-xs font-extrabold sm:text-sm">
-                  {account.specs.changeName}
+
+              {/* Change Name Status */}
+              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
+                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                  <UserCheck className="h-3.5 w-3.5 text-purple-400" />
+                  <span>Ganti Nama (CN)</span>
+                </div>
+                <span className="text-foreground block truncate text-sm font-extrabold">
+                  {account.specs.changeName || "Ready"}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Detailed Account Description */}
-          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
+          {/* Account Detailed Description */}
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 sm:p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
-              <CheckCircle2 className="h-4 w-4 text-primary" /> {descriptionTitle}
+              <FileText className="text-primary h-4.5 w-4.5" /> {descriptionTitle}
             </h2>
 
-            <ul className="text-muted-foreground space-y-2.5 text-xs leading-relaxed sm:text-sm">
+            <ul className="space-y-3 text-xs sm:text-sm">
               {account.description.map((desc, i) => (
-                <li key={i} className="flex items-start gap-2.5">
-                  <span className="bg-primary mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
-                  <span>{desc}</span>
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+                  <span className="text-muted-foreground leading-relaxed">{desc}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        {/* Right Column: Sticky Purchasing Card & Seller Info */}
-        <div className="sticky top-24 space-y-6 self-start lg:col-span-4">
-          {/* Main Price & Purchase CTA Box */}
-          <div className="border-primary/30 bg-card space-y-6 overflow-hidden rounded-2xl border p-6 shadow-xl">
-            <div className="space-y-2">
+        {/* Right Column: Unified Sticky Purchase Panel & Seller Profile */}
+        <div className="space-y-5 lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
+          {/* Main Purchasing & Seller Card */}
+          <div className="border-primary/30 bg-card relative overflow-hidden rounded-2xl border p-5 sm:p-6 shadow-xl space-y-5">
+            {/* Top accent bar */}
+            <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-primary via-cyan-400 to-amber-500" />
+
+            {/* Seller Profile Header */}
+            <div className="border-border/60 border-b pb-4">
+              <span className="text-muted-foreground mb-3 block text-[11px] font-bold uppercase tracking-wider">
+                {sellerInfoLabel}
+              </span>
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/10 text-primary border-primary/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border text-lg font-black shadow-sm">
+                  {account.seller.name?.charAt(0) || "?"}
+                </div>
+                <div className="space-y-0.5 overflow-hidden">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-foreground truncate text-sm font-bold">
+                      {account.seller.name}
+                    </span>
+                    {account.seller.isVerified && (
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs font-semibold text-amber-500">
+                    <Star className="h-3.5 w-3.5 fill-amber-500" />
+                    <span>{account.seller.rating}</span>
+                    <span className="text-muted-foreground">
+                      ({account.seller.salesCount} Transaksi Sukses)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Price Box */}
+            <div className="space-y-1.5">
               <span className="text-muted-foreground block text-xs font-bold uppercase tracking-wider">
                 {priceLabel}
               </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-primary sm:text-3xl">
+              <div className="flex items-baseline gap-2.5">
+                <span className="text-primary text-2xl font-black sm:text-3xl">
                   Rp {account.price.toLocaleString("id-ID")}
                 </span>
                 {account.originalPrice && (
@@ -335,45 +427,14 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               </div>
             </div>
 
-            {/* How to Buy (collapsible) */}
-            <button
-              type="button"
-              onClick={() => setCaraBeliOpen((o) => !o)}
-              className="text-muted-foreground flex w-full items-center justify-between text-[11px] font-bold uppercase tracking-wider"
-            >
-              Cara Beli
-              <ChevronDown
-                className={cn(
-                  "h-3.5 w-3.5 transition-transform duration-200",
-                  caraBeliOpen && "rotate-180",
-                )}
-              />
-            </button>
-            {caraBeliOpen && (
-              <ol className="text-muted-foreground space-y-1.5 text-[11px] leading-relaxed">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5 font-bold">1.</span>
-                  Chat admin via WhatsApp
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5 font-bold">2.</span>
-                  Transfer via Rekber Feryshop
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5 font-bold">3.</span>
-                  Data akun dikirim ke Anda
-                </li>
-              </ol>
-            )}
-
             {/* Action Buttons */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-2.5 pt-1">
               {whatsappFailed ? (
                 <div className="space-y-2">
                   <Button
                     asChild
                     size="lg"
-                    className="h-12 w-full gap-2 rounded-2xl bg-primary text-sm font-extrabold text-white shadow-lg shadow-primary/20 hover:bg-primary/90"
+                    className="bg-primary hover:bg-primary/90 shadow-primary/25 h-12 w-full gap-2 rounded-xl text-sm font-extrabold text-white shadow-lg transition-all"
                   >
                     <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
                       <MessageCircle className="h-5 w-5 fill-white text-primary" />
@@ -384,7 +445,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                     asChild
                     variant="outline"
                     size="lg"
-                    className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-2xl text-xs font-bold sm:text-sm"
+                    className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-xl text-xs font-bold sm:text-sm"
                   >
                     <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
                       <MessageCircle className="text-primary h-4 w-4" />
@@ -398,7 +459,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                     <Button
                       asChild
                       size="lg"
-                      className="h-12 flex-1 gap-2 rounded-2xl bg-primary text-sm font-extrabold text-white shadow-lg shadow-primary/20 hover:bg-primary/90"
+                      className="bg-primary hover:bg-primary/90 shadow-primary/25 h-12 flex-1 gap-2 rounded-xl text-sm font-extrabold text-white shadow-lg transition-all active:scale-[0.98]"
                     >
                       <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
                         <MessageCircle className="h-5 w-5 fill-white text-primary" />
@@ -409,7 +470,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       asChild
                       variant="outline"
                       size="lg"
-                      className="border-border bg-background hover:bg-muted h-12 flex-1 gap-2 rounded-2xl text-xs font-bold sm:text-sm"
+                      className="border-border bg-background hover:bg-muted h-12 flex-1 gap-2 rounded-xl text-xs font-bold sm:text-sm active:scale-[0.98]"
                     >
                       <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
                         <MessageCircle className="text-primary h-4 w-4" />
@@ -421,48 +482,84 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                     href={whatsappTanyaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary -my-1 block shrink-0 py-2 text-center text-xs font-bold underline-offset-2 hover:underline"
+                    className="text-primary block py-1 text-center text-xs font-bold underline-offset-4 hover:underline"
                   >
-                    Butuh bantuan? Tanya Admin
+                    Butuh bantuan? Tanya Admin WhatsApp
                   </a>
                 </>
               )}
             </div>
 
-            {/* Transaction Security Guarantee */}
-            <div className="border-border/60 flex items-center gap-2 border-t pt-4 text-xs">
-              <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
-              <span className="text-foreground font-semibold">Rekber Feryshop — Garansi Anti-Hack</span>
+            {/* How to Buy Accordion */}
+            <div className="border-border/60 border-t pt-3.5">
+              <button
+                type="button"
+                onClick={() => setCaraBeliOpen((o) => !o)}
+                className="text-muted-foreground hover:text-foreground flex w-full items-center justify-between text-xs font-bold uppercase tracking-wider transition-colors"
+              >
+                <span>Cara Transaksi Rekber</span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 transition-transform duration-200",
+                    caraBeliOpen && "rotate-180",
+                  )}
+                />
+              </button>
+              {caraBeliOpen && (
+                <ol className="text-muted-foreground mt-3 space-y-2 text-xs leading-relaxed">
+                  <li className="flex items-start gap-2">
+                    <span className="bg-primary/10 text-primary flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-extrabold">
+                      1
+                    </span>
+                    <span>Klik Beli Akun untuk terhubung langsung ke Admin WA.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="bg-primary/10 text-primary flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-extrabold">
+                      2
+                    </span>
+                    <span>Lakukan pembayaran via Rekber resmi {brandName}.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="bg-primary/10 text-primary flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-extrabold">
+                      3
+                    </span>
+                    <span>Data akun diverifikasi dan diserahterimakan 100% aman.</span>
+                  </li>
+                </ol>
+              )}
+            </div>
+
+            {/* Security Guarantee Footer */}
+            <div className="border-border/60 bg-muted/30 flex items-center justify-center gap-2 rounded-xl border p-3 text-xs">
+              <ShieldCheck className="text-primary h-4.5 w-4.5 shrink-0" />
+              <span className="text-foreground font-semibold">
+                Rekber {brandName} — Garansi Anti-Hack
+              </span>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Seller Profile Box */}
-          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-sm">
-            <span className="text-muted-foreground block text-xs font-bold uppercase tracking-wider">
-              {sellerInfoLabel}
+      {/* Mobile Sticky Bottom Conversion Bar */}
+      <div className="border-border bg-card/95 fixed bottom-0 left-0 right-0 z-40 border-t p-3 shadow-2xl backdrop-blur-md lg:hidden">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <span className="text-muted-foreground block text-[10px] font-bold uppercase">
+              Harga Rekber
             </span>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary border-primary/20 flex h-10 w-10 items-center justify-center rounded-2xl border font-black">
-                  {account.seller.name?.charAt(0) || "?"}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-foreground text-sm font-bold">{account.seller.name}</span>
-                    {account.seller.isVerified && (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs font-semibold text-amber-500">
-                    <Star className="h-3.5 w-3.5 fill-amber-500" />
-                    <span>{account.seller.rating}</span>
-                    <span className="text-muted-foreground">
-                      ({account.seller.salesCount} Transaksi Sukses)
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <span className="text-primary text-lg font-black">
+              Rp {account.price.toLocaleString("id-ID")}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => handleWhatsAppClick(whatsappBeliUrl)}
+              size="sm"
+              className="bg-primary hover:bg-primary/90 shadow-primary/25 h-10 gap-1.5 rounded-xl text-xs font-extrabold text-white shadow-md"
+            >
+              <MessageCircle className="h-4 w-4 fill-white text-primary" />
+              Beli Akun
+            </Button>
           </div>
         </div>
       </div>
