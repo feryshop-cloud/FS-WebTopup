@@ -18,7 +18,6 @@ import { AccountCard } from "./account-card";
 import { GameCategoryIcon } from "./category-grid";
 import {
   MARKETPLACE_CATEGORIES,
-  MOCK_ACCOUNTS,
   type GameAccount,
   type GameCategory,
 } from "@/lib/data/mock-marketplace";
@@ -26,7 +25,7 @@ import { cn } from "@/lib/utils";
 
 export function MarketplaceCategoryView({
   categorySlug = "all",
-  accounts = MOCK_ACCOUNTS,
+  accounts = [],
   categories = MARKETPLACE_CATEGORIES,
   initialQuery = "",
 }: {

@@ -261,6 +261,13 @@ export async function getMarketplaceAccounts(options?: GetLiveMarketplaceAccount
   const liveAccounts = await getLiveMarketplaceAccounts(options);
   if (liveAccounts.length > 0) return liveAccounts;
 
+  // Do NOT return mock/dummy accounts in production or when Supabase DB is configured
+  const isProduction = process.env.NODE_ENV === "production";
+  const { restUrl } = getSupabaseRestConfig();
+  if (isProduction || restUrl) {
+    return [];
+  }
+
   const featuredFallback = MOCK_ACCOUNTS.filter(
     (account) => account.isFeatured || account.badge === "Sultan",
   );
