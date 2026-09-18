@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,7 +16,6 @@ import {
   ChevronLeft,
   Maximize2,
   X,
-  Copy,
   ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,9 +29,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [whatsappFailed, setWhatsappFailed] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [caraBeliOpen, setCaraBeliOpen] = useState(false);
-  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
   const settings = useSettings();
   const data = settings?.data ?? {};
 
@@ -104,14 +101,6 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
     },
     [],
   );
-
-  const handleCopyNumber = useCallback(() => {
-    navigator.clipboard.writeText(adminPhone).then(() => {
-      setCopied(true);
-      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
-      copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
-    });
-  }, [adminPhone]);
 
   return (
     <div className="space-y-8 pb-12">
@@ -400,26 +389,6 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                     <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
                       <MessageCircle className="text-primary h-4 w-4" />
                       Nego Harga
-                    </button>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="lg"
-                    className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-2xl text-xs font-bold sm:text-sm"
-                  >
-                    <button type="button" onClick={handleCopyNumber}>
-                      {copied ? (
-                        <>
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                          Nomor tersalin!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="text-primary h-4 w-4" />
-                          Salin Nomor Admin
-                        </>
-                      )}
                     </button>
                   </Button>
                 </div>
