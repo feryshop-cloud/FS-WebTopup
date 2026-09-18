@@ -150,30 +150,21 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         <div className="space-y-6 lg:col-span-8">
           {/* Main Image Gallery */}
           <div className="border-border/70 bg-card space-y-3 rounded-2xl border p-2.5 sm:p-4 shadow-sm">
-            <div className="border-border/80 bg-black/90 group relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl border shadow-inner">
-              {/* Blurred Ambient Background Layer */}
-              <Image
-                src={resolveStorageUrl(account.images[selectedImageIndex])}
-                alt=""
-                fill
-                aria-hidden="true"
-                className="pointer-events-none object-cover blur-2xl opacity-40 scale-110"
-              />
-
-              {/* Foreground Image Layer (100% visible, uncropped) */}
+            <div className="border-border/80 bg-black/40 group relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl border shadow-md">
+              {/* Main Image Layer (Full cover) */}
               <Image
                 src={resolveStorageUrl(account.images[selectedImageIndex])}
                 alt={account.title}
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 66vw"
-                className="relative z-10 cursor-zoom-in object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.02]"
+                className="cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
                 onClick={() => setIsLightboxOpen(true)}
               />
-              <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
               {/* Top Badges */}
-              <div className="absolute left-3 top-3 z-30 flex items-center gap-2 sm:left-4 sm:top-4">
+              <div className="absolute left-3 top-3 z-20 flex items-center gap-2 sm:left-4 sm:top-4">
                 {account.badge && (
                   <span className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-extrabold text-black shadow-lg">
                     <Award className="h-3.5 w-3.5" />
@@ -188,7 +179,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               </div>
 
               {/* Top Right: Photo Counter & Expand Button */}
-              <div className="absolute right-3 top-3 z-30 flex items-center gap-2 sm:right-4 sm:top-4">
+              <div className="absolute right-3 top-3 z-20 flex items-center gap-2 sm:right-4 sm:top-4">
                 {totalImages > 1 && (
                   <span className="rounded-xl border border-white/15 bg-black/70 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-md">
                     {selectedImageIndex + 1} / {totalImages} Foto
@@ -214,7 +205,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       handlePrevImage();
                     }}
                     aria-label="Foto sebelumnya"
-                    className="absolute left-3 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-90 backdrop-blur-md transition-all hover:bg-black/80 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100"
+                    className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-90 backdrop-blur-md transition-all hover:bg-black/80 sm:left-4 sm:opacity-0 sm:group-hover:opacity-100"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -225,7 +216,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       handleNextImage();
                     }}
                     aria-label="Foto berikutnya"
-                    className="absolute right-3 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-90 backdrop-blur-md transition-all hover:bg-black/80 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100"
+                    className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2 text-white opacity-90 backdrop-blur-md transition-all hover:bg-black/80 sm:right-4 sm:opacity-0 sm:group-hover:opacity-100"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -233,7 +224,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               )}
 
               {/* Bottom Security Banner */}
-              <div className="absolute bottom-3 left-3 right-3 z-30 flex items-center justify-between text-xs font-bold text-white sm:bottom-4 sm:left-4 sm:right-4">
+              <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between text-xs font-bold text-white sm:bottom-4 sm:left-4 sm:right-4">
                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/75 px-3 py-1.5 backdrop-blur-md">
                   <ShieldCheck className="text-primary h-4 w-4" />
                   {antiHackBadge}
@@ -241,19 +232,19 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               </div>
             </div>
 
-            {/* Gallery Thumbnails */}
+            {/* Gallery Thumbnails Carousel */}
             {totalImages > 1 && (
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-1">
+              <div className="flex items-center gap-3 overflow-x-auto p-1.5">
                 {account.images.map((img, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImageIndex(idx)}
                     className={cn(
-                      "relative aspect-[16/10] w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all sm:w-28 sm:rounded-xl",
+                      "relative aspect-[16/10] w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all sm:w-28",
                       selectedImageIndex === idx
-                        ? "border-primary ring-primary/30 scale-105 shadow-md ring-2"
-                        : "border-border/50 opacity-60 hover:opacity-100",
+                        ? "border-primary ring-primary/40 shadow-md ring-2"
+                        : "border-border/60 opacity-65 hover:opacity-100",
                     )}
                   >
                     <Image
