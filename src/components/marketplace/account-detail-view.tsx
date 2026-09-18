@@ -17,13 +17,7 @@ import {
   Maximize2,
   X,
   ChevronDown,
-  Trophy,
-  Key,
   FileText,
-  UserCheck,
-  Flame,
-  Swords,
-  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GameAccount } from "@/lib/data/mock-marketplace";
@@ -265,93 +259,43 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
             )}
           </div>
 
-          {/* Specifications Card */}
-          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 sm:p-6 shadow-sm">
+          {/* Key Specifications Grid */}
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-6 shadow-sm">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
-              <Sparkles className="text-primary h-4.5 w-4.5" /> {specsTitle}
+              <Sparkles className="text-primary h-4 w-4" /> {specsTitle}
             </h2>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {/* Rank */}
-              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                  <Trophy className="h-3.5 w-3.5 text-amber-500" />
-                  <span>Rank Utama</span>
-                </div>
-                <span className="text-foreground block truncate text-sm font-extrabold">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
+                <span className="text-muted-foreground block text-[11px] font-semibold">
+                  Rank Utama
+                </span>
+                <span className="text-foreground block truncate text-xs font-extrabold sm:text-sm">
                   {account.specs.rank}
                 </span>
               </div>
-
-              {/* Skins Count */}
-              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                  <Sparkles className="text-primary h-3.5 w-3.5" />
-                  <span>Jumlah Skin</span>
-                </div>
-                <span className="text-foreground block truncate text-sm font-extrabold">
+              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
+                <span className="text-muted-foreground block text-[11px] font-semibold">
+                  Jumlah Skin
+                </span>
+                <span className="text-foreground block truncate text-xs font-extrabold sm:text-sm">
                   {account.specs.skinsCount}
                 </span>
               </div>
-
-              {/* Heroes Count (if present) */}
-              {account.specs.heroesCount !== undefined && (
-                <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                    <Swords className="h-3.5 w-3.5 text-cyan-400" />
-                    <span>Jumlah Hero</span>
-                  </div>
-                  <span className="text-foreground block truncate text-sm font-extrabold">
-                    {account.specs.heroesCount}
-                  </span>
-                </div>
-              )}
-
-              {/* Level (if present) */}
-              {account.specs.level !== undefined && (
-                <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                    <Flame className="h-3.5 w-3.5 text-rose-400" />
-                    <span>Level Akun</span>
-                  </div>
-                  <span className="text-foreground block truncate text-sm font-extrabold">
-                    {account.specs.level}
-                  </span>
-                </div>
-              )}
-
-              {/* Winrate (if present) */}
-              {account.specs.winrate && (
-                <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                    <Activity className="h-3.5 w-3.5 text-emerald-400" />
-                    <span>Win Rate</span>
-                  </div>
-                  <span className="text-foreground block truncate text-sm font-extrabold">
-                    {account.specs.winrate}
-                  </span>
-                </div>
-              )}
-
-              {/* Login Method */}
-              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                  <Key className="text-primary h-3.5 w-3.5" />
-                  <span>Metode Login</span>
-                </div>
-                <span className="text-primary block truncate text-sm font-extrabold">
+              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
+                <span className="text-muted-foreground block text-[11px] font-semibold">
+                  Metode Login
+                </span>
+                <span className="text-primary block truncate text-xs font-extrabold sm:text-sm">
                   {account.specs.loginVia}
                 </span>
               </div>
-
-              {/* Change Name Status */}
-              <div className="bg-muted/40 border-border/50 space-y-1 rounded-xl border p-3.5 transition-colors hover:border-border">
-                <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                  <UserCheck className="h-3.5 w-3.5 text-purple-400" />
-                  <span>Ganti Nama (CN)</span>
-                </div>
-                <span className="text-foreground block truncate text-sm font-extrabold">
-                  {account.specs.changeName || "Ready"}
+              <div className="bg-muted/50 border-border/40 space-y-1 rounded-2xl border p-3.5">
+                <span className="text-muted-foreground block text-[11px] font-semibold">
+                  Ganti Nama (CN)
+                </span>
+                <span className="text-foreground block truncate text-xs font-extrabold sm:text-sm">
+                  {account.specs.changeName}
                 </span>
               </div>
             </div>
