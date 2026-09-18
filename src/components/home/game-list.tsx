@@ -54,7 +54,10 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
       >
         {isLoading
           ? [...Array(9)].map((_, index) => (
-              <li key={`skeleton-${index}`} className="border-border/50 bg-card relative overflow-hidden rounded-xl border">
+              <li
+                key={`skeleton-${index}`}
+                className="border-border/50 bg-card relative overflow-hidden rounded-xl border"
+              >
                 <Skeleton className="aspect-square w-full rounded-t-xl" />
                 <div className="space-y-1.5 p-2 sm:p-3">
                   <Skeleton className="h-3.5 w-3/4 rounded" />
@@ -75,7 +78,7 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
               >
                 <Link prefetch href={`/order/${game.slug}`} className="block">
                   <div className="border-border/70 bg-card hover:border-primary/50 relative overflow-hidden rounded-xl border shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md active:scale-[0.98]">
-                    <div className="aspect-square w-full overflow-hidden rounded-t-xl bg-muted/40">
+                    <div className="bg-muted/40 aspect-square w-full overflow-hidden rounded-t-xl">
                       <Image
                         src={game.image}
                         alt={game.title}
@@ -86,7 +89,7 @@ export function GameList({ isLoading, filteredGames }: GameListProps) {
                       />
                     </div>
                     <div className="p-2 sm:p-3">
-                      <h3 className="group-hover:text-primary truncate text-xs font-semibold text-foreground transition-colors sm:text-sm">
+                      <h3 className="group-hover:text-primary text-foreground truncate text-xs font-semibold transition-colors sm:text-sm">
                         {game.title}
                       </h3>
                       <p className="text-muted-foreground mt-0.5 truncate text-[10px] sm:text-xs">

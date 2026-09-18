@@ -5,7 +5,12 @@ import { eq } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import { authOptions } from "@/lib/auth";
 import { withRequestLogging } from "@/lib/logging/with-request-logging";
-import { callValidatePromo, getProductUnitPrice, computeDiscount, checkDigiflazzBalanceForProduct } from "@/lib/promo";
+import {
+  callValidatePromo,
+  getProductUnitPrice,
+  computeDiscount,
+  checkDigiflazzBalanceForProduct,
+} from "@/lib/promo";
 import { createPayment, getPaymentServiceBaseUrl } from "@/lib/payment-client";
 import { OrderPaymentStatus, OrderBuyStatus } from "@/types/status";
 

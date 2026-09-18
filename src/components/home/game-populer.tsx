@@ -34,7 +34,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
             unoptimized
             className="h-6 w-6 brightness-110 drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] filter transition-all sm:h-7 sm:w-7"
           />
-          <h3 className="text-base font-bold uppercase tracking-wider text-foreground sm:text-lg">
+          <h3 className="text-foreground text-base font-bold uppercase tracking-wider sm:text-lg">
             TRENDING
           </h3>
         </div>
@@ -47,7 +47,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
         {isLoading
           ? Array.from({ length: 6 }).map((_, index) => (
               <li key={index} className="relative rounded-xl sm:rounded-2xl">
-                <div className="h-16 w-full animate-pulse rounded-xl border border-border/40 bg-muted/50 sm:h-20 sm:rounded-2xl" />
+                <div className="border-border/40 bg-muted/50 h-16 w-full animate-pulse rounded-xl border sm:h-20 sm:rounded-2xl" />
               </li>
             ))
           : popularGames?.map((gamePopuler: Game, index: number) => (
@@ -68,7 +68,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
                 <Link
                   prefetch={true}
                   href={`/order/${gamePopuler.slug}`}
-                  className="focus-visible:ring-primary focus-visible:ring-offset-background relative z-10 flex items-center gap-2 p-2 sm:gap-3 sm:p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  className="focus-visible:ring-primary focus-visible:ring-offset-background relative z-10 flex items-center gap-2 p-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:gap-3 sm:p-3"
                 >
                   {/* Game Thumbnail */}
                   <div className="relative shrink-0 overflow-hidden rounded-lg sm:rounded-xl">
@@ -88,7 +88,7 @@ export function PopularGames({ isLoading, popularGames }: PopularGamesProps) {
 
                   {/* Game Details */}
                   <div className="min-w-0 flex-1 overflow-hidden">
-                    <h2 className="group-hover:text-primary truncate text-xs font-bold text-foreground transition-colors duration-200 sm:text-sm">
+                    <h2 className="group-hover:text-primary text-foreground truncate text-xs font-bold transition-colors duration-200 sm:text-sm">
                       {gamePopuler.title}
                     </h2>
                     <div className="mt-0.5 flex items-center gap-1">

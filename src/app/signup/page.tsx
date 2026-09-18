@@ -1,14 +1,14 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
-import TurnstileWidget from "@/components/auth/turnstile-widget";
+import TurnstileWidget, { type TurnstileWidgetHandle } from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,15 +33,15 @@ export default function SignupPage() {
           </div>
         }
       >
-        <SignupForm />
+        <SignupContent />
       </Suspense>
     </ContentLayout>
   );
 }
 
-function SignupForm() {
-  const { data: session } = useSession();
+function SignupContent() {
   const router = useRouter();
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
@@ -49,6 +49,7 @@ function SignupForm() {
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   const [turnstileTokenEmail, setTurnstileTokenEmail] = useState("");
+  const turnstileRef = useRef<TurnstileWidgetHandle | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -68,15 +69,23 @@ function SignupForm() {
     };
   }, []);
 
-  const turnstileEnabled = useMemo(() => {
-    const v = settings?.["turnstile.enabled"];
-    return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
-  }, [settings]);
-
   const turnstileSiteKey = useMemo(
-    () => String(settings?.["turnstile.site_key"] || ""),
+    () =>
+      String(
+        settings?.["turnstile.site_key"] ||
+          process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+          "0x4AAAAAAE8YJ66GAChhwJAe",
+      ),
     [settings],
   );
+
+  const turnstileEnabled = useMemo(() => {
+    const v = settings?.["turnstile.enabled"];
+    if (v !== undefined) {
+      return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
+    }
+    return !!turnstileSiteKey;
+  }, [settings, turnstileSiteKey]);
 
   useEffect(() => {
     if (session) redirect("/dashboard");
@@ -124,26 +133,17 @@ function SignupForm() {
       if (!res.ok || !data?.success) {
         if (msg.toLowerCase().includes("sudah terdaftar")) showDuplicateAlert();
         else setSignupError(msg);
+        turnstileRef.current?.reset();
+        setTurnstileTokenEmail("");
         return;
       }
 
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: email.trim(),
-        password,
-        ...(turnstileEnabled ? { turnstile_token: turnstileTokenEmail } : {}),
-      });
-
-      if (!result?.ok) {
-        toast.success("Berhasil daftar. Silakan masuk.");
-        router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-        return;
-      }
-
-      toast.success("Berhasil daftar");
-      router.push(callbackUrl);
+      toast.success("Berhasil mendaftar. Silakan masuk.");
+      router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     } catch {
       setSignupError("Gagal menghubungi server");
+      turnstileRef.current?.reset();
+      setTurnstileTokenEmail("");
     } finally {
       setLoadingEmail(false);
     }
@@ -208,7 +208,9 @@ function SignupForm() {
         {turnstileEnabled && turnstileSiteKey ? (
           <div className="pt-1">
             <TurnstileWidget
+              ref={turnstileRef}
               siteKey={turnstileSiteKey}
+              action="signup"
               onToken={(t) => setTurnstileTokenEmail(t)}
               onExpire={() => setTurnstileTokenEmail("")}
               onError={() => setTurnstileTokenEmail("")}

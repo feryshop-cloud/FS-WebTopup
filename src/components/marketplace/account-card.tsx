@@ -29,7 +29,7 @@ export function AccountCard({ account }: { account: GameAccount }) {
   return (
     <Link
       href={`/marketplace/${account.gameSlug}/${account.id}`}
-      className="border-border/70 bg-card hover:border-primary/50 focus-visible:ring-primary focus-visible:ring-offset-background group relative flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
+      className="border-border/70 bg-card hover:border-primary/50 focus-visible:ring-primary focus-visible:ring-offset-background group relative flex flex-col overflow-hidden rounded-xl border transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] sm:rounded-2xl"
     >
       {/* Thumbnail Section */}
       <div className="bg-muted/60 relative aspect-[3/4] w-full overflow-hidden">
@@ -43,11 +43,11 @@ export function AccountCard({ account }: { account: GameAccount }) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
         {/* Top Badges */}
-        <div className="absolute left-2 right-2 top-2 sm:left-2.5 sm:right-2.5 sm:top-2.5 flex items-center justify-between gap-1.5">
+        <div className="absolute left-2 right-2 top-2 flex items-center justify-between gap-1.5 sm:left-2.5 sm:right-2.5 sm:top-2.5">
           {account.badge ? (
             <span
               className={cn(
-                "inline-flex items-center gap-1 rounded-md sm:rounded-lg border px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] tracking-wide shadow-md backdrop-blur-sm",
+                "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] tracking-wide shadow-md backdrop-blur-sm sm:rounded-lg sm:px-2.5 sm:py-1 sm:text-[10px]",
                 getBadgeStyle(account.badge),
               )}
             >
@@ -61,19 +61,19 @@ export function AccountCard({ account }: { account: GameAccount }) {
           )}
 
           {discountPercentage > 0 && (
-            <span className="rounded-md sm:rounded-lg bg-red-600 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-extrabold text-white shadow-md">
+            <span className="rounded-md bg-red-600 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-md sm:rounded-lg sm:text-[10px]">
               -{discountPercentage}%
             </span>
           )}
         </div>
 
         {/* Bottom Image Overlay: Rank & Login Via */}
-        <div className="absolute bottom-2 left-2 right-2 sm:left-2.5 sm:right-2.5 flex items-center justify-between gap-1 text-[10px] sm:text-[11px] font-semibold text-white/95">
-          <span className="flex max-w-[55%] items-center gap-1 truncate rounded-md border border-white/10 bg-black/70 px-1.5 py-0.5 sm:px-2 backdrop-blur-md">
+        <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-1 text-[10px] font-semibold text-white/95 sm:left-2.5 sm:right-2.5 sm:text-[11px]">
+          <span className="flex max-w-[55%] items-center gap-1 truncate rounded-md border border-white/10 bg-black/70 px-1.5 py-0.5 backdrop-blur-md sm:px-2">
             <ShieldCheck className="inline h-3 w-3 shrink-0 text-emerald-400" />
             <span className="truncate">{account.specs.rank}</span>
           </span>
-          <span className="max-w-[42%] truncate rounded-md border border-white/10 bg-black/70 px-1.5 py-0.5 sm:px-2 text-zinc-300 backdrop-blur-md">
+          <span className="max-w-[42%] truncate rounded-md border border-white/10 bg-black/70 px-1.5 py-0.5 text-zinc-300 backdrop-blur-md sm:px-2">
             {account.specs.loginVia}
           </span>
         </div>
@@ -83,24 +83,24 @@ export function AccountCard({ account }: { account: GameAccount }) {
       <div className="flex flex-1 flex-col justify-between gap-1.5 p-2.5 sm:gap-2 sm:p-3.5">
         <div className="space-y-1">
           {/* Game label */}
-          <span className="text-primary text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">
+          <span className="text-primary text-[9px] font-bold uppercase tracking-wider sm:text-[10px]">
             {account.gameName}
           </span>
 
           {/* Account Title */}
-          <h3 className="text-foreground group-hover:text-primary line-clamp-2 text-xs sm:text-sm font-bold leading-tight sm:leading-snug transition-colors min-h-[2rem] sm:min-h-[2.5rem]">
+          <h3 className="text-foreground group-hover:text-primary line-clamp-2 min-h-[2rem] text-xs font-bold leading-tight transition-colors sm:min-h-[2.5rem] sm:text-sm sm:leading-snug">
             {account.title}
           </h3>
         </div>
 
         {/* Price */}
-        <div className="border-border/40 mt-1 flex flex-col xs:flex-row xs:items-baseline xs:gap-1.5 border-t pt-1.5 sm:pt-2">
+        <div className="border-border/40 xs:flex-row xs:items-baseline xs:gap-1.5 mt-1 flex flex-col border-t pt-1.5 sm:pt-2">
           {account.originalPrice && (
-            <span className="text-muted-foreground text-[9px] sm:text-[10px] font-medium line-through">
+            <span className="text-muted-foreground text-[9px] font-medium line-through sm:text-[10px]">
               Rp {account.originalPrice.toLocaleString("id-ID")}
             </span>
           )}
-          <span className="text-xs sm:text-base font-extrabold text-emerald-500">
+          <span className="text-xs font-extrabold text-emerald-500 sm:text-base">
             Rp {account.price.toLocaleString("id-ID")}
           </span>
         </div>

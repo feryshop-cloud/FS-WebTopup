@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { hasDatabaseConnection, sqlClient } from "@/lib/db";
 import { signInSupabaseWithPassword } from "@/lib/supabase-auth";
 import { logger } from "@/lib/logger";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 const ALLOW_BUILD_WITHOUT_SECRET = process.env.NEXTAUTH_SECRET_ALLOW_BUILD_WITHOUT === "true";
@@ -42,11 +43,37 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
         turnstile_token: { label: "Turnstile", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         const email = typeof credentials?.email === "string" ? credentials.email.trim() : "";
         const password = typeof credentials?.password === "string" ? credentials.password : "";
 
         if (!email || !password || !hasDatabaseConnection) return null;
+
+        if (process.env.TURNSTILE_SECRET) {
+          const turnstileToken =
+            typeof credentials?.turnstile_token === "string" ? credentials.turnstile_token : "";
+
+          const rawClientIp =
+            (req?.headers as any)?.["x-forwarded-for"] ||
+            (req?.headers as any)?.["cf-connecting-ip"] ||
+            null;
+          const clientIp =
+            typeof rawClientIp === "string" ? rawClientIp.split(",")[0].trim() : null;
+
+          const turnstileResult = await verifyTurnstileToken({
+            token: turnstileToken,
+            expectedAction: "login",
+            clientIp,
+          });
+
+          if (!turnstileResult.success) {
+            logger.warn("Credentials auth blocked by Turnstile", {
+              reason: turnstileResult.reason,
+              errorCodes: turnstileResult.errorCodes,
+            });
+            return null;
+          }
+        }
 
         try {
           const authUser = await signInSupabaseWithPassword(email, password);

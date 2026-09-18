@@ -59,7 +59,7 @@ export function GameCategories({
 
           <motion.div
             ref={categoryRef}
-            className="scrollbar-none mx-0 flex w-full items-center gap-2 overflow-x-auto py-1 scroll-smooth md:mx-11 md:gap-3"
+            className="scrollbar-none mx-0 flex w-full items-center gap-2 overflow-x-auto scroll-smooth py-1 md:mx-11 md:gap-3"
             variants={categoryContainerVariants}
             initial="hidden"
             animate="visible"
@@ -102,20 +102,13 @@ export function GameCategories({
         </motion.div>
       ) : (
         <motion.div className="relative flex items-center">
-          <motion.div
-            className="bg-muted absolute left-0 z-10 hidden h-8 w-8 rounded-full shadow-md md:flex"
-          />
+          <motion.div className="bg-muted absolute left-0 z-10 hidden h-8 w-8 rounded-full shadow-md md:flex" />
           <div className="scrollbar-none mx-0 flex w-full items-center gap-2 overflow-x-auto py-1 md:mx-11 md:gap-3">
             {[...Array(5)].map((_, index) => (
-              <motion.div
-                key={index}
-                className="bg-muted/60 h-9 w-28 shrink-0 rounded-full"
-              />
+              <motion.div key={index} className="bg-muted/60 h-9 w-28 shrink-0 rounded-full" />
             ))}
           </div>
-          <motion.div
-            className="bg-muted absolute right-0 z-10 hidden h-8 w-8 rounded-full shadow-md md:flex"
-          />
+          <motion.div className="bg-muted absolute right-0 z-10 hidden h-8 w-8 rounded-full shadow-md md:flex" />
         </motion.div>
       )}
     </>

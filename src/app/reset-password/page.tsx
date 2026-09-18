@@ -1,12 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 
 import { ContentLayout } from "@/components/panel/content-layout";
 import AuthCard from "@/components/auth/auth-card";
-import TurnstileWidget from "@/components/auth/turnstile-widget";
+import TurnstileWidget, { type TurnstileWidgetHandle } from "@/components/auth/turnstile-widget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,18 +22,18 @@ export default function ForgotPasswordPage() {
     <ContentLayout title="Lupa Password">
       <Suspense
         fallback={
-          <div className="flex h-[80vh] w-full items-center justify-center">
+          <div className="flex h-64 items-center justify-center">
             <LoadingSpinner size={40} />
           </div>
         }
       >
-        <ForgotPasswordForm />
+        <ForgotPasswordContent />
       </Suspense>
     </ContentLayout>
   );
 }
 
-function ForgotPasswordForm() {
+function ForgotPasswordContent() {
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
@@ -55,17 +55,26 @@ function ForgotPasswordForm() {
     };
   }, []);
 
-  const turnstileEnabled = useMemo(() => {
-    const v = settings?.["turnstile.enabled"];
-    return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
-  }, [settings]);
-
   const turnstileSiteKey = useMemo(
-    () => String(settings?.["turnstile.site_key"] || ""),
+    () =>
+      String(
+        settings?.["turnstile.site_key"] ||
+          process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+          "0x4AAAAAAE8YJ66GAChhwJAe",
+      ),
     [settings],
   );
 
+  const turnstileEnabled = useMemo(() => {
+    const v = settings?.["turnstile.enabled"];
+    if (v !== undefined) {
+      return v === true || String(v).toLowerCase() === "true" || String(v) === "1";
+    }
+    return !!turnstileSiteKey;
+  }, [settings, turnstileSiteKey]);
+
   const [turnstileTokenEmail, setTurnstileTokenEmail] = useState("");
+  const turnstileRef = useRef<TurnstileWidgetHandle | null>(null);
 
   const [email, setEmail] = useState("");
   const [loadingEmail, setLoadingEmail] = useState(false);
@@ -92,12 +101,16 @@ function ForgotPasswordForm() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data?.success) {
         toast.error(data?.message || "Gagal mengirim link reset");
+        turnstileRef.current?.reset();
+        setTurnstileTokenEmail("");
         return;
       }
 
       toast.success("Jika email terdaftar, link reset akan dikirim");
     } catch {
       toast.error("Gagal menghubungi server");
+      turnstileRef.current?.reset();
+      setTurnstileTokenEmail("");
     } finally {
       setLoadingEmail(false);
     }
@@ -135,7 +148,9 @@ function ForgotPasswordForm() {
         {showTurnstileForEmail ? (
           <div className="pt-1">
             <TurnstileWidget
+              ref={turnstileRef}
               siteKey={turnstileSiteKey}
+              action="reset_password"
               onToken={(t) => setTurnstileTokenEmail(t)}
               onExpire={() => setTurnstileTokenEmail("")}
               onError={() => setTurnstileTokenEmail("")}

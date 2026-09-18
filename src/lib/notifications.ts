@@ -10,9 +10,7 @@ interface NotificationParams {
   targetRoles: string[];
 }
 
-export async function createNotification(
-  params: NotificationParams,
-): Promise<void> {
+export async function createNotification(params: NotificationParams): Promise<void> {
   try {
     let notificationId: string;
 

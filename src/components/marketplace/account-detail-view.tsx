@@ -93,20 +93,20 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
   const whatsappBeliUrl = `https://wa.me/${adminPhone}?text=${beliMessage}`;
   const whatsappNegoUrl = `https://wa.me/${adminPhone}?text=${negoMessage}`;
 
-  const handleWhatsAppClick = useCallback(
-    (url: string) => {
-      const newWindow = window.open(url, "_blank", "noopener,noreferrer");
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
-        setWhatsappFailed(true);
-      }
-    },
-    [],
-  );
+  const handleWhatsAppClick = useCallback((url: string) => {
+    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
+      setWhatsappFailed(true);
+    }
+  }, []);
 
   return (
     <div className="space-y-6 pb-20 lg:pb-12">
       {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb" className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
+      <nav
+        aria-label="Breadcrumb"
+        className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs sm:text-sm"
+      >
         <Link href="/marketplace" className="hover:text-primary font-medium transition-colors">
           Daftar Akun
         </Link>
@@ -124,7 +124,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
       </nav>
 
       {/* Main Account Title & Badges Header */}
-      <div className="border-border/60 bg-card/60 space-y-3 rounded-2xl border p-4 sm:p-6 shadow-sm backdrop-blur-sm">
+      <div className="border-border/60 bg-card/60 space-y-3 rounded-2xl border p-4 shadow-sm backdrop-blur-sm sm:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <span className="bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold">
             <Zap className="h-3.5 w-3.5" />
@@ -149,8 +149,8 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         {/* Left Column: Image Gallery, Specs, and Description */}
         <div className="space-y-6 lg:col-span-8">
           {/* Main Image Gallery */}
-          <div className="border-border/70 bg-card space-y-3 rounded-2xl border p-2.5 sm:p-4 shadow-sm">
-            <div className="border-border/80 bg-black/40 group relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden rounded-xl sm:rounded-2xl border shadow-md">
+          <div className="border-border/70 bg-card space-y-3 rounded-2xl border p-2.5 shadow-sm sm:p-4">
+            <div className="border-border/80 group relative aspect-[16/10] w-full overflow-hidden rounded-xl border bg-black/40 shadow-md sm:aspect-[16/9] sm:rounded-2xl">
               {/* Main Image Layer (Full cover) */}
               <Image
                 src={resolveStorageUrl(account.images[selectedImageIndex])}
@@ -303,7 +303,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
           </div>
 
           {/* Account Detailed Description */}
-          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 sm:p-6 shadow-sm">
+          <div className="border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-sm sm:p-6">
             <h2 className="text-foreground flex items-center gap-2 text-base font-bold">
               <FileText className="text-primary h-4.5 w-4.5" /> {descriptionTitle}
             </h2>
@@ -311,7 +311,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
             <ul className="space-y-3 text-xs sm:text-sm">
               {account.description.map((desc, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                   <span className="text-muted-foreground leading-relaxed">{desc}</span>
                 </li>
               ))}
@@ -322,9 +322,9 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
         {/* Right Column: Unified Sticky Purchase Panel & Seller Profile */}
         <div className="space-y-5 lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
           {/* Main Purchasing & Seller Card */}
-          <div className="border-primary/30 bg-card relative overflow-hidden rounded-2xl border p-5 sm:p-6 shadow-xl space-y-5">
+          <div className="border-primary/30 bg-card relative space-y-5 overflow-hidden rounded-2xl border p-5 shadow-xl sm:p-6">
             {/* Top accent bar */}
-            <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-primary via-cyan-400 to-amber-500" />
+            <div className="from-primary absolute left-0 right-0 top-0 h-1 bg-gradient-to-r via-cyan-400 to-amber-500" />
 
             {/* Seller Profile Header */}
             <div className="border-border/60 border-b pb-4">
@@ -382,7 +382,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                     className="bg-primary hover:bg-primary/90 shadow-primary/25 h-12 w-full gap-2 rounded-xl text-sm font-extrabold text-white shadow-lg transition-all"
                   >
                     <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
-                      <MessageCircle className="h-5 w-5 fill-white text-primary" />
+                      <MessageCircle className="text-primary h-5 w-5 fill-white" />
                       Beli Akun
                     </button>
                   </Button>
@@ -407,7 +407,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       className="bg-primary hover:bg-primary/90 shadow-primary/25 h-12 w-full gap-2 rounded-xl text-sm font-extrabold text-white shadow-lg transition-all active:scale-[0.98]"
                     >
                       <button type="button" onClick={() => handleWhatsAppClick(whatsappBeliUrl)}>
-                        <MessageCircle className="h-5 w-5 fill-white text-primary" />
+                        <MessageCircle className="text-primary h-5 w-5 fill-white" />
                         Beli Akun
                       </button>
                     </Button>
@@ -415,7 +415,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
                       asChild
                       variant="outline"
                       size="lg"
-                      className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-xl text-xs font-bold sm:text-sm transition-all active:scale-[0.98]"
+                      className="border-border bg-background hover:bg-muted h-11 w-full gap-2 rounded-xl text-xs font-bold transition-all active:scale-[0.98] sm:text-sm"
                     >
                       <button type="button" onClick={() => handleWhatsAppClick(whatsappNegoUrl)}>
                         <MessageCircle className="text-primary h-4 w-4" />
@@ -502,7 +502,7 @@ export function MarketplaceAccountDetailView({ account }: { account: GameAccount
               size="sm"
               className="bg-primary hover:bg-primary/90 shadow-primary/25 h-10 gap-1.5 rounded-xl text-xs font-extrabold text-white shadow-md"
             >
-              <MessageCircle className="h-4 w-4 fill-white text-primary" />
+              <MessageCircle className="text-primary h-4 w-4 fill-white" />
               Beli Akun
             </Button>
           </div>
