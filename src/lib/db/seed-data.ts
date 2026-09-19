@@ -1070,6 +1070,8 @@ export const seedSettings = {
   "marketplace.description_title": "Detail Deskripsi & Kelengkapan",
   "marketplace.listed_label": "Diposting",
   "marketplace.discount_label": "Diskon",
+  "sosmed.wa": "6281234567890",
+  "whatsapp.bubble.phone": "6281234567890",
   "turnstile.enabled": true,
   "turnstile.site_key": process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAE8YJ66GAChhwJAe",
 };

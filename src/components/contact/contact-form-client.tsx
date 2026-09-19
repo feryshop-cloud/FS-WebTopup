@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +16,13 @@ import { useSettings } from "@/context/settings-context";
 
 export function ContactFormClient() {
   const settings = useSettings();
-  const waNumber = settings?.data?.["sosmed.wa"];
+  const rawWaNumber =
+    settings?.data?.["sosmed.wa"] ||
+    settings?.data?.["marketplace.admin_whatsapp"] ||
+    settings?.data?.["whatsapp.bubble.phone"] ||
+    settings?.data?.social_whatsapp ||
+    "6281234567890";
+  const waNumber = String(rawWaNumber).replace(/\D/g, "");
 
   const [type, setType] = useState("");
   const [name, setName] = useState("");
@@ -41,13 +48,17 @@ export function ContactFormClient() {
 
     if (Object.keys(newErrors).length > 0) return;
 
-    const phoneNumber = waNumber;
+    if (!waNumber || waNumber.length < 8) {
+      toast.error("Nomor WhatsApp admin belum dikonfigurasi.");
+      return;
+    }
+
     const message =
       `*Nama:* ${name}\n` +
       `*Tipe:* ${type}\n` +
       `*Nomor WhatsApp:* ${whatsapp}\n` +
       `*Deskripsi:* ${description}`;
-    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
+    const url = `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodeURIComponent(
       message,
     )}`;
     window.open(url, "_blank");
