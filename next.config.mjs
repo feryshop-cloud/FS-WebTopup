@@ -80,6 +80,16 @@ const nextConfig = {
     ];
   },
 
+  async redirects() {
+    return [
+      {
+        source: "/security.txt",
+        destination: "/.well-known/security.txt",
+        permanent: true,
+      },
+    ];
+  },
+
   async rewrites() {
     if (!adminDashboardOrigin) return [];
 
