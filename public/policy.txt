@@ -1,0 +1,81 @@
+# ==============================================================================
+# Feryshop Vulnerability Disclosure & Security Research Policy
+# URL: https://feryshop.com/policy.txt
+# Canonical Security Policy: https://feryshop.com/.well-known/security.txt
+# Hall of Fame: https://feryshop.com/acknowledgement.txt
+# ==============================================================================
+#
+# Di Feryshop, keamanan platform, data pengguna, dan integritas transaksi adalah
+# prioritas utama kami. Kami sangat menghargai kontribusi komunitas peneliti
+# keamanan (security researchers / white-hat hackers) yang menemukan dan melaporkan
+# kerentanan keamanan secara bertanggung jawab (Coordinated Vulnerability Disclosure).
+#
+# At Feryshop, the security of our platform, customer data, and transaction
+# integrity is our top priority. We welcome and value contributions from security
+# researchers who discover and disclose vulnerabilities responsibly.
+#
+# ==============================================================================
+# 1. Safe Harbor (Perlindungan Hukum bagi Peneliti Beritikad Baik)
+# ==============================================================================
+#
+# Jika Anda melakukan pengujian keamanan sesuai dengan pedoman dalam kebijakan ini:
+# - Kami menganggap aktivitas riset keamanan Anda sebagai aktivitas yang sah (authorized).
+# - Kami TIDAK akan mengambil tindakan hukum atau menuntut Anda atas riset tersebut.
+# - Kami akan bekerja sama dengan Anda untuk memverifikasi dan memperbaiki kerentanan.
+#
+# If you conduct vulnerability research in accordance with this policy:
+# - We consider your research activities authorized.
+# - We will NOT initiate or pursue legal action against you.
+# - We will work collaboratively with you to understand and remediate the issue.
+#
+# ==============================================================================
+# 2. Scope (Cakupan Pengujian)
+# ==============================================================================
+#
+# [DALAM CAKUPAN / IN-SCOPE]:
+# - https://feryshop.com dan subdomain resmi (*.feryshop.com)
+# - Endpoint API Storefront (https://feryshop.com/api/*)
+# - Alur autentikasi dan otorisasi (Sign In, Sign Up, Session, CSRF, Token)
+# - Validasi data dan logika bisnis (pesanan, pembayaran, verifikasi keranjang)
+#
+# [DI LUAR CAKUPAN / STRICTLY OUT-OF-SCOPE]:
+# - Serangan Denial of Service (DoS / DDoS) atau uji beban yang mengganggu ketersediaan layanan.
+# - Social engineering, phishing, spear-phishing, atau vishing terhadap staf, admin, atau pelanggan Feryshop.
+# - Serangan fisik terhadap fasilitas, server, atau kantor kami.
+# - Pengujian massal menggunakan automated scanner tanpa triage manual (misal: raw report scanner).
+# - Kerentanan pada layanan pihak ketiga di luar kendali langsung kami (infrastruktur Cloudflare, Supabase platform, payment provider gateway).
+# - Masalah non-eksploitasi seperti email spoofing tanpa SPF/DMARC bypass yang terbukti berdampak, atau missing best practice headers yang tidak menimbulkan risiko nyata.
+#
+# ==============================================================================
+# 3. Rules of Engagement (Aturan & Pedoman Pengujian)
+# ==============================================================================
+#
+# - Gunakan HANYA akun Anda sendiri untuk pengujian. Jangan mengakses atau memodifikasi akun milik pengguna lain.
+# - HENTIKAN pengujian segera jika Anda menemukan data pribadi (PII), kredensial, atau saldo pengguna lain. JANGAN mengunduh (exfiltrate), menyimpan, atau menyebarkan data tersebut.
+# - Buat Proof of Concept (PoC) minimal yang tidak merusak data (non-destructive) dan tidak mengganggu pengguna aktif.
+# - Berikan waktu yang wajar bagi tim kami untuk menganalisis dan merilis perbaikan sebelum membagikan informasi kerentanan kepada pihak luar (Coordinated Disclosure).
+#
+# ==============================================================================
+# 4. Cara Melaporkan Kerentanan (How to Report)
+# ==============================================================================
+#
+# Kirim laporan Anda melalui email ke:
+# -> mailto:security@feryshop.com
+#
+# Format Laporan yang Dianjurkan:
+# 1. Judul & Ringkasan Kerentanan (misal: IDOR pada endpoint order, Stored XSS, bypass otorisasi).
+# 2. URL / Endpoint & Parameter yang Terdampak.
+# 3. Langkah-langkah Reproduksi (Step-by-step Reproduction) yang jelas dan runut.
+# 4. Bukti Konsep (PoC): Screenshot, HTTP Request/Response, atau video singkat.
+# 5. Analisis Dampak Keamanan & Rekomendasi Solusi Perbaikan (opsional namun sangat dihargai).
+#
+# ==============================================================================
+# 5. Komitmen Kami (Our Commitment)
+# ==============================================================================
+#
+# - Konfirmasi Penerimaan: Kami berkomitmen merespons laporan Anda dalam waktu 1-2 hari kerja.
+# - Triage & Pembaruan: Kami akan memberikan status perkembangan investigasi dan perkiraan waktu patch.
+# - Pengakuan / Hall of Fame: Peneliti yang menemukan kerentanan valid dan mengikuti panduan ini akan diabadikan di daftar kehormatan kami di:
+#   https://feryshop.com/acknowledgement.txt
+#
+# ==============================================================================

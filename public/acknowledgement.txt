@@ -1,0 +1,39 @@
+# ==============================================================================
+# Feryshop Security Researcher Acknowledgements & Hall of Fame
+# URL: https://feryshop.com/acknowledgement.txt
+# ==============================================================================
+#
+# Kami mengucapkan terima kasih yang sebesar-besarnya kepada para peneliti
+# keamanan (security researchers) yang telah berpartisipasi dalam Coordinated
+# Vulnerability Disclosure (CVD) secara etis dan bertanggung jawab untuk
+# menjaga keamanan ekosistem Feryshop serta melindungi seluruh pengguna kami.
+#
+# We would like to express our sincere gratitude to all security researchers
+# who have responsibly discovered and reported vulnerabilities in accordance with
+# our Coordinated Vulnerability Disclosure guidelines, helping us keep Feryshop
+# and our users secure.
+#
+# ==============================================================================
+# Panduan Pelaporan / Reporting Guidelines
+# ==============================================================================
+#
+# Kontak Resmi Tim Keamanan:
+# - Email: mailto:security@feryshop.com
+# - Kebijakan Keamanan: https://feryshop.com/policy.txt
+# - Security.txt: https://feryshop.com/.well-known/security.txt
+#
+# Kriteria Masuk Hall of Fame (Recognition Eligibility):
+# 1. Menjadi pelapor pertama dari kerentanan keamanan yang valid dan berdampak.
+# 2. Melaporkan kerentanan secara terkoordinasi tanpa mengeksploitasi data pengguna,
+#    tanpa merusak integritas sistem, dan tanpa mengganggu ketersediaan layanan.
+# 3. Memberikan waktu perbaikan yang wajar sebelum publikasi ke publik.
+#
+# ==============================================================================
+# Hall of Fame / Daftar Peneliti Keamanan
+# ==============================================================================
+#
+# [2026]
+# - Terbuka untuk kontribusi peneliti keamanan independen.
+#   Laporkan temuan kerentanan Anda ke security@feryshop.com.
+#
+# ==============================================================================
